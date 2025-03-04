@@ -8,26 +8,21 @@ namespace Engine.Items
 {
 	public class Checklist
 	{
-		private readonly BooleanItem _booleanItem;
+		private readonly List<BooleanItem> _booleanItems;
 
-		public Checklist(BooleanItem booleanItem)
+		public Checklist(params BooleanItem[] booleanItems)
 		{
-			_booleanItem = booleanItem;
+			_booleanItems = booleanItems.ToList();
 		}
 
 		public ChecklistStatus Status()
 		{
-			switch (_booleanItem.Status())
-			{
-				case ItemStatus.Succeeded:
-					return ChecklistStatus.Succeeded;
-				case ItemStatus.Failed:
-					return ChecklistStatus.Failed;
-				case ItemStatus.InProgress:
-					return ChecklistStatus.InProgress;
-				default:
-					throw new InvalidOperationException("Invalid ItemStatus");
-			}
+			var statuses = _booleanItems.Select(item => item.Status());
+			if (statuses.All(status => status == ItemStatus.Succeeded))
+				return ChecklistStatus.Succeeded;
+			if (statuses.Any(status => status == ItemStatus.Failed))
+				return ChecklistStatus.Failed;
+			return ChecklistStatus.InProgress;
 		}
 	}
 }
