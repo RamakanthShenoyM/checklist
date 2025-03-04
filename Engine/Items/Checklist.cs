@@ -19,7 +19,8 @@ namespace Engine.Items
 
         public void Cancel(Item item) => _items.Remove(item);
 
-        public ChecklistStatus Status()
+		public List<Item> Failures() => _items.FindAll(item => item.Status() == ItemStatus.Failed);
+		public ChecklistStatus Status()
 		{
 			if(_items.Count == 0 ) return ChecklistStatus.NotApplicable;
 			var statuses = _items.Select(item => item.Status());
@@ -29,5 +30,9 @@ namespace Engine.Items
 				return ChecklistStatus.Failed;
 			return ChecklistStatus.InProgress;
 		}
+
+		public List<Item> Successes() => _items.FindAll(item => item.Status() == ItemStatus.Succeeded);
+
+		public List<Item> Unknowns() => _items.FindAll(item => item.Status() == ItemStatus.Unknown);
 	}
 }
