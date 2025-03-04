@@ -13,8 +13,15 @@ namespace Engine.Tests.Unit
 		[Fact]
 		public void InProgress()
 		{
-			var checklist = new Checklist(new BooleanItem());
+			var item = new BooleanItem();
+			var checklist = new Checklist(item);
 			Assert.Equal(ChecklistStatus.InProgress,checklist.Status());
+			item.Be(true);
+			Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
+			item.Be(false);
+			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
+			item.Reset();
+			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
 		}
 	}
 }

@@ -5,6 +5,17 @@ namespace Engine.Items
 	public class BooleanItem
 	{
 		private bool? hasSucceeded;
+
+		public void Be(bool value)
+		{
+			 hasSucceeded = value;
+		}
+
+		public void Reset()
+		{
+			hasSucceeded = null;
+		}
+
 		public ItemStatus Status()
 		{
 			switch (hasSucceeded) {
