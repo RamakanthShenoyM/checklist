@@ -4,6 +4,7 @@
 	{
 		InProgress,
 		Failed,
-		Succeeded
-	}
+		Succeeded,
+        NotApplicable
+    }
 }

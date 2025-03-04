@@ -2,7 +2,7 @@
 {
 	public enum ItemStatus
 	{
-		InProgress,
+		Unknown,
 		Failed,
 		Succeeded
 	}

@@ -8,20 +8,21 @@ namespace Engine.Items
 {
 	public class Checklist
 	{
-		private readonly List<BooleanItem> _booleanItems;
+		private readonly List<Item> _items;
 
-		public Checklist(params BooleanItem[] booleanItems)
+		public Checklist(params Item[] items)
 		{
-			_booleanItems = booleanItems.ToList();
+            _items = items.ToList();
 		}
 
-        public void Add(params BooleanItem[] items) => _booleanItems.AddRange(items);
+        public void Add(params Item[] items) => _items.AddRange(items);
 
-        public void Cancel(BooleanItem item) => _booleanItems.Remove(item);
+        public void Cancel(Item item) => _items.Remove(item);
 
         public ChecklistStatus Status()
 		{
-			var statuses = _booleanItems.Select(item => item.Status());
+			if(_items.Count == 0 ) return ChecklistStatus.NotApplicable;
+			var statuses = _items.Select(item => item.Status());
 			if (statuses.All(status => status == ItemStatus.Succeeded))
 				return ChecklistStatus.Succeeded;
 			if (statuses.Any(status => status == ItemStatus.Failed))

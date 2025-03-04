@@ -11,7 +11,7 @@
         {
             true => ItemStatus.Succeeded,
             false => ItemStatus.Failed,
-            _ => ItemStatus.InProgress,
+            _ => ItemStatus.Unknown,
         };
     }
 }
