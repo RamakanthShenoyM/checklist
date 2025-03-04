@@ -15,7 +15,11 @@ namespace Engine.Items
 			_booleanItems = booleanItems.ToList();
 		}
 
-		public ChecklistStatus Status()
+        public void Add(params BooleanItem[] items) => _booleanItems.AddRange(items);
+
+        public void Cancel(BooleanItem item) => _booleanItems.Remove(item);
+
+        public ChecklistStatus Status()
 		{
 			var statuses = _booleanItems.Select(item => item.Status());
 			if (statuses.All(status => status == ItemStatus.Succeeded))

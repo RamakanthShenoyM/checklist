@@ -1,31 +1,17 @@
-﻿
-using System.Diagnostics.Contracts;
-namespace Engine.Items
+﻿namespace Engine.Items
 {
-	public class BooleanItem
+	public class BooleanItem : Item
 	{
 		private bool? hasSucceeded;
+        public void Be(object value) => hasSucceeded = (bool)value;
 
-		public void Be(bool value)
-		{
-			 hasSucceeded = value;
-		}
+        public void Reset() => hasSucceeded = null;
 
-		public void Reset()
-		{
-			hasSucceeded = null;
-		}
-
-		public ItemStatus Status()
-		{
-			switch (hasSucceeded) {
-				case true:
-					return ItemStatus.Succeeded;
-				case false:
-					return ItemStatus.Failed;
-				default:
-					return ItemStatus.InProgress;
-			}
-		}
-	}
+        public ItemStatus Status() => hasSucceeded switch
+        {
+            true => ItemStatus.Succeeded,
+            false => ItemStatus.Failed,
+            _ => ItemStatus.InProgress,
+        };
+    }
 }
