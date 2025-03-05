@@ -1,4 +1,5 @@
 ﻿using Engine.Items;
+using Engine.Persons;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,12 @@ namespace Engine.Tests.Unit
 {
 	public class BooleanItemTest
 	{
+		private readonly static Creator creator = new Creator();
 		[Fact]
 		public void SingleItem()
 		{
 			var item = new BooleanItem();
-			var checklist = new Checklist(item);
+			var checklist = new Checklist( creator, item);
 			Assert.Equal(ChecklistStatus.InProgress,checklist.Status());
 			item.Be(true);
 			Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
@@ -30,7 +32,7 @@ namespace Engine.Tests.Unit
 			var item1 = new BooleanItem();
 			var item2 = new BooleanItem();
 			var item3 = new BooleanItem();
-			var checklist = new Checklist(item1,item2,item3);
+			var checklist = new Checklist( creator, item1,item2,item3);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
 			item1.Be(true);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
@@ -52,7 +54,7 @@ namespace Engine.Tests.Unit
         {
             var item1 = new BooleanItem();
             var item2 = new BooleanItem();
-            var checklist = new Checklist(item1, item2);
+            var checklist = new Checklist( creator, item1, item2);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             item1.Be(true);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
@@ -68,7 +70,7 @@ namespace Engine.Tests.Unit
             var item2 = new BooleanItem();
             var item3 = new BooleanItem();
             var item4 = new BooleanItem();
-            var checklist = new Checklist(item1, item2);
+            var checklist = new Checklist( creator, item1, item2);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             item1.Be(true);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
@@ -84,7 +86,7 @@ namespace Engine.Tests.Unit
         public void InvalidValue()
         {
             var item = new BooleanItem();
-            var checklist = new Checklist(item);
+            var checklist = new Checklist( creator, item);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             item.Be(true);
             Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());

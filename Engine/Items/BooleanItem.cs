@@ -3,11 +3,11 @@
 	public class BooleanItem : Item
 	{
 		private bool? hasSucceeded;
-        public void Be(object value) => hasSucceeded = (bool)value;
+        public override void Be(object value) => hasSucceeded = (bool)value;
 
-        public void Reset() => hasSucceeded = null;
+        public override void Reset() => hasSucceeded = null;
 
-        public ItemStatus Status() => hasSucceeded switch
+        internal override ItemStatus Status() => hasSucceeded switch
         {
             true => ItemStatus.Succeeded,
             false => ItemStatus.Failed,

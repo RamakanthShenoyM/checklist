@@ -16,11 +16,11 @@ namespace Engine.Items
             _choices.Insert(0, firstChoice);
         }
 
-        public void Be(object value) => _value = value;
+        public override void Be(object value) => _value = value;
 
-        public void Reset() => _value = null;
+        public override void Reset() => _value = null;
 
-        public ItemStatus Status()
+        internal override ItemStatus Status()
         {
             if (_value == null) return ItemStatus.Unknown;
             return _choices.Contains(_value)? ItemStatus.Succeeded: ItemStatus.Failed;

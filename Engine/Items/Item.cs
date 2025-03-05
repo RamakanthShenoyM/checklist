@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Persons;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Engine.Items
 {
-    public interface Item
+    public abstract class Item
     {
-        public ItemStatus Status();
-        public void Be(object value);
-        public void Reset();
-
-    }
+        internal abstract ItemStatus Status();
+        public abstract void Be(object value);
+        public abstract void Reset();
+		  
+	}
 
     public static class ItemExtensions
     {

@@ -15,11 +15,11 @@ namespace Engine.Items
             _item = item;
         }
 
-        public void Be(object value) => _item.Be(value);
+        public override void Be(object value) => _item.Be(value);
 
-        public void Reset() => _item.Reset();
+        public override void Reset() => _item.Reset();
 
-        public ItemStatus Status()
+        internal override ItemStatus Status()
         {
             if (_item.Status() == Succeeded) return Failed;
             if (_item.Status() == Failed) return Succeeded;

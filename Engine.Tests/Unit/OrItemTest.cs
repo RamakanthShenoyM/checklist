@@ -1,4 +1,5 @@
 ﻿using Engine.Items;
+using Engine.Persons;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,13 @@ namespace Engine.Tests.Unit
 {
     public class OrItemTest
     {
-        [Fact]
+		private readonly static Creator creator = new Creator();
+		[Fact]
         public void BooleanItems() {
             var item1 = new BooleanItem();
             var item2 = new BooleanItem();
             var item = item1.Or(item2);
-            var checkList = new Checklist(item);
+            var checkList = new Checklist(creator, item);
             Assert.Equal(InProgress, checkList.Status());
             item1.Be(false);
             Assert.Equal(Failed, checkList.Status());

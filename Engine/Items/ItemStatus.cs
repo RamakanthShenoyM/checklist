@@ -1,6 +1,6 @@
 ﻿namespace Engine.Items
 {
-	public enum ItemStatus
+	internal enum ItemStatus
 	{
 		Unknown,
 		Failed,

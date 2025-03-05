@@ -1,4 +1,5 @@
 ﻿using Engine.Items;
+using Engine.Persons;
 using Xunit;
 using static Engine.Items.ChecklistStatus;
 
@@ -6,6 +7,7 @@ namespace Engine.Tests.Unit
 {
 	public class ConditionalItemTest
 	{
+		private readonly static Creator creator = new Creator();
 		[Fact]
 		public void Boolean()
 		{
@@ -14,7 +16,7 @@ namespace Engine.Tests.Unit
 			var failItem = new BooleanItem();
 
 			var compositeItem = new ConditionalItem(baseItem, successItem, failItem);
-			var checklist = new Checklist(compositeItem);
+			var checklist = new Checklist( creator, compositeItem);
 
 			Assert.Equal(InProgress, checklist.Status());
 			baseItem.Be(true);
@@ -33,7 +35,7 @@ namespace Engine.Tests.Unit
             var failItem = new BooleanItem();
 
             var compositeItem = new ConditionalItem(baseItem, failItem : failItem);
-            var checklist = new Checklist(compositeItem);
+            var checklist = new Checklist( creator, compositeItem);
 
             Assert.Equal(InProgress, checklist.Status());
             baseItem.Be(true);
@@ -50,7 +52,7 @@ namespace Engine.Tests.Unit
             var successItem = new BooleanItem();
 
             var compositeItem = new ConditionalItem(baseItem, successItem: successItem);
-            var checklist = new Checklist(compositeItem);
+            var checklist = new Checklist( creator, compositeItem);
 
             Assert.Equal(InProgress, checklist.Status());
             baseItem.Be(false);
@@ -67,7 +69,7 @@ namespace Engine.Tests.Unit
             var successItem = new BooleanItem();
             var failitem = new BooleanItem();
             var compositeItem = new ConditionalItem(baseItem, successItem, failitem);
-            var checklist = new Checklist(compositeItem);
+            var checklist = new Checklist( creator, compositeItem);
         }
     }
 }

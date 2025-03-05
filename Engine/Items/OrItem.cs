@@ -18,17 +18,17 @@ namespace Engine.Items
             _item2 = item2;
         }
 
-        public void Be(object value)
+        public override void Be(object value)
         {
             throw new InvalidOperationException("can't set the Or");
         }
 
-        public void Reset()
+        public override void Reset()
         {
             throw new InvalidOperationException("can't reset the Or");
         }
 
-        public ItemStatus Status()
+        internal override ItemStatus Status()
         {
             if(_item1.Status() == Failed ||  _item2.Status() == Failed) return Failed;
             if (_item1.Status() == Succeeded || _item2.Status() == Succeeded) return Succeeded;
