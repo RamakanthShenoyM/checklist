@@ -3,24 +3,22 @@ using static Engine.Items.ItemStatus;
 
 namespace Engine.Items
 {
-	public class CompositeItem(BooleanItem baseItem, BooleanItem successItem, BooleanItem failItem) : Item
+	public class CompositeItem(BooleanItem baseItem, BooleanItem? successItem = null, BooleanItem? failItem = null) : Item
 	{
-		public void Be(object value)
-		{
-			baseItem.Be(value);
-		}
 
-		public void Reset()
+        public void Be(object value) => baseItem.Be(value);
+
+        public void Reset()
 		{
 			baseItem.Reset();
-			successItem.Reset();
-			failItem.Reset();
+			successItem?.Reset();
+			failItem?.Reset();
 		}
 
 		public ItemStatus Status()
 		{
-			if(baseItem.Status() == Succeeded) return successItem.Status();
-			if(baseItem.Status() == Failed) return failItem.Status();
+			if(baseItem.Status() == Succeeded) return successItem?.Status() ?? Succeeded;
+			if(baseItem.Status() == Failed) return failItem?.Status() ?? Failed;
 			return Unknown;
 		}
 	}
