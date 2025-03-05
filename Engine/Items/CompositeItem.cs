@@ -3,7 +3,7 @@ using static Engine.Items.ItemStatus;
 
 namespace Engine.Items
 {
-	public class CompositeItem(BooleanItem baseItem, BooleanItem? successItem = null, BooleanItem? failItem = null) : Item
+	public class CompositeItem(Item baseItem, Item? successItem = null, Item? failItem = null) : Item
 	{
 
         public void Be(object value) => baseItem.Be(value);
