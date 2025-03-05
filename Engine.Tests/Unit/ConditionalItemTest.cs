@@ -4,7 +4,7 @@ using static Engine.Items.ChecklistStatus;
 
 namespace Engine.Tests.Unit
 {
-	public class CompositeItemTest
+	public class ConditionalItemTest
 	{
 		[Fact]
 		public void Boolean()
@@ -13,7 +13,7 @@ namespace Engine.Tests.Unit
 			var successItem = new BooleanItem();
 			var failItem = new BooleanItem();
 
-			var compositeItem = new CompositeItem(baseItem, successItem, failItem);
+			var compositeItem = new ConditionalItem(baseItem, successItem, failItem);
 			var checklist = new Checklist(compositeItem);
 
 			Assert.Equal(InProgress, checklist.Status());
@@ -32,7 +32,7 @@ namespace Engine.Tests.Unit
             var baseItem = new BooleanItem();
             var failItem = new BooleanItem();
 
-            var compositeItem = new CompositeItem(baseItem, failItem : failItem);
+            var compositeItem = new ConditionalItem(baseItem, failItem : failItem);
             var checklist = new Checklist(compositeItem);
 
             Assert.Equal(InProgress, checklist.Status());
@@ -49,7 +49,7 @@ namespace Engine.Tests.Unit
             var baseItem = new BooleanItem();
             var successItem = new BooleanItem();
 
-            var compositeItem = new CompositeItem(baseItem, successItem: successItem);
+            var compositeItem = new ConditionalItem(baseItem, successItem: successItem);
             var checklist = new Checklist(compositeItem);
 
             Assert.Equal(InProgress, checklist.Status());
@@ -66,7 +66,7 @@ namespace Engine.Tests.Unit
             var baseItem = new BooleanItem();
             var successItem = new BooleanItem();
             var failitem = new BooleanItem();
-            var compositeItem = new CompositeItem(baseItem, successItem, failitem);
+            var compositeItem = new ConditionalItem(baseItem, successItem, failitem);
             var checklist = new Checklist(compositeItem);
         }
     }
