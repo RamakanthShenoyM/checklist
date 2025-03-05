@@ -10,9 +10,10 @@ namespace Engine.Items
     {
         private readonly List<object> _choices;
         private object? _value;
-        public MultipleChoiceItem(params object[] choices)
+        public MultipleChoiceItem(object firstChoice, params object[] choices)
         {
             _choices = choices.ToList();
+            _choices.Insert(0, firstChoice);
         }
 
         public void Be(object value) => _value = value;

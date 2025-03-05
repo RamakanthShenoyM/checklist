@@ -10,9 +10,10 @@ namespace Engine.Items
 	{
 		private readonly List<Item> _items;
 
-		public Checklist(params Item[] items)
+		public Checklist(Item firstItem, params Item[] items)
 		{
             _items = items.ToList();
+			_items.Insert(0, firstItem);
 		}
 
         public void Add(params Item[] items) => _items.AddRange(items);
