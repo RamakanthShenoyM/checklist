@@ -85,8 +85,11 @@ namespace Engine.Tests.Unit
 			nordicItem.Be("Iceland");
 			Assert.Equal(Failed, checklist.Status());
 
-
-		}
+			failItem.Reset();
+			Assert.Equal(InProgress, checklist.Status());
+            asiaItem.Be("Srilanka");
+            Assert.Equal(Failed, checklist.Status());
+        }
 
 	}
 }

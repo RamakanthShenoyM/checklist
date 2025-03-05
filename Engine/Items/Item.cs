@@ -13,4 +13,9 @@ namespace Engine.Items
         public void Reset();
 
     }
+
+    public static class ItemExtensions
+    {
+        public static NotItem Not(this Item item) => new NotItem(item);
+    }
 }

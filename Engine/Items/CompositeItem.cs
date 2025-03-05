@@ -11,8 +11,6 @@ namespace Engine.Items
         public void Reset()
 		{
 			baseItem.Reset();
-			successItem?.Reset();
-			failItem?.Reset();
 		}
 
 		public ItemStatus Status()
