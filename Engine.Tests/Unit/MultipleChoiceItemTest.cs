@@ -41,6 +41,7 @@ namespace Engine.Tests.Unit
 			var item2 = new BooleanItem();
 			var item3 = new MultipleChoiceItem("India", "Iceland", "Norway");
 			var checklist = new Checklist(item1, item2, item3);
+
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
 			item1.Be(GreenCarpet);
 			item2.Be(true);
