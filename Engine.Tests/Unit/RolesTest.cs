@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using static Engine.Persons.Roles;
+using static Engine.Persons.Permissions;
 
 namespace Engine.Tests.Unit
 {
@@ -18,7 +18,7 @@ namespace Engine.Tests.Unit
 			var creator = new Creator();
 			var item = new BooleanItem();
 			var checklist = new Checklist(creator,item);
-			//Assert.True(creator.Can(View).On(item));
+			Assert.True(creator.Can(View).On(item));
 		}
 	}
 }

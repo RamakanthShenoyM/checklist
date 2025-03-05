@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Persons
 {
-	public enum Roles
+	public enum Permissions
 	{
 		View,
 		AddItem,

@@ -17,7 +17,7 @@ namespace Engine.Items
 			_items = items.ToList();
 			_items.Insert(0, firstItem);
 			_creator = creator;
-			//_items.ForEach(item => item.AddPerson(_creator));	
+			_items.ForEach(item => item.AddPerson(_creator));	
 		}
 
 		public void Add(params Item[] items) => _items.AddRange(items);
