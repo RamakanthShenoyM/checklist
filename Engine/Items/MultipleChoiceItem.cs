@@ -16,9 +16,9 @@ namespace Engine.Items
             _choices.Insert(0, firstChoice);
         }
 
-        public override void Be(object value) => _value = value;
+        internal override void Be(object value) => _value = value;
 
-        public override void Reset() => _value = null;
+        internal override void Reset() => _value = null;
 
         internal override ItemStatus Status()
         {

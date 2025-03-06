@@ -5,9 +5,9 @@ namespace Engine.Items
 	public class BooleanItem : Item
 	{
 		private bool? hasSucceeded;
-        public override void Be(object value) => hasSucceeded = (bool)value;
+        internal override void Be(object value) => hasSucceeded = (bool)value;
 
-        public override void Reset() => hasSucceeded = null;
+        internal override void Reset() => hasSucceeded = null;
 
 		
 

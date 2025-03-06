@@ -24,9 +24,9 @@ namespace Engine.Tests.Unit
             Assert.Equal(Failed, checkList.Status());
             creator.Sets(item2).To(true);
             Assert.Equal(Failed, checkList.Status());
-            item1.Reset();
+            creator.Reset(item1);
             Assert.Equal(Succeeded, checkList.Status());
-            item2.Reset();
+            creator.Reset(item2);
             Assert.Equal(InProgress, checkList.Status());
         }
 

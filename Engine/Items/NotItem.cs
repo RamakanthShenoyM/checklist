@@ -16,9 +16,9 @@ namespace Engine.Items
             _item = item;
         }
 
-        public override void Be(object value) => _item.Be(value);
+        internal override void Be(object value) => _item.Be(value);
 
-        public override void Reset() => _item.Reset();
+        internal override void Reset() => _item.Reset();
 
         internal override ItemStatus Status()
         {
@@ -26,10 +26,9 @@ namespace Engine.Items
             if (_item.Status() == Failed) return Succeeded;
             return Unknown;
         }
-		internal override void AddPerson(Person person, Role role)
-		{
-			_item.AddPerson(person, role);
-		}
+        internal override void AddPerson(Person person, Role role) => _item.AddPerson(person, role);
+        internal override bool Contains(Item desiredItem) =>
+           _item.Contains(desiredItem);
 
-	}
+    }
 }

@@ -24,7 +24,7 @@ namespace Engine.Tests.Unit
 			Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
 			creator.Sets(item).To(BlueCarpet);
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
-			item.Reset();
+			creator.Reset(item);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
 		}
 		[Fact]

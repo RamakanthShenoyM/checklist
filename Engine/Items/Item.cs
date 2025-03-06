@@ -6,12 +6,13 @@ namespace Engine.Items
 	{
 		private readonly Dictionary<Person, List<Operation>> _operations = [];
 		internal abstract ItemStatus Status();
-		public abstract void Be(object value);
-		public abstract void Reset();
+		internal abstract void Be(object value);
+		internal abstract void Reset();
 		internal virtual void AddPerson(Person person, Role role) => _operations[person] = role.Operations;
 		internal bool HasPerson(Person person) => _operations.Keys.Contains(person);
 		internal bool DoesAllow(Person person, Operation operation) => 
 			_operations.ContainsKey(person) && _operations[person].Contains(operation);
+		internal virtual bool Contains(Item desiredItem) => this == desiredItem;
 
 	}
 

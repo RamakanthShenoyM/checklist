@@ -19,27 +19,31 @@ namespace Engine.Items
             _item2 = item2;
         }
 
-        public override void Be(object value)
+        internal override void Be(object value)
         {
             throw new InvalidOperationException("can't set the Or");
         }
 
-        public override void Reset()
+        internal override void Reset()
         {
             throw new InvalidOperationException("can't reset the Or");
         }
 
         internal override ItemStatus Status()
         {
-            if(_item1.Status() == Failed ||  _item2.Status() == Failed) return Failed;
+            if (_item1.Status() == Failed || _item2.Status() == Failed) return Failed;
             if (_item1.Status() == Succeeded || _item2.Status() == Succeeded) return Succeeded;
             return Unknown;
         }
 
-		internal override void AddPerson(Person person, Role role)
-		{
-			_item1.AddPerson(person, role);
-			_item2.AddPerson(person, role);
-		}
-	}
+        internal override void AddPerson(Person person, Role role)
+        {
+            _item1.AddPerson(person, role);
+            _item2.AddPerson(person, role);
+        }
+        internal override bool Contains(Item desiredItem) =>
+           _item1.Contains(desiredItem)
+               || _item2.Contains(desiredItem);
+
+    }
 }

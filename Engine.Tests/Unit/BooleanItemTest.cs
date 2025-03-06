@@ -22,7 +22,7 @@ namespace Engine.Tests.Unit
 			Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
 			creator.Sets(item).To(false);
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
-			item.Reset();
+			creator.Reset(item);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
 		}
 
@@ -43,9 +43,9 @@ namespace Engine.Tests.Unit
 			creator.Sets(item2).To(false);
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
 
-			item1.Reset();
+			creator.Reset(item1);
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
-			item2.Reset();
+			creator.Reset(item2);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
 
 		}
@@ -76,10 +76,10 @@ namespace Engine.Tests.Unit
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             creator.Sets(item2).To(false);
             Assert.Equal(ChecklistStatus.Failed, checklist.Status());
-            checklist.Cancel(item2);
-			checklist.Add(item3, item4);
+            creator.Cancel(item2).In(checklist);
+            creator.Add(item3, item4).In(checklist);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			item4.Be(false);
+            creator.Sets(item4).To(false);
             Assert.Equal(ChecklistStatus.Failed, checklist.Status());
         }
 		[Fact]

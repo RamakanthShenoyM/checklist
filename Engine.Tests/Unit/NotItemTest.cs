@@ -20,7 +20,7 @@ namespace Engine.Tests.Unit
             Assert.Equal(Failed, checklist.Status());
             creator.Sets(booleanItem).To(false);
             Assert.Equal(Succeeded, checklist.Status());
-            booleanItem.Reset();
+            creator.Reset(booleanItem);
             Assert.Equal(InProgress, checklist.Status());
         }
 
@@ -37,7 +37,7 @@ namespace Engine.Tests.Unit
             Assert.Equal(Failed, checklist.Status());
             creator.Sets(multipleChoiceItem).To("Bangladesh");
             Assert.Equal(Succeeded, checklist.Status());
-            multipleChoiceItem.Reset();
+            creator.Reset(multipleChoiceItem);
             Assert.Equal(InProgress, checklist.Status());
         }
     }
