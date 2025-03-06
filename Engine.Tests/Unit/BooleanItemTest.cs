@@ -60,7 +60,7 @@ namespace Engine.Tests.Unit
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             creator.Sets(item2).To(false);
             Assert.Equal(ChecklistStatus.Failed, checklist.Status());
-			checklist.Cancel(item2);
+			creator.Cancel(item2).In(checklist);
             Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
 		}
         [Fact]

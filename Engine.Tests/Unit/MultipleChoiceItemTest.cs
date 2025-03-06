@@ -33,7 +33,7 @@ namespace Engine.Tests.Unit
 			var item = new MultipleChoiceItem(RedCarpet);
 			var checklist = new Checklist( creator, item);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			checklist.Cancel(item);
+			creator.Cancel(item).In(checklist);
 			Assert.Equal(ChecklistStatus.NotApplicable, checklist.Status());
 		}
 		[Fact]
