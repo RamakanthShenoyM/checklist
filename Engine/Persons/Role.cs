@@ -9,16 +9,18 @@ namespace Engine.Persons
         Cancel,
         DeleteItem,
         Set,
-        Reset,
         AddPerson,
         RemovePerson});
 
 		public static readonly Role Owner = new Role(new List<Operation> {
 				View,
 				Set,
-				Reset,
 				AddPerson,
 				RemovePerson});
+
+		public static readonly Role Viewer = new Role(new List<Operation> {
+				View
+		});
 
 		internal List<Operation> Operations { get; } = operations;
 
@@ -30,7 +32,6 @@ namespace Engine.Persons
 		Cancel,
 		DeleteItem,
 		Set,
-		Reset,
 		AddPerson,
 		RemovePerson
 	}

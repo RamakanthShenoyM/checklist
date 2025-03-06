@@ -20,9 +20,9 @@ namespace Engine.Tests.Unit
             var item = item1.Or(item2);
             var checkList = new Checklist(creator, item);
             Assert.Equal(InProgress, checkList.Status());
-            item1.Be(false);
+            creator.Sets(item1).To(false);
             Assert.Equal(Failed, checkList.Status());
-            item2.Be(true);
+            creator.Sets(item2).To(true);
             Assert.Equal(Failed, checkList.Status());
             item1.Reset();
             Assert.Equal(Succeeded, checkList.Status());

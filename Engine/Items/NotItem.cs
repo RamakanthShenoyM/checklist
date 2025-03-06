@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Persons;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,5 +26,10 @@ namespace Engine.Items
             if (_item.Status() == Failed) return Succeeded;
             return Unknown;
         }
-    }
+		internal override void AddPerson(Person person, Role role)
+		{
+			_item.AddPerson(person, role);
+		}
+
+	}
 }

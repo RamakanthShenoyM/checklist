@@ -1,4 +1,6 @@
 ﻿using Engine.Items;
+using static Engine.Persons.Person;
+using static Engine.Persons.Operation;
 
 namespace Engine.Persons
 {
@@ -12,6 +14,19 @@ namespace Engine.Persons
     
 
 		public ActionValidation Can(Operation view) => new ActionValidation(this, view);
+
+		public void Reset(Item item)
+		{
+			if (!this.Can(Set).On(item))
+				throw new InvalidOperationException("Does not have permission to reset an Item");
+			item.Reset();
+			
+		}
+
+		public AssignToItem Sets(Item item)
+		{
+			return new AssignToItem(this,item);
+		}
 
 		public class ActionValidation
         {
@@ -51,6 +66,25 @@ namespace Engine.Persons
 					throw new InvalidOperationException("Does not have permission to add new person");
 				item.AddPerson(_addedPerson, _role);
 				
+			}
+		}
+
+		public class AssignToItem
+		{
+			private readonly Person _person;
+			private readonly Item _item;
+
+			internal AssignToItem(Person person, Item item)
+			{
+				_person = person;
+				_item = item;
+			}
+
+			public void To(object value)
+			{
+				if (!_person.Can(Set).On(_item))
+					throw new InvalidOperationException("Does not have permission to set an Item");
+				_item.Be(value);
 			}
 		}
 	}

@@ -19,13 +19,13 @@ namespace Engine.Tests.Unit
 			var checklist = new Checklist( creator, compositeItem);
 
 			Assert.Equal(InProgress, checklist.Status());
-			baseItem.Be(true);
+			creator.Sets(baseItem).To(true);
 			Assert.Equal(InProgress, checklist.Status());
-			successItem.Be(false);
+			creator.Sets(successItem).To(false);
 			Assert.Equal(Failed, checklist.Status());
-			baseItem.Be(false);
+			creator.Sets(baseItem).To(false);
 			Assert.Equal(InProgress, checklist.Status());
-			failItem.Be(true);
+			creator.Sets(failItem).To(true);
 			Assert.Equal(Succeeded, checklist.Status());
 		}
         [Fact]
@@ -38,11 +38,11 @@ namespace Engine.Tests.Unit
             var checklist = new Checklist( creator, compositeItem);
 
             Assert.Equal(InProgress, checklist.Status());
-            baseItem.Be(true);
+            creator.Sets(baseItem).To(true);
             Assert.Equal(Succeeded, checklist.Status());
-            baseItem.Be(false);
+            creator.Sets(baseItem).To(false);
             Assert.Equal(InProgress, checklist.Status());
-            failItem.Be(true);
+            creator.Sets(failItem).To(true);
             Assert.Equal(Succeeded, checklist.Status());
         }
         [Fact]
@@ -55,11 +55,11 @@ namespace Engine.Tests.Unit
             var checklist = new Checklist( creator, compositeItem);
 
             Assert.Equal(InProgress, checklist.Status());
-            baseItem.Be(false);
+            creator.Sets(baseItem).To(false);
             Assert.Equal(Failed, checklist.Status());
-            baseItem.Be(true);
+            creator.Sets(baseItem).To(true);
             Assert.Equal(InProgress, checklist.Status());
-            successItem.Be(true);
+            creator.Sets(successItem).To(true);
             Assert.Equal(Succeeded, checklist.Status());
         }
         [Fact]

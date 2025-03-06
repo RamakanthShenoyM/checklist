@@ -22,8 +22,8 @@ namespace Engine.Tests.Unit
 			Assert.Equal(new List<Item> { item1,item2,item3 }, checklist.Unknowns());
 			Assert.Equal(new List<Item>(), checklist.Successes());
 			Assert.Equal(new List<Item>(), checklist.Failures());
-			item2.Be(true);
-			item3.Be("India");
+			creator.Sets(item2).To(true);
+			creator.Sets(item3).To("India");
 			Assert.Equal(new List<Item> { item1 }, checklist.Unknowns());
 			Assert.Equal(new List<Item> { item2,item3 }, checklist.Successes());
 			Assert.Equal(new List<Item>(), checklist.Failures());

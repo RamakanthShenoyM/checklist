@@ -8,7 +8,7 @@ namespace Engine.Items
 		internal abstract ItemStatus Status();
 		public abstract void Be(object value);
 		public abstract void Reset();
-		internal void AddPerson(Person person, Role role) => _operations[person] = role.Operations;
+		internal virtual void AddPerson(Person person, Role role) => _operations[person] = role.Operations;
 		internal bool HasPerson(Person person) => _operations.Keys.Contains(person);
 		internal bool DoesAllow(Person person, Operation operation) => 
 			_operations.ContainsKey(person) && _operations[person].Contains(operation);

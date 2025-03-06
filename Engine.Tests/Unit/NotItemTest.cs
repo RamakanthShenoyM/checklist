@@ -16,9 +16,9 @@ namespace Engine.Tests.Unit
             var notItem = booleanItem.Not();
             var checklist = new Checklist( creator, notItem);
             Assert.Equal(InProgress, checklist.Status());
-            booleanItem.Be(true);
+            creator.Sets(booleanItem).To(true);
             Assert.Equal(Failed, checklist.Status());
-            booleanItem.Be(false);
+            creator.Sets(booleanItem).To(false);
             Assert.Equal(Succeeded, checklist.Status());
             booleanItem.Reset();
             Assert.Equal(InProgress, checklist.Status());
@@ -31,11 +31,11 @@ namespace Engine.Tests.Unit
             var notItem = multipleChoiceItem.Not();
             var checklist = new Checklist( creator, notItem);
             Assert.Equal(InProgress, checklist.Status());
-            multipleChoiceItem.Be("India");
+            creator.Sets(multipleChoiceItem).To("India");
             Assert.Equal(Failed, checklist.Status());
-            multipleChoiceItem.Be("Srilanka");
+            creator.Sets(multipleChoiceItem).To("Srilanka");
             Assert.Equal(Failed, checklist.Status());
-            multipleChoiceItem.Be("Bangladesh");
+            creator.Sets(multipleChoiceItem).To("Bangladesh");
             Assert.Equal(Succeeded, checklist.Status());
             multipleChoiceItem.Reset();
             Assert.Equal(InProgress, checklist.Status());

@@ -18,9 +18,9 @@ namespace Engine.Tests.Unit
 			var item = new BooleanItem();
 			var checklist = new Checklist( creator, item);
 			Assert.Equal(ChecklistStatus.InProgress,checklist.Status());
-			item.Be(true);
+			creator.Sets(item).To(true);
 			Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
-			item.Be(false);
+			creator.Sets(item).To(false);
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
 			item.Reset();
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
@@ -34,13 +34,13 @@ namespace Engine.Tests.Unit
 			var item3 = new BooleanItem();
 			var checklist = new Checklist( creator, item1,item2,item3);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			item1.Be(true);
+			creator.Sets(item1).To(true);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
 
-			item2.Be(true);
-			item3.Be(true);
+			creator.Sets(item2).To(true);
+			creator.Sets(item3).To(true);
 			Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
-			item2.Be(false);
+			creator.Sets(item2).To(false);
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
 
 			item1.Reset();
@@ -56,9 +56,9 @@ namespace Engine.Tests.Unit
             var item2 = new BooleanItem();
             var checklist = new Checklist( creator, item1, item2);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-            item1.Be(true);
+            creator.Sets(item1).To(true);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-            item2.Be(false);
+            creator.Sets(item2).To(false);
             Assert.Equal(ChecklistStatus.Failed, checklist.Status());
 			checklist.Cancel(item2);
             Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
@@ -72,9 +72,9 @@ namespace Engine.Tests.Unit
             var item4 = new BooleanItem();
             var checklist = new Checklist( creator, item1, item2);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-            item1.Be(true);
+            creator.Sets(item1).To(true);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-            item2.Be(false);
+            creator.Sets(item2).To(false);
             Assert.Equal(ChecklistStatus.Failed, checklist.Status());
             checklist.Cancel(item2);
 			checklist.Add(item3, item4);
@@ -88,9 +88,9 @@ namespace Engine.Tests.Unit
             var item = new BooleanItem();
             var checklist = new Checklist( creator, item);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-            item.Be(true);
+            creator.Sets(item).To(true);
             Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
-			Assert.Throws<InvalidCastException>(() => item.Be("green"));
+			Assert.Throws<InvalidCastException>(() => creator.Sets(item).To("green"));
         }
     }
 }

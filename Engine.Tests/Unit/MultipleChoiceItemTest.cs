@@ -20,9 +20,9 @@ namespace Engine.Tests.Unit
 			var item = new MultipleChoiceItem(RedCarpet, GreenCarpet, NoCarpet);
 			var checklist = new Checklist( creator, item);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			item.Be(GreenCarpet);
+			creator.Sets(item).To(GreenCarpet);
 			Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
-			item.Be(BlueCarpet);
+			creator.Sets(item).To(BlueCarpet);
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
 			item.Reset();
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
@@ -45,11 +45,11 @@ namespace Engine.Tests.Unit
 			var checklist = new Checklist( creator, item1, item2, item3);
 
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			item1.Be(GreenCarpet);
-			item2.Be(true);
-			item3.Be("India");
+			creator.Sets(item1).To(GreenCarpet);
+			creator.Sets(item2).To(true);
+			creator.Sets(item3).To("India");
 			Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
-			item3.Be("Poland");
+			creator.Sets(item3).To("Poland");
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
 		}
 
