@@ -1,22 +1,15 @@
 ﻿using Engine.Persons;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Items
 {
 	public abstract class Item
 	{
-		private readonly List<Creator> _persons = new List<Creator>();
+		private readonly Dictionary<Person, List<Operation>> _operations = [];
 		internal abstract ItemStatus Status();
 		public abstract void Be(object value);
 		public abstract void Reset();
-
-		internal void AddPerson(Creator person) => _persons.Add(person);
-
-		internal bool HasPerson(Creator person) => _persons.Contains(person);
+		internal void AddPerson(Person person, Role role) => _operations[person] = role.Operations;
+		internal bool HasPerson(Person person) => _operations.Keys.Contains(person);
 	}
 
 	public static class ItemExtensions

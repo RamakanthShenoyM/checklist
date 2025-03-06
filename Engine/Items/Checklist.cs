@@ -4,20 +4,22 @@ using System.Linq;
 using System.Text;
 using Engine.Persons;
 using System.Threading.Tasks;
+using static Engine.Persons.Role;
+
 
 namespace Engine.Items
 {
 	public class Checklist
 	{
 		private readonly List<Item> _items;
-		private readonly Creator _creator;
+		private readonly Person _creator;
 
-		public Checklist(Creator creator, Item firstItem, params Item[] items)
+		public Checklist(Person creator, Item firstItem, params Item[] items)
 		{
 			_items = items.ToList();
 			_items.Insert(0, firstItem);
 			_creator = creator;
-			_items.ForEach(item => item.AddPerson(_creator));	
+			_items.ForEach(item => item.AddPerson(_creator, Creator));	
 		}
 
 		public void Add(params Item[] items) => _items.AddRange(items);

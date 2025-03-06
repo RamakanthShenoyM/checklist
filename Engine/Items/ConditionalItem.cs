@@ -1,5 +1,4 @@
-﻿using Engine.Items;
-using static Engine.Items.ItemStatus;
+﻿using static Engine.Items.ItemStatus;
 
 namespace Engine.Items
 {
