@@ -13,7 +13,25 @@ namespace Engine.Persons
         AddPerson,
         RemovePerson});
 
-        internal List<Operation> Operations { get; } = operations;
+		public static readonly Role Owner = new Role(new List<Operation> {
+				View,
+				Set,
+				Reset,
+				AddPerson,
+				RemovePerson});
 
-    }
+		internal List<Operation> Operations { get; } = operations;
+
+	}
+	public enum Operation
+	{
+		View,
+		AddItem,
+		Cancel,
+		DeleteItem,
+		Set,
+		Reset,
+		AddPerson,
+		RemovePerson
+	}
 }

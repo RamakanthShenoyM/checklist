@@ -1,4 +1,6 @@
-﻿namespace Engine.Items
+﻿using Engine.Persons;
+
+namespace Engine.Items
 {
 	public class BooleanItem : Item
 	{
@@ -7,7 +9,9 @@
 
         public override void Reset() => hasSucceeded = null;
 
-        internal override ItemStatus Status() => hasSucceeded switch
+		
+
+		internal override ItemStatus Status() => hasSucceeded switch
         {
             true => ItemStatus.Succeeded,
             false => ItemStatus.Failed,

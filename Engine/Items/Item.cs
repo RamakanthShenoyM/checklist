@@ -10,6 +10,9 @@ namespace Engine.Items
 		public abstract void Reset();
 		internal void AddPerson(Person person, Role role) => _operations[person] = role.Operations;
 		internal bool HasPerson(Person person) => _operations.Keys.Contains(person);
+		internal bool DoesAllow(Person person, Operation operation) => 
+			_operations.ContainsKey(person) && _operations[person].Contains(operation);
+
 	}
 
 	public static class ItemExtensions
