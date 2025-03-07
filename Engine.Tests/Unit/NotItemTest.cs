@@ -12,7 +12,7 @@ namespace Engine.Tests.Unit
 		[Fact]
         public void NotBoolean()
         {
-            var booleanItem = new BooleanItem();
+            var booleanItem = new BooleanItem("Is US citizen?");
             var notItem = booleanItem.Not();
             var checklist = new Checklist( creator, notItem);
             Assert.Equal(InProgress, checklist.Status());

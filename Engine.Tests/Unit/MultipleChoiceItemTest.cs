@@ -40,7 +40,7 @@ namespace Engine.Tests.Unit
 		public void MixedItems()
 		{
 			var item1 = new MultipleChoiceItem(RedCarpet, GreenCarpet, NoCarpet);
-			var item2 = new BooleanItem();
+			var item2 = new BooleanItem("Is US citizen?");
 			var item3 = new MultipleChoiceItem("India", "Iceland", "Norway");
 			var checklist = new Checklist( creator, item1, item2, item3);
 

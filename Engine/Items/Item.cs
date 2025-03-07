@@ -21,5 +21,7 @@ namespace Engine.Items
 		public static NotItem Not(this Item item) => new NotItem(item);
 		public static OrItem Or(this Item item1, Item item2) => new OrItem(item1, item2);
 
+		public static BooleanItem TrueFalse(this string question) => new BooleanItem(question);
+
 	}
 }
