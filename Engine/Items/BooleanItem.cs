@@ -9,7 +9,7 @@
         internal override void Reset() => _hasSucceeded = null;
         
         internal override void Accept(ChecklistVisitor visitor) {
-	        visitor.Visit(this, Operations);
+	        visitor.Visit(this, _hasSucceeded, Operations);
         }
 
         internal override ItemStatus Status() => _hasSucceeded switch
