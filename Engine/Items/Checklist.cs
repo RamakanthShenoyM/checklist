@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Engine.Persons;
-using System.Threading.Tasks;
+﻿using Engine.Persons;
 using static Engine.Persons.Role;
-
 
 namespace Engine.Items
 {
@@ -22,6 +16,12 @@ namespace Engine.Items
 			_items.ForEach(item => item.AddPerson(_creator, Creator));	
 		}
 
+		public void Accept(ChecklistVisitor visitor) {
+			visitor.PreVisit(this, _creator);
+			foreach (var item in _items) item.Accept(visitor);
+			visitor.PostVisit(this, _creator);
+		}
+
         internal void Add(params Item[] items)
         {
             items.ToList().ForEach(item => item.AddPerson(_creator, Creator));
@@ -31,10 +31,11 @@ namespace Engine.Items
         internal void Cancel(Item item) => _items.Remove(item);
 
 		public List<Item> Failures() => _items.FindAll(item => item.Status() == ItemStatus.Failed);
+		
 		public ChecklistStatus Status()
 		{
 			if (_items.Count == 0) return ChecklistStatus.NotApplicable;
-			var statuses = _items.Select(item => item.Status());
+			var statuses = _items.Select(item => item.Status()).ToList();
 			if (statuses.All(status => status == ItemStatus.Succeeded))
 				return ChecklistStatus.Succeeded;
 			if (statuses.Any(status => status == ItemStatus.Failed))
@@ -45,6 +46,7 @@ namespace Engine.Items
 		public List<Item> Successes() => _items.FindAll(item => item.Status() == ItemStatus.Succeeded);
 
 		public List<Item> Unknowns() => _items.FindAll(item => item.Status() == ItemStatus.Unknown);
+		
 		internal bool Contains(Item desiredItem) => _items.Any(item => item.Contains(desiredItem));
 
         internal bool HasCreator(Person person) => person == _creator;

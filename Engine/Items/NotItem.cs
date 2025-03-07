@@ -1,9 +1,4 @@
 ﻿using Engine.Persons;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Engine.Items.ItemStatus;
 
 namespace Engine.Items
@@ -11,9 +6,16 @@ namespace Engine.Items
     public class NotItem : Item
     {
         private readonly Item _item;
+        
         internal NotItem(Item item)
         {
             _item = item;
+        }
+        
+        internal override void Accept(ChecklistVisitor visitor) {
+            visitor.PreVisit(this, _item);
+            _item.Accept(visitor);
+            visitor.PostVisit(this, _item);
         }
 
         internal override void Be(object value) => _item.Be(value);
@@ -26,9 +28,10 @@ namespace Engine.Items
             if (_item.Status() == Failed) return Succeeded;
             return Unknown;
         }
+        
         internal override void AddPerson(Person person, Role role) => _item.AddPerson(person, role);
+        
         internal override bool Contains(Item desiredItem) =>
            _item.Contains(desiredItem);
-
     }
 }

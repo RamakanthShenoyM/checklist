@@ -68,7 +68,7 @@ namespace Engine.Persons
 
             public void To(Item item)
             {
-                if (!_addingPerson.Can(Operation.AddPerson).On(item))
+                if (!_addingPerson.Can(AddPerson).On(item))
                     throw new InvalidOperationException("Does not have permission to add new person");
                 item.AddPerson(_addedPerson, _role);
 

@@ -4,16 +4,16 @@ namespace Engine.Items
 {
 	public abstract class Item
 	{
-		private readonly Dictionary<Person, List<Operation>> _operations = [];
+		protected readonly Dictionary<Person, List<Operation>> Operations = [];
 		internal abstract ItemStatus Status();
 		internal abstract void Be(object value);
 		internal abstract void Reset();
-		internal virtual void AddPerson(Person person, Role role) => _operations[person] = role.Operations;
-		internal bool HasPerson(Person person) => _operations.Keys.Contains(person);
+		internal virtual void AddPerson(Person person, Role role) => Operations[person] = role.Operations;
+		internal bool HasPerson(Person person) => Operations.Keys.Contains(person);
 		internal bool DoesAllow(Person person, Operation operation) => 
-			_operations.ContainsKey(person) && _operations[person].Contains(operation);
+			Operations.ContainsKey(person) && Operations[person].Contains(operation);
 		internal virtual bool Contains(Item desiredItem) => this == desiredItem;
-
+		internal abstract void Accept(ChecklistVisitor visitor);
 	}
 
 	public static class ItemExtensions

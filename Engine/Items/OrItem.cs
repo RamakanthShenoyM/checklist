@@ -1,9 +1,4 @@
 ﻿using Engine.Persons;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Engine.Items.ItemStatus;
 
 namespace Engine.Items
@@ -17,6 +12,13 @@ namespace Engine.Items
         {
             _item1 = item1;
             _item2 = item2;
+        }
+        
+        internal override void Accept(ChecklistVisitor visitor) {
+            visitor.PreVisit(this, _item1, _item2);
+            _item1.Accept(visitor);
+            _item2.Accept(visitor);
+            visitor.PostVisit(this, _item1, _item2);
         }
 
         internal override void Be(object value)
@@ -41,6 +43,7 @@ namespace Engine.Items
             _item1.AddPerson(person, role);
             _item2.AddPerson(person, role);
         }
+        
         internal override bool Contains(Item desiredItem) =>
            _item1.Contains(desiredItem)
                || _item2.Contains(desiredItem);
