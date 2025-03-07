@@ -27,7 +27,7 @@ namespace Engine.Tests.Unit
         [Fact]
         public void NotMultipleChoice()
         {
-            var multipleChoiceItem = new MultipleChoiceItem("India","Srilanka");
+            var multipleChoiceItem = "Which country?".Choices("India","Srilanka");
             var notItem = multipleChoiceItem.Not();
             var checklist = new Checklist( creator, notItem);
             Assert.Equal(InProgress, checklist.Status());

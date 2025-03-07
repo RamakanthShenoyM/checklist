@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Engine.Items
 {
-	public class BooleanItemVisitor : ChecklistVisitor
+	public class CurrentAnswers : ChecklistVisitor
 	{
-		private Dictionary<string, bool?> _answers = [];
-		public BooleanItemVisitor(Checklist checklist)
+		private Dictionary<string, object?> _answers = [];
+		public CurrentAnswers(Checklist checklist)
 		{
 			checklist.Accept(this);
 
@@ -26,6 +26,11 @@ namespace Engine.Items
 		public void Visit(BooleanItem item,string question, bool? value, Dictionary<Person, List<Operation>> operations)
 		{
 			_answers[question]= value;
+		}
+
+		public void Visit(MultipleChoiceItem item, string question, object? value, Dictionary<Person, List<Operation>> operations)
+		{
+			_answers[question] = value;
 		}
 
 	}

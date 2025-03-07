@@ -15,9 +15,9 @@ namespace Engine.Tests.Unit
 		[Fact]
 		public void MixedItems()
 		{
-			var item1 = new MultipleChoiceItem(RedCarpet, GreenCarpet, NoCarpet);
+			var item1 = "Which Carpet Color?".Choices(RedCarpet, GreenCarpet, NoCarpet);
 			var item2 = new BooleanItem("Is US citizen?");
-			var item3 = new MultipleChoiceItem("India", "Iceland", "Norway");
+			var item3 = "Which Country?".Choices("India", "Iceland", "Norway");
 			var checklist = new Checklist( creator, item1, item2, item3);
 			Assert.Equal(new List<Item> { item1,item2,item3 }, checklist.Unknowns());
 			Assert.Equal(new List<Item>(), checklist.Successes());
