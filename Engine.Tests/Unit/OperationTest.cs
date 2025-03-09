@@ -22,7 +22,7 @@ namespace Engine.Tests.Unit
 			_creator.Add(_owner).As(Owner).To(item1);
 
 			Assert.True(_owner.Can(View).On(item1));
-			Assert.False(_owner.Can(Cancel).On(item1));
+			Assert.False(_owner.Can(ModifyChecklist).On(item1));
 		}
 	}
 }

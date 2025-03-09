@@ -18,9 +18,9 @@ namespace Engine.Items
             visitor.PostVisit(this, _item);
         }
 
-        internal override void Be(object value) => _item.Be(value);
+        internal override void Be(object value) => throw new InvalidOperationException("can't set the Not");
 
-        internal override void Reset() => _item.Reset();
+        internal override void Reset() => throw new InvalidOperationException("can't Reset the Not");
 
         internal override ItemStatus Status()
         {

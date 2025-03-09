@@ -61,7 +61,67 @@ namespace Engine.Tests.Unit
 			//throws
 		}
 
-	}
+        [Fact]
+        public void ReplaceItem()
+        {
+            var item1 = "Which Carpet Color?".Choices(RedCarpet, GreenCarpet, NoCarpet);
+            var item2 = "Is US citizen?".TrueFalse();
+            var item3 = "Which country?".Choices("India", "Iceland", "Norway");
+
+            var checklist = new Checklist(creator, item1, item2, item3);
+
+            var item4 = "Vehicle Type?".Choices("Car", "Bike", "Bus");
+            var item5 = item2.Not();
+
+            Assert.Equal(3, new QuestionCount(checklist).Count);
+
+            creator.Replace(item2).With(item4, item5).In(checklist);
+
+            Assert.Equal(4, new QuestionCount(checklist).Count);
+        }
+
+        [Fact]
+        public void InsertAfterItem()
+        {
+            var item1 = "Which Carpet Color?".Choices(RedCarpet, GreenCarpet, NoCarpet);
+            var item2 = "Is US citizen?".TrueFalse();
+            var item3 = "Which country?".Choices("India", "Iceland", "Norway");
+
+            var checklist = new Checklist(creator, item1, item2, item3);
+
+            Assert.Equal(3, new QuestionCount(checklist).Count);
+
+            var item4 = "Vehicle Type?".Choices("Car", "Bike", "Bus");
+            var item5 = "Has License?".TrueFalse();
+            var item6 = "Stationery?".Choices("Pen", "Pencil");
+
+            var item56 = item5.Or(item6);
+
+            creator.Insert(item4, item56).After(item2).In(checklist);
+
+            Assert.Equal(6, new QuestionCount(checklist).Count);
+        }
+
+
+
+
+        private class QuestionCount : ChecklistVisitor
+        {
+            internal int Count;
+
+            public QuestionCount(Checklist checklist)
+            {
+                checklist.Accept(this);
+            }
+
+            public void Visit(BooleanItem item, string question, bool? value, Dictionary<Person, List<Operation>> operations) =>
+                Count++;
+
+            public void Visit(MultipleChoiceItem item, string question, object? value, Dictionary<Person, List<Operation>> operations) =>
+                Count++;
+        }
+
+    }
 	internal enum CarpetColor
 	{
 		RedCarpet,

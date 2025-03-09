@@ -5,9 +5,7 @@ namespace Engine.Persons
     {
         public static readonly Role Creator = new Role(new List<Operation> {
         View,
-        AddItem,
-        Cancel,
-        DeleteItem,
+        ModifyChecklist,
         Set,
         AddPerson,
         RemovePerson});
@@ -28,9 +26,7 @@ namespace Engine.Persons
 	public enum Operation
 	{
 		View,
-		AddItem,
-		Cancel,
-		DeleteItem,
+		ModifyChecklist,
 		Set,
 		AddPerson,
 		RemovePerson

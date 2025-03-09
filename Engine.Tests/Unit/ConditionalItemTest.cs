@@ -1,5 +1,6 @@
 ﻿using Engine.Items;
 using Engine.Persons;
+using System;
 using Xunit;
 using static Engine.Items.ChecklistStatus;
 
@@ -61,6 +62,7 @@ namespace Engine.Tests.Unit
             Assert.Equal(InProgress, checklist.Status());
             creator.Sets(successItem).To(true);
             Assert.Equal(Succeeded, checklist.Status());
+            Assert.Throws<InvalidOperationException>(() => creator.Sets(compositeItem).To(true));
         }
         [Fact]
         public void MultipleChoice()
