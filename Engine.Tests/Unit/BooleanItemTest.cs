@@ -1,30 +1,26 @@
-﻿using Engine.Items;
+﻿using System;
+using Engine.Items;
 using Engine.Persons;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Engine.Tests.Unit
 {
 	public class BooleanItemTest
 	{
-		private readonly static Person creator = new Person();
+		private static readonly Person Creator = new Person();
 		[Fact]
 		public void SingleItem()
 		{
 			var item = new BooleanItem("Is US citizen?");
-			var checklist = new Checklist(creator, item);
+			var checklist = new Checklist(Creator, item);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			creator.Sets(item).To(true);
+			Creator.Sets(item).To(true);
 			Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
-			creator.Sets(item).To(false);
+			Creator.Sets(item).To(false);
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
-			creator.Reset(item);
+			Creator.Reset(item);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			creator.Sets(item).To(true);
+			Creator.Sets(item).To(true);
 			Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
 		}
 
@@ -34,20 +30,20 @@ namespace Engine.Tests.Unit
 			var item1 = "Is US citizen?".TrueFalse();
 			var item2 = "Is Indian citizen?".TrueFalse();
 			var item3 = "Is Nordic citizen?".TrueFalse();
-			var checklist = new Checklist(creator, item1, item2, item3);
+			var checklist = new Checklist(Creator, item1, item2, item3);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			creator.Sets(item1).To(true);
+			Creator.Sets(item1).To(true);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
 
-			creator.Sets(item2).To(true);
-			creator.Sets(item3).To(true);
+			Creator.Sets(item2).To(true);
+			Creator.Sets(item3).To(true);
 			Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
-			creator.Sets(item2).To(false);
+			Creator.Sets(item2).To(false);
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
 
-			creator.Reset(item1);
+			Creator.Reset(item1);
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
-			creator.Reset(item2);
+			Creator.Reset(item2);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
 			var visitor = new CurrentAnswers(checklist);
 			Assert.Null(visitor.value("Is US citizen?"));
@@ -59,13 +55,13 @@ namespace Engine.Tests.Unit
 		{
 			var item1 = new BooleanItem("Is US citizen?");
 			var item2 = new BooleanItem("Is US citizen?");
-			var checklist = new Checklist(creator, item1, item2);
+			var checklist = new Checklist(Creator, item1, item2);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			creator.Sets(item1).To(true);
+			Creator.Sets(item1).To(true);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			creator.Sets(item2).To(false);
+			Creator.Sets(item2).To(false);
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
-			creator.Cancel(item2).In(checklist);
+			Creator.Cancel(item2).In(checklist);
 			Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
 		}
 		[Fact]
@@ -75,27 +71,27 @@ namespace Engine.Tests.Unit
 			var item2 = new BooleanItem("Is US citizen?");
 			var item3 = new BooleanItem("Is US citizen?");
 			var item4 = new BooleanItem("Is US citizen?");
-			var checklist = new Checklist(creator, item1, item2);
+			var checklist = new Checklist(Creator, item1, item2);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			creator.Sets(item1).To(true);
+			Creator.Sets(item1).To(true);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			creator.Sets(item2).To(false);
+			Creator.Sets(item2).To(false);
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
-			creator.Cancel(item2).In(checklist);
-			creator.Add(item3, item4).In(checklist);
+			Creator.Cancel(item2).In(checklist);
+			Creator.Add(item3, item4).In(checklist);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			creator.Sets(item4).To(false);
+			Creator.Sets(item4).To(false);
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
 		}
 		[Fact]
 		public void InvalidValue()
 		{
 			var item = new BooleanItem("Is US citizen?");
-			var checklist = new Checklist(creator, item);
+			var checklist = new Checklist(Creator, item);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			creator.Sets(item).To(true);
+			Creator.Sets(item).To(true);
 			Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
-			Assert.Throws<InvalidCastException>(() => creator.Sets(item).To("green"));
+			Assert.Throws<InvalidCastException>(() => Creator.Sets(item).To("green"));
 		}
 	}
 }

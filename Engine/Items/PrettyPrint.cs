@@ -69,6 +69,14 @@ public class PrettyPrint : ChecklistVisitor {
     public void PostVisit(NotItem item, Item negatedItem) {
         _indentionLevel--;}
 
+    
+    public void PreVisit(GroupItem item, List<Item> childItems) {
+        _result += String.Format("{0}Group of Items\n", Indention);
+        _indentionLevel++;}
+    
+    public void PostVisit(GroupItem item, List<Item> childItems) {
+        _indentionLevel--;}
+
     private void OperationsDescription(Dictionary<Person, List<Operation>> operations) {
         _indentionLevel++;
         foreach (var operation in operations) {
