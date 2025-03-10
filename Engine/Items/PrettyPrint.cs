@@ -11,11 +11,10 @@ namespace Engine.Items;
 
 // Understands SOMETHING_IDIOT
 public class PrettyPrint : ChecklistVisitor {
-    private delegate void ItemWriter();
-
     private int _indentionLevel;
     private readonly List<Triple> _conditionalItems = [];
     private String _result = "";
+    private readonly HashSet<Item> _extraIndentedItems = new();
 
     public PrettyPrint(Checklist checklist) {
         checklist.Accept(this);
@@ -30,12 +29,11 @@ public class PrettyPrint : ChecklistVisitor {
         _indentionLevel--;
     }
 
-    public void Visit(BooleanItem item, bool? value, Dictionary<Person, List<Operation>> operations) {
-        HandleConditional(item,
-            () => {
-                _result += String.Format("{0}Boolean Item with value {1}\n", Indention, Format(value));
-                OperationsDescription(operations);
-            });
+    public void Visit(BooleanItem item, string question, bool? value, Dictionary<Person, List<Operation>> operations) {
+        LabelIndention(item);
+        _result += String.Format("{0}Question: {1} Value: {2}\n", Indention, question, Format(value));
+        OperationsDescription(operations);
+        LabelUndention(item);
     }
 
     public void Visit(MultipleChoiceItem item, object? value, Dictionary<Person, List<Operation>> operations) {
@@ -44,6 +42,7 @@ public class PrettyPrint : ChecklistVisitor {
     }
 
     public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) {
+        LabelIndention(item);
         _result += String.Format("{0}Conditional\n", Indention);
         _conditionalItems.Insert(0, new Triple(baseItem, successItem, failureItem));
         _indentionLevel++;
@@ -51,6 +50,7 @@ public class PrettyPrint : ChecklistVisitor {
 
     public void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) {
         _indentionLevel--;
+        LabelUndention(item);
     }
 
     private void OperationsDescription(Dictionary<Person, List<Operation>> operations) {
@@ -66,28 +66,25 @@ public class PrettyPrint : ChecklistVisitor {
         _indentionLevel--;
     }
 
-    private String Indention {
-        get { return new String(' ', _indentionLevel * 2); }
+    private string Indention => new(' ', _indentionLevel * 2);
+
+    private string Format(object? value) => value?.ToString() ?? "<unknown>";
+
+    private string Operations(List<Operation> operations) =>
+        string.Join(",", operations.Select(o => Format(o)).ToArray());
+
+    private void LabelIndention(Item item) {
+        if (_conditionalItems.Count == 0) return;
+        var label = _conditionalItems[0].Matches(item);
+        if (label.Length == 0) return;
+        _extraIndentedItems.Add(item);
+        _result += $"{Indention}{label}\n";
+        removeTripleIfEmpty();
+        _indentionLevel++;
     }
 
-    private String Format(object? value) => value?.ToString() ?? "<unknown>";
-
-    private String Operations(List<Operation> operations) =>
-        String.Join(",", operations.Select(o => Format(o)).ToArray());
-
-    private void HandleConditional(Item item, ItemWriter writer) {
-        if (_conditionalItems.Count > 0) {
-            var label = _conditionalItems[0].Matches(item);
-            if (label.Length > 0) {
-                _result += String.Format("{0}{1}\n", Indention, label);
-                _indentionLevel++;
-                writer.Invoke();
-                removeTripleIfEmpty();
-                _indentionLevel--;
-                return;
-            }
-        }
-        writer.Invoke();
+    private void LabelUndention(Item item) {
+        if (_extraIndentedItems.Remove(item)) _indentionLevel--;
     }
 
     private void removeTripleIfEmpty() {
@@ -112,17 +109,20 @@ public class PrettyPrint : ChecklistVisitor {
                 _baseItem = null;
                 return "Conditional Item:";
             }
+
             if (item == _successItem) {
                 _successItem = null;
                 return "Success Leg:";
             }
+
             if (item == _failItem) {
                 _failItem = null;
                 return "Failure Leg:";
             }
+
             return "";
         }
-        
+
         internal bool IsEmpty() => _baseItem == null && _successItem == null && _failItem == null;
     }
 }

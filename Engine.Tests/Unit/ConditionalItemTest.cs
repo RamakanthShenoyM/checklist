@@ -2,13 +2,15 @@
 using Engine.Persons;
 using System;
 using Xunit;
+using Xunit.Abstractions;
 using static Engine.Items.ChecklistStatus;
 
 namespace Engine.Tests.Unit
 {
-	public class ConditionalItemTest
+	public class ConditionalItemTest(ITestOutputHelper testOutput)
 	{
 		private static readonly Person Creator = new();
+		
 		[Fact]
 		public void Boolean()
 		{
@@ -29,7 +31,7 @@ namespace Engine.Tests.Unit
 			Creator.Sets(failItem).To(true);
 			Assert.Equal(Succeeded, checklist.Status());
 			var output = new PrettyPrint(checklist).Result();
-			// Assert.Equal("", output);
+			testOutput.WriteLine(output);
 		}
         [Fact]
         public void BooleanWithFalse()
@@ -65,6 +67,22 @@ namespace Engine.Tests.Unit
             Creator.Sets(successItem).To(true);
             Assert.Equal(Succeeded, checklist.Status());
             Assert.Throws<InvalidOperationException>(() => Creator.Sets(compositeItem).To(true));
+        }
+        
+        [Fact]
+        public void ConditionalWithConditional()
+        {
+	        var baseItem1 = new BooleanItem("First condition");
+	        var baseItem2 = new BooleanItem("Second condition");
+	        var successItem2 = new BooleanItem("Second success leg");
+	        var failItem2 = new BooleanItem("Second failure leg");
+	        var successItem1 = new ConditionalItem(baseItem2, successItem2, failItem2);
+	        var failItem1 = new BooleanItem("First failure leg");
+
+	        var compositeItem = new ConditionalItem(baseItem1, successItem1, failItem1);
+	        var checklist = new Checklist( Creator, compositeItem);
+	        var output = new PrettyPrint(checklist).Result();
+	        testOutput.WriteLine(output);
         }
     }
 }
