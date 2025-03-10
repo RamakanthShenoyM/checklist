@@ -230,5 +230,29 @@ namespace Engine.Persons
 
             public void In(Checklist checklist) => checklist.Replace(_originalItem, _newItem);
         }
+
+        public class InsertEngine
+        {
+            private readonly Person _person;
+            private Item _originalItem;
+            private readonly List<Item> _newItems;
+
+            internal InsertEngine(Person person, Item firstItem, Item[] items)
+            {
+                _person = person;
+                _newItems = [firstItem];
+                _newItems.AddRange(items);
+            }
+
+            public void In(Checklist checklist) => _person.Replace1(_originalItem).With(_originalItem,_newItems.ToArray()).In(checklist);
+
+            public InsertEngine After(Item originalItem)
+            {
+                _originalItem = originalItem;
+                return this;
+            }
+        }
+
+        public InsertEngine Insert1(Item firstItem, params Item[] items) => new InsertEngine(this, firstItem,items);
     }
 }
