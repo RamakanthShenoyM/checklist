@@ -42,7 +42,6 @@ namespace Engine.Items
             _items.InsertRange(index + 1, items);
         }
 
-
         internal void Cancel(Item item) => _items.Remove(item);
 
 		public List<Item> Failures() => _items.FindAll(item => item.Status() == ItemStatus.Failed);
@@ -65,5 +64,7 @@ namespace Engine.Items
 		internal bool Contains(Item desiredItem) => _items.Any(item => item.Contains(desiredItem));
 
         internal bool HasCreator(Person person) => person == _creator;
-    }
+
+        public override string ToString() => new PrettyPrint(this).Result();
+	}
 }

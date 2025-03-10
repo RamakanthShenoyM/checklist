@@ -81,8 +81,7 @@ namespace Engine.Tests.Unit
 
 	        var compositeItem = new ConditionalItem(baseItem1, successItem1, failItem1);
 	        var checklist = new Checklist( Creator, compositeItem);
-	        var output = new PrettyPrint(checklist).Result();
-	        testOutput.WriteLine(output);
+	        testOutput.WriteLine(checklist.ToString());
         }
     }
 }
