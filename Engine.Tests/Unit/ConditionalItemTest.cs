@@ -77,7 +77,9 @@ namespace Engine.Tests.Unit
 	        var successItem2 = new BooleanItem("Second success leg");
 	        var failItem2 = new BooleanItem("Second failure leg");
 	        var successItem1 = new ConditionalItem(baseItem2, successItem2, failItem2);
-	        var failItem1 = new BooleanItem("First failure leg");
+	        var failItem1A = new BooleanItem("First Or of first failure leg");
+	        var failItem1B = new BooleanItem("Second Or of first failure leg");
+	        var failItem1 = failItem1A.Not().Or(failItem1B);
 
 	        var compositeItem = new ConditionalItem(baseItem1, successItem1, failItem1);
 	        var checklist = new Checklist( Creator, compositeItem);

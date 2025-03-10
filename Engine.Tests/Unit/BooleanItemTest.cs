@@ -53,8 +53,6 @@ namespace Engine.Tests.Unit
 			Assert.Null(visitor.value("Is US citizen?"));
 			Assert.Null(visitor.value("Is Indian citizen?"));
 			Assert.Equal(true, visitor.value("Is Nordic citizen?"));
-			var output = new PrettyPrint(checklist).Result();
-		//	Assert.Equal("", output);
 		}
 		[Fact]
 		public void CancelItem()

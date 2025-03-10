@@ -53,6 +53,22 @@ public class PrettyPrint : ChecklistVisitor {
         LabelUndention(item);
     }
 
+    public void PreVisit(OrItem item, Item item1, Item item2) {
+        _result += String.Format("{0}Either/Or\n", Indention);
+        _indentionLevel++;
+    }
+
+    public void PostVisit(OrItem item, Item item1, Item item2) {
+        _indentionLevel--;
+    }
+    
+    public void PreVisit(NotItem item, Item negatedItem) {
+        _result += String.Format("{0}Not (the following)\n", Indention);
+        _indentionLevel++;}
+    
+    public void PostVisit(NotItem item, Item negatedItem) {
+        _indentionLevel--;}
+
     private void OperationsDescription(Dictionary<Person, List<Operation>> operations) {
         _indentionLevel++;
         foreach (var operation in operations) {
