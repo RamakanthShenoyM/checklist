@@ -5,7 +5,7 @@ namespace Engine.Items
 {
     public class NotItem : Item
     {
-        private readonly Item _item;
+        private Item _item;
         
         internal NotItem(Item item)
         {
@@ -21,6 +21,16 @@ namespace Engine.Items
         internal override void Be(object value) => throw new InvalidOperationException("can't set the Not");
 
         internal override void Reset() => throw new InvalidOperationException("can't Reset the Not");
+
+        internal override bool Replace(Item originalItem, Item newItem)
+        {
+            if (_item == originalItem)
+            {
+                _item = newItem;
+                return true;
+            }
+            return _item.Replace(originalItem, newItem);
+        }
 
         internal override ItemStatus Status()
         {

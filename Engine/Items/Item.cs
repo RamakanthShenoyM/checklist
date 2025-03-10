@@ -14,7 +14,8 @@ namespace Engine.Items
 			Operations.ContainsKey(person) && Operations[person].Contains(operation);
 		internal virtual bool Contains(Item desiredItem) => this == desiredItem;
 		internal abstract void Accept(ChecklistVisitor visitor);
-	}
+        internal virtual bool Replace(Item originalItem, Item newItem) => false;
+    }
 
 	public static class ItemExtensions
 	{

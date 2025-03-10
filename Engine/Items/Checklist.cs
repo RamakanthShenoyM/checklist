@@ -66,5 +66,18 @@ namespace Engine.Items
         internal bool HasCreator(Person person) => person == _creator;
 
         public override string ToString() => new PrettyPrint(this).Result();
-	}
+
+        public void Replace(Item originalItem, Item newItem)
+        {
+			newItem.AddPerson(_creator,Creator);
+            if (_items.Contains(originalItem))
+            {
+                var index = _items.IndexOf(originalItem);
+                _items.RemoveAt(index);
+                _items.Insert(index, newItem);
+				return;
+            }
+            if (!_items.Any(item => item.Replace(originalItem, newItem))) throw new InvalidOperationException("Item not found in checklist");
+        }
+    }
 }

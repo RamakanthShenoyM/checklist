@@ -31,6 +31,18 @@ namespace Engine.Items
 
         internal override void Reset() => throw new InvalidOperationException("can't reset the Group Item");
 
+        internal override bool Replace(Item originalItem, Item newItem)
+        {
+            if (_childItems.Contains(originalItem))
+            {
+                var index = _childItems.IndexOf(originalItem);
+                _childItems.RemoveAt(index);
+                _childItems.Insert(index, newItem);
+                return true;
+            }
+            return _childItems.Any(item => item.Replace(originalItem, newItem));
+        }
+
         internal override void Accept(ChecklistVisitor visitor)
         {
             visitor.PreVisit(this, _childItems);

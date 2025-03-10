@@ -5,8 +5,8 @@ namespace Engine.Items
 {
     public class OrItem : Item
     {
-        private readonly Item _item1;
-        private readonly Item _item2;
+        private Item _item1;
+        private Item _item2;
 
         internal OrItem(Item item1, Item item2)
         {
@@ -29,6 +29,21 @@ namespace Engine.Items
         internal override void Reset()
         {
             throw new InvalidOperationException("can't reset the Or");
+        }
+
+        internal override bool Replace(Item originalItem, Item newItem)
+        {
+            if (_item1 == originalItem)
+            {
+                _item1 = newItem;
+                return true;
+            }
+            if (_item2 == originalItem)
+            {
+                _item2 = newItem;
+                return true;
+            }
+            return new List<Item> { _item1, _item2 }.Any(item => item.Replace(originalItem, newItem));
         }
 
         internal override ItemStatus Status()

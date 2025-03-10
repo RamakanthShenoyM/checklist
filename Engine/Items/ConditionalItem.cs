@@ -17,7 +17,25 @@ namespace Engine.Items
         internal override void Be(object value) => throw new InvalidOperationException("can't set the Conditional Item");
 
         internal override void Reset() => throw new InvalidOperationException("can't set the Conditional Item");
-
+        internal override bool Replace(Item originalItem, Item newItem)
+        {
+            if (baseItem == originalItem)
+            {
+                baseItem = newItem;
+                return true;
+            }
+            if (successItem == originalItem)
+            {
+                successItem = newItem;
+                return true;
+            }
+            if (failItem == originalItem)
+            {
+                failItem = newItem;
+                return true;
+            }
+            return new List<Item>{baseItem,successItem,failItem}.Any(item => item.Replace(originalItem, newItem));
+        }
         internal override ItemStatus Status()
         {
             if (baseItem.Status() == Succeeded) return successItem?.Status() ?? Succeeded;

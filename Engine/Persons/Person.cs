@@ -202,5 +202,33 @@ namespace Engine.Persons
                 checklist.InsertAfter(_insertAfterItem, _items.ToArray<Item>());
             }
         }
+
+        public ReplaceEngine Replace1(Item originalItem)
+        {
+            if (!originalItem.DoesAllow(this,ModifyChecklist))
+                throw new InvalidOperationException("Does not have permission to modify checklist");
+            return new ReplaceEngine(this, originalItem);
+        }
+
+        public class ReplaceEngine
+        {
+            private readonly Person _person;
+            private readonly Item _originalItem;
+            private Item _newItem;
+
+            internal ReplaceEngine(Person person, Item originalItem)
+            {
+                _person = person;
+                _originalItem = originalItem;
+            }
+
+            public ReplaceEngine With(Item firstItem, params Item[] items)
+            {
+                _newItem = items.Length==0 ? firstItem : new GroupItem(firstItem, items);
+                return this;
+            }
+
+            public void In(Checklist checklist) => checklist.Replace(_originalItem, _newItem);
+        }
     }
 }

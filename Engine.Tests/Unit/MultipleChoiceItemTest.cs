@@ -105,7 +105,7 @@ namespace Engine.Tests.Unit
 
 
 
-        private class QuestionCount : ChecklistVisitor
+        internal class QuestionCount : ChecklistVisitor
         {
             internal int Count;
 
