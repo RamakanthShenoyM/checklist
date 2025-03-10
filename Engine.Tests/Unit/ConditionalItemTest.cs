@@ -7,7 +7,7 @@ namespace Engine.Tests.Unit
 {
 	public class ConditionalItemTest
 	{
-		private readonly static Person creator = new Person();
+		private static readonly Person Creator = new();
 		[Fact]
 		public void Boolean()
 		{
@@ -16,17 +16,19 @@ namespace Engine.Tests.Unit
 			var failItem = new BooleanItem();
 
 			var compositeItem = new ConditionalItem(baseItem, successItem, failItem);
-			var checklist = new Checklist( creator, compositeItem);
+			var checklist = new Checklist( Creator, compositeItem);
 
 			Assert.Equal(InProgress, checklist.Status());
-			creator.Sets(baseItem).To(true);
+			Creator.Sets(baseItem).To(true);
 			Assert.Equal(InProgress, checklist.Status());
-			creator.Sets(successItem).To(false);
+			Creator.Sets(successItem).To(false);
 			Assert.Equal(Failed, checklist.Status());
-			creator.Sets(baseItem).To(false);
+			Creator.Sets(baseItem).To(false);
 			Assert.Equal(InProgress, checklist.Status());
-			creator.Sets(failItem).To(true);
+			Creator.Sets(failItem).To(true);
 			Assert.Equal(Succeeded, checklist.Status());
+			var output = new PrettyPrint(checklist).Result();
+			// Assert.Equal("", output);
 		}
         [Fact]
         public void BooleanWithFalse()
@@ -35,14 +37,14 @@ namespace Engine.Tests.Unit
             var failItem = new BooleanItem();
 
             var compositeItem = new ConditionalItem(baseItem, failItem : failItem);
-            var checklist = new Checklist( creator, compositeItem);
+            var checklist = new Checklist( Creator, compositeItem);
 
             Assert.Equal(InProgress, checklist.Status());
-            creator.Sets(baseItem).To(true);
+            Creator.Sets(baseItem).To(true);
             Assert.Equal(Succeeded, checklist.Status());
-            creator.Sets(baseItem).To(false);
+            Creator.Sets(baseItem).To(false);
             Assert.Equal(InProgress, checklist.Status());
-            creator.Sets(failItem).To(true);
+            Creator.Sets(failItem).To(true);
             Assert.Equal(Succeeded, checklist.Status());
         }
         [Fact]
@@ -52,24 +54,15 @@ namespace Engine.Tests.Unit
             var successItem = new BooleanItem();
 
             var compositeItem = new ConditionalItem(baseItem, successItem: successItem);
-            var checklist = new Checklist( creator, compositeItem);
+            var checklist = new Checklist( Creator, compositeItem);
 
             Assert.Equal(InProgress, checklist.Status());
-            creator.Sets(baseItem).To(false);
+            Creator.Sets(baseItem).To(false);
             Assert.Equal(Failed, checklist.Status());
-            creator.Sets(baseItem).To(true);
+            Creator.Sets(baseItem).To(true);
             Assert.Equal(InProgress, checklist.Status());
-            creator.Sets(successItem).To(true);
+            Creator.Sets(successItem).To(true);
             Assert.Equal(Succeeded, checklist.Status());
-        }
-        [Fact]
-        public void MultipleChoice()
-        {
-            var baseItem = new BooleanItem();
-            var successItem = new BooleanItem();
-            var failitem = new BooleanItem();
-            var compositeItem = new ConditionalItem(baseItem, successItem, failitem);
-            var checklist = new Checklist( creator, compositeItem);
         }
     }
 }
