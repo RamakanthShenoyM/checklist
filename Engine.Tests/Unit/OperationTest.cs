@@ -13,8 +13,8 @@ namespace Engine.Tests.Unit
 		[Fact]
 		public void SingleItem()
 		{
-			var item1 = new BooleanItem();
-			var item2 = new BooleanItem();
+			var item1 = new BooleanItem("Is US citizen?");
+			var item2 = new BooleanItem("Is US citizen?");
 			var checklist = new Checklist(_creator, item1, item2);
 			
 			Assert.True(_creator.Can(View).On(item1));
@@ -22,7 +22,7 @@ namespace Engine.Tests.Unit
 			_creator.Add(_owner).As(Owner).To(item1);
 
 			Assert.True(_owner.Can(View).On(item1));
-			Assert.False(_owner.Can(Cancel).On(item1));
+			Assert.False(_owner.Can(ModifyChecklist).On(item1));
 		}
 	}
 }

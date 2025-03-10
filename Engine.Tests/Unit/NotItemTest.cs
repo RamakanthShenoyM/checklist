@@ -1,5 +1,6 @@
 ﻿using Engine.Items;
 using Engine.Persons;
+using System;
 using Xunit;
 using static Engine.Items.ChecklistStatus;
 
@@ -12,7 +13,7 @@ namespace Engine.Tests.Unit
 		[Fact]
         public void NotBoolean()
         {
-            var booleanItem = new BooleanItem();
+            var booleanItem = new BooleanItem("Is US citizen?");
             var notItem = booleanItem.Not();
             var checklist = new Checklist( creator, notItem);
             Assert.Equal(InProgress, checklist.Status());
@@ -22,12 +23,13 @@ namespace Engine.Tests.Unit
             Assert.Equal(Succeeded, checklist.Status());
             creator.Reset(booleanItem);
             Assert.Equal(InProgress, checklist.Status());
+            Assert.Throws<InvalidOperationException>(() => creator.Sets(notItem).To(true));
         }
 
         [Fact]
         public void NotMultipleChoice()
         {
-            var multipleChoiceItem = new MultipleChoiceItem("India","Srilanka");
+            var multipleChoiceItem = "Which country?".Choices("India","Srilanka");
             var notItem = multipleChoiceItem.Not();
             var checklist = new Checklist( creator, notItem);
             Assert.Equal(InProgress, checklist.Status());

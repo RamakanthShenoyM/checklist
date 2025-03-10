@@ -13,10 +13,10 @@ namespace Engine.Items
             failItem?.Accept(visitor);
             visitor.PostVisit(this, baseItem, successItem, failItem);
         }
-        
-        internal override void Be(object value) => baseItem.Be(value);
 
-        internal override void Reset() => baseItem.Reset();
+        internal override void Be(object value) => throw new InvalidOperationException("can't set the Conditional Item");
+
+        internal override void Reset() => throw new InvalidOperationException("can't set the Conditional Item");
 
         internal override ItemStatus Status()
         {

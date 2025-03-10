@@ -28,6 +28,21 @@ namespace Engine.Items
             _items.AddRange(items);
         }
 
+        internal void Replace(Item itemToBeReplaced, Item[] items)
+        {
+            items.ToList().ForEach(item => item.AddPerson(_creator, Creator));
+            var index = _items.IndexOf(itemToBeReplaced);
+            _items.RemoveAt(index);
+            _items.InsertRange(index, items);
+        }
+        internal void InsertAfter(Item insertAfterItem, Item[] items)
+        {
+            items.ToList().ForEach(item => item.AddPerson(_creator, Creator));
+            var index = _items.IndexOf(insertAfterItem);
+            _items.InsertRange(index + 1, items);
+        }
+
+
         internal void Cancel(Item item) => _items.Remove(item);
 
 		public List<Item> Failures() => _items.FindAll(item => item.Status() == ItemStatus.Failed);

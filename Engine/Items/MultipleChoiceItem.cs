@@ -3,16 +3,18 @@
     public class MultipleChoiceItem: Item
     {
         private readonly List<object> _choices;
-        private object? _value;
+		    private readonly string _question;
+		    private object? _value;
         
-        public MultipleChoiceItem(object firstChoice, params object[] choices)
+        public MultipleChoiceItem(string question,object firstChoice, params object[] choices)
         {
             _choices = choices.ToList();
             _choices.Insert(0, firstChoice);
-        }
+			  _question = question;
+		}
         
         internal override void Accept(ChecklistVisitor visitor) {
-            visitor.Visit(this, _value, Operations);
+            visitor.Visit(this, _question, _value, Operations);
         }
 
         internal override void Be(object value) => _value = value;

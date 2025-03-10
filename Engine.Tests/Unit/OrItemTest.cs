@@ -15,8 +15,8 @@ namespace Engine.Tests.Unit
 		private readonly static Person creator = new Person();
 		[Fact]
         public void BooleanItems() {
-            var item1 = new BooleanItem();
-            var item2 = new BooleanItem();
+            var item1 = new BooleanItem("Is US citizen?");
+            var item2 = new BooleanItem("Is US citizen?");
             var item = item1.Or(item2);
             var checkList = new Checklist(creator, item);
             Assert.Equal(InProgress, checkList.Status());
