@@ -20,4 +20,6 @@ public interface ChecklistVisitor {
     void PostVisit(NotItem item, Item negatedItem) {}
     void PreVisit(OrItem item, Item item1, Item item2) {}
     void PostVisit(OrItem item, Item item1, Item item2) {}
+    void PreVisit(GroupItem item, List<Item> childItems) { }
+    void PostVisit(GroupItem item, List<Item> childItems) { }
 }
