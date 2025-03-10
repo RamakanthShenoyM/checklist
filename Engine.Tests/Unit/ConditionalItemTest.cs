@@ -64,16 +64,7 @@ namespace Engine.Tests.Unit
             Assert.Equal(InProgress, checklist.Status());
             Creator.Sets(successItem).To(true);
             Assert.Equal(Succeeded, checklist.Status());
-            Assert.Throws<InvalidOperationException>(() => creator.Sets(compositeItem).To(true));
-        }
-        [Fact]
-        public void MultipleChoice()
-        {
-            var baseItem = new BooleanItem();
-            var successItem = new BooleanItem();
-            var failitem = new BooleanItem();
-            var compositeItem = new ConditionalItem(baseItem, successItem, failitem);
-            var checklist = new Checklist( creator, compositeItem);
+            Assert.Throws<InvalidOperationException>(() => Creator.Sets(compositeItem).To(true));
         }
     }
 }
