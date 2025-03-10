@@ -39,8 +39,12 @@ namespace Engine.Items
             return Unknown;
         }
         
-        internal override void AddPerson(Person person, Role role) => _item.AddPerson(person, role);
-        
+        internal override void AddPerson(Person person, Role role)
+        {
+            base.AddPerson(person, role);
+            _item.AddPerson(person, role);
+        }
+
         internal override bool Contains(Item desiredItem) =>
            _item.Contains(desiredItem);
     }

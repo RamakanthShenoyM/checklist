@@ -45,6 +45,7 @@ namespace Engine.Items
 
         internal override void AddPerson(Person person, Role role)
         {
+            base.AddPerson(person, role);
             baseItem.AddPerson(person, role);
             successItem?.AddPerson(person, role);
             failItem?.AddPerson(person, role);
