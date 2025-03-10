@@ -162,7 +162,7 @@ namespace Engine.Tests.Unit
         }
         
         [Fact]
-        public void InsertToConditional()
+        public void InsertAfterToConditional()
         {
             var firstItem = "First simple item".TrueFalse();
             var baseItem1 = new BooleanItem("First condition");
@@ -182,6 +182,31 @@ namespace Engine.Tests.Unit
             var addition2 = "Addition2".TrueFalse();
             var group1 = new GroupItem(addition1, addition2);
             Creator.Insert1(addition1, addition2).After(successItem1).In(checklist);
+            testOutput.WriteLine(checklist.ToString());
+            Assert.Equal(10, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
+        }
+        
+        [Fact]
+        public void InsertBeforeToConditional()
+        {
+            var firstItem = "First simple item".TrueFalse();
+            var baseItem1 = new BooleanItem("First condition");
+            var baseItem2 = new BooleanItem("Second condition");
+            var successItem2 = new BooleanItem("Second success leg");
+            var failItem2 = new BooleanItem("Second failure leg");
+            var successItem1 = new ConditionalItem(baseItem2, successItem2, failItem2);
+            var failItem1A = new BooleanItem("First Or of first failure leg");
+            var failItem1B = new BooleanItem("Second Or of first failure leg");
+            var failItem1 = failItem1A.Not().Or(failItem1B);
+            var lastItem = "Last simple item".TrueFalse();
+
+            var compositeItem = new ConditionalItem(baseItem1, successItem1, failItem1);
+            var checklist = new Checklist(Creator, firstItem, compositeItem, lastItem);
+            Assert.Equal(8, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
+            var addition1 = "Addition1".TrueFalse();
+            var addition2 = "Addition2".TrueFalse();
+            var group1 = new GroupItem(addition1, addition2);
+            Creator.Insert1(addition1, addition2).Before(successItem1).In(checklist);
             testOutput.WriteLine(checklist.ToString());
             Assert.Equal(10, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
         }

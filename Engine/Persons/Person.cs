@@ -234,20 +234,32 @@ namespace Engine.Persons
         public class InsertEngine
         {
             private readonly Person _person;
+            private readonly Item _item;
+            private Item _newItem;
+            private readonly List<Item> _items;
             private Item _originalItem;
-            private readonly List<Item> _newItems;
 
-            internal InsertEngine(Person person, Item firstItem, Item[] items)
+            internal InsertEngine(Person person, Item item, Item[] items)
             {
                 _person = person;
-                _newItems = [firstItem];
-                _newItems.AddRange(items);
+                _item = item;
+                _items = items.ToList();
             }
 
-            public void In(Checklist checklist) => _person.Replace1(_originalItem).With(_originalItem,_newItems.ToArray()).In(checklist);
+            public void In(Checklist checklist) => _person.Replace1(_originalItem).With(_newItem).In(checklist);
 
             public InsertEngine After(Item originalItem)
             {
+                _items.Insert(0,_item);
+                _newItem=new GroupItem(originalItem, _items.ToArray());
+                _originalItem = originalItem;
+                return this;
+            }
+
+            public InsertEngine Before(Item originalItem)
+            {
+                _items.Add(originalItem);
+                _newItem = new GroupItem(_item, _items.ToArray());
                 _originalItem = originalItem;
                 return this;
             }
