@@ -6,25 +6,46 @@ using Xunit.Abstractions;
 
 namespace Engine.Tests.Unit;
 
-public class RemoveTest(ITestOutputHelper testOutput)
+public class RemoveTest
 {
     private static readonly Person Creator = new Person();
+    private readonly ITestOutputHelper testOutput;
+
+    private Item firstItem;
+    private Item baseItem1;
+    private Item baseItem2;    
+    private Item successItem2;
+    private Item failItem2;
+    private Item successItem1;
+    private Item failItem1A;
+    private Item failItem1B;
+    private Item failItem1;
+    private Item compositeItem;
+    private Item lastItem;
+    private Checklist checklist;
+
+    public RemoveTest(ITestOutputHelper testOutput)
+    {
+        this.testOutput = testOutput;
+
+        firstItem = "First simple item".TrueFalse();
+        baseItem1 = new BooleanItem("First condition");
+        baseItem2 = new BooleanItem("Second condition");
+        successItem2 = new BooleanItem("Second success leg");
+        failItem2 = new BooleanItem("Second failure leg");
+        successItem1 = new ConditionalItem(baseItem2, successItem2, failItem2);
+        failItem1A = new BooleanItem("First Or of first failure leg");
+        failItem1B = new BooleanItem("Second Or of first failure leg");
+        failItem1 = failItem1A.Not().Or(failItem1B);
+        compositeItem = new ConditionalItem(baseItem1, successItem1, failItem1);
+        lastItem = "Last simple item".TrueFalse();
+        checklist = new Checklist(Creator, firstItem, compositeItem, lastItem);
+    }
 
     [Fact]
     public void RemoveInGroup()
     {
-        var firstItem = "First simple item".TrueFalse();
-        var baseItem1 = new BooleanItem("First condition");
-        var baseItem2 = new BooleanItem("Second condition");
-        var successItem2 = new BooleanItem("Second success leg");
-        var failItem2 = new BooleanItem("Second failure leg");
-        var successItem1 = new ConditionalItem(baseItem2, successItem2, failItem2);
-        var failItem1A = new BooleanItem("First Or of first failure leg");
-        var failItem1B = new BooleanItem("Second Or of first failure leg");
-        var failItem1 = failItem1A.Not().Or(failItem1B);
-        var compositeItem = new ConditionalItem(baseItem1, successItem1, failItem1);
-        var lastItem = "Last simple item".TrueFalse();
-        var checklist = new Checklist(Creator, firstItem, compositeItem, lastItem);
+        
         Assert.Equal(8, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
         testOutput.WriteLine(checklist.ToString());
         Creator.Remove(firstItem).From(checklist);
