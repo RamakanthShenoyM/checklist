@@ -27,6 +27,6 @@ public class RemoveTest(ITestOutputHelper testOutput)
         var checklist = new Checklist(Creator, firstItem, compositeItem, lastItem);
         Assert.Equal(8, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
         testOutput.WriteLine(checklist.ToString());
-        // Creator.Remove(firstItem).From(checklist);
+        Creator.Remove(firstItem).From(checklist);
     }
 }

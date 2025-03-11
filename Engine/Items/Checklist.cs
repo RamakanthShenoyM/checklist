@@ -56,8 +56,8 @@ namespace Engine.Items
 
         internal void Remove(Item item)
         {
-
-            throw new NotImplementedException();
+			if (item == _item) throw new InvalidOperationException("Cannot remove the only item in the checklist");
+            if (!_item.Remove(item)) throw new InvalidOperationException("Item not found in checklist");
         }
     }
 }

@@ -71,5 +71,16 @@ namespace Engine.Items
 
             foreach (var item in _childItems) item.Simplify();
         }
+
+        internal override bool Remove(Item item)
+        {
+            if (_childItems.Contains(item)) {
+                if (_childItems.Count == 1) throw new InvalidOperationException("Cannot remove the only item in the checklist");
+                _childItems.Remove(item);
+                foreach(var childItem in _childItems) childItem.Remove(item);
+                return true;
+            }
+            return _childItems.Select(childItem => childItem.Remove(item)).Any();
+        }
     }
 }

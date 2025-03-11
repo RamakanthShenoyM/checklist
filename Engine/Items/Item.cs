@@ -16,7 +16,9 @@ namespace Engine.Items
 		internal abstract void Accept(ChecklistVisitor visitor);
         internal virtual bool Replace(Item originalItem, Item newItem) => false;
         internal virtual void Simplify() {} // Ignore by default
-	}
+
+		internal virtual bool Remove(Item item) => false;
+    }
 
 	public static class ItemExtensions
 	{
