@@ -95,4 +95,20 @@ public class RemoveTest
         Assert.Throws<InvalidOperationException>(() => Creator.Remove(failItem1ANot).From(checklist));
         Creator.Remove(failItem1A1).From(checklist);
     }
+
+    [Fact]
+    public void RemoveMultipleInstances()
+    {
+        var target = "Item to remove".TrueFalse();
+        var item2 = "Second item".TrueFalse();
+        var item3 = "Third item".TrueFalse();
+        var baseItem = "Base condition".TrueFalse();
+        var successItem = "Success condition".TrueFalse();
+        var conditional = new ConditionalItem(baseItem, successItem, target);
+        var checklist = new Checklist(Creator, target, item2, item3, conditional);
+        var replacement = "Replacement".TrueFalse();
+        Creator.Remove(target).From(checklist);
+        testOutput.WriteLine(checklist.ToString(false));
+        Assert.Throws<ArgumentException>(() => new CurrentAnswers(checklist).Value("Item to remove"));
+    }
 }
