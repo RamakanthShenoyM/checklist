@@ -1,21 +1,17 @@
-/*
- * Copyright (c) 2025 by Fred George
- * May be used freely except for training; license required for training.
- * @author Fred George  fredgeorge@acm.org
- */
-
 using Engine.Persons;
 
 namespace Engine.Items;
 
 // Understands SOMETHING_IDIOT
 public class PrettyPrint : ChecklistVisitor {
+    private readonly bool _showOperations;
     private int _indentionLevel;
     private readonly List<Triple> _conditionalItems = [];
     private String _result = "";
     private readonly HashSet<Item> _extraIndentedItems = new();
 
-    public PrettyPrint(Checklist checklist) {
+    public PrettyPrint(Checklist checklist,bool showOperations = true) {
+        _showOperations = showOperations;
         checklist.Accept(this);
     }
 
@@ -98,6 +94,7 @@ public class PrettyPrint : ChecklistVisitor {
     }
 
     private void OperationsDescription(Dictionary<Person, List<Operation>> operations) {
+        if (!_showOperations) return;
         _indentionLevel++;
         foreach (var operation in operations) {
             _result += String.Format(

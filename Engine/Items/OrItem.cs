@@ -64,5 +64,10 @@ namespace Engine.Items
            _item1.Contains(desiredItem)
                || _item2.Contains(desiredItem);
 
+        internal override void Simplify() {
+            _item1.Simplify();
+            _item2.Simplify();
+        }
+
     }
 }

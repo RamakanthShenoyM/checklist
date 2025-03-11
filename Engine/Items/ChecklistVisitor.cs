@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2025 by Fred George
- * May be used freely except for training; license required for training.
- * @author Fred George  fredgeorge@acm.org
- */
-
 using Engine.Persons;
 
 namespace Engine.Items;

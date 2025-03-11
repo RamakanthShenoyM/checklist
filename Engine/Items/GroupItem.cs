@@ -59,5 +59,17 @@ namespace Engine.Items
         internal override bool Contains(Item desiredItem) =>
             _childItems.Contains(desiredItem);
 
+        internal override void Simplify() {
+            var originalItems = new List<Item>(_childItems);
+            foreach (var item in originalItems) {
+                if (item is GroupItem) {
+                    var index = _childItems.IndexOf(item);
+                    _childItems.RemoveAt(index);
+                    _childItems.InsertRange(index, ((GroupItem)item)._childItems);
+                }
+            }
+
+            foreach (var item in _childItems) item.Simplify();
+        }
     }
 }

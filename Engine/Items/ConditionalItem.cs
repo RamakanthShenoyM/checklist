@@ -55,5 +55,11 @@ namespace Engine.Items
             baseItem.Contains(desiredItem)
                 || (successItem?.Contains(desiredItem) ?? false)
                 || (failItem?.Contains(desiredItem) ?? false);
+
+        internal override void Simplify() {
+            baseItem.Simplify();
+            successItem?.Simplify();
+            failItem?.Simplify();
+        }
     }
 }

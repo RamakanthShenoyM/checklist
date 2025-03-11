@@ -47,5 +47,7 @@ namespace Engine.Items
 
         internal override bool Contains(Item desiredItem) =>
            _item.Contains(desiredItem);
+
+        internal override void Simplify() => _item.Simplify();
     }
 }
