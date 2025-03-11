@@ -266,5 +266,28 @@ namespace Engine.Persons
         }
 
         public InsertEngine Insert1(Item firstItem, params Item[] items) => new InsertEngine(this, firstItem,items);
+
+        public RemoveEngine Remove(Item item)
+        {
+            if (!this.Can(ModifyChecklist).On(item))
+                throw new InvalidOperationException("Does not have permission to modify checklist");
+
+            return new RemoveEngine(item);
+        }
+
+        public class RemoveEngine
+        {
+            private readonly Item _item;
+
+            public RemoveEngine(Item item)
+            {
+                _item = item;
+            }
+
+            public void From(Checklist checklist)
+            {
+                checklist.Remove(_item);
+            }
+        }
     }
 }

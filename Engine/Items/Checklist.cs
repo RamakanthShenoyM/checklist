@@ -85,5 +85,11 @@ namespace Engine.Items
         public void Simplify() {
 	        foreach (var item in _items) item.Simplify();
         }
-	}
+
+        internal void Remove(Item item)
+        {
+
+            throw new NotImplementedException();
+        }
+    }
 }
