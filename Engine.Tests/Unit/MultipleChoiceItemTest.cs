@@ -46,9 +46,9 @@ namespace Engine.Tests.Unit
 
 			var answers = new CurrentAnswers(checklist);
 
-			Assert.Equal(GreenCarpet,answers.value("Which Carpet Color?"));
-			Assert.Equal("Poland", answers.value("Which country?"));
-			Assert.Equal(true, answers.value("Is US citizen?"));
+			Assert.Equal(GreenCarpet,answers.Value("Which Carpet Color?"));
+			Assert.Equal("Poland", answers.Value("Which country?"));
+			Assert.Equal(true, answers.Value("Is US citizen?"));
 			//TODO: null
 			//TODO: throws
 		}

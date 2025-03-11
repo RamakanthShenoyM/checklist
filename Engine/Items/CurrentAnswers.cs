@@ -17,7 +17,7 @@ namespace Engine.Items
 
 		}
 
-		public object? value(string question)
+		public object? Value(string question)
 		{
 			if (!_answers.ContainsKey(question)) throw new ArgumentException("No Such Question.");
 			return _answers[question];

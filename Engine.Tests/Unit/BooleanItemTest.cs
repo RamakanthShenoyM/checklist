@@ -46,9 +46,9 @@ namespace Engine.Tests.Unit
 			Creator.Reset(item2);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
 			var visitor = new CurrentAnswers(checklist);
-			Assert.Null(visitor.value("Is US citizen?"));
-			Assert.Null(visitor.value("Is Indian citizen?"));
-			Assert.Equal(true, visitor.value("Is Nordic citizen?"));
+			Assert.Null(visitor.Value("Is US citizen?"));
+			Assert.Null(visitor.Value("Is Indian citizen?"));
+			Assert.Equal(true, visitor.Value("Is Nordic citizen?"));
 		}
 		
 		[Fact]

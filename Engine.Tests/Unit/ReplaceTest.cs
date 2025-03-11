@@ -203,11 +203,24 @@ namespace Engine.Tests.Unit
             Assert.Equal(8, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
             var addition1 = "Addition1".TrueFalse();
             var addition2 = "Addition2".TrueFalse();
-            var group1 = new GroupItem(addition1, addition2);
             Creator.Insert(addition1, addition2).Before(successItem1).In(checklist);
             testOutput.WriteLine(checklist.ToString());
             Assert.Equal(10, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
         }
 
+        [Fact]
+        public void ReplaceMultipleInstances() {
+            var target = "Item to remove".TrueFalse();
+            var item2 = "Second item".TrueFalse();
+            var item3 = "Third item".TrueFalse();
+            var baseItem = "Base condition".TrueFalse();
+            var successItem = "Success condition".TrueFalse();
+            var conditional = new ConditionalItem(baseItem, successItem, target);
+            var checklist = new Checklist(Creator, target, item2, item3, conditional);
+            var replacement = "Replacement".TrueFalse();
+            Creator.Replace(target).With(replacement).In(checklist);
+            testOutput.WriteLine(checklist.ToString(false));
+            // Assert.Throws<ArgumentException>(() => new CurrentAnswers(checklist).Value("Item to remove"));
+        }
     }
 }
