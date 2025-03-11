@@ -49,5 +49,12 @@ namespace Engine.Items
            _item.Contains(desiredItem);
 
         internal override void Simplify() => _item.Simplify();
+
+        internal override bool Remove(Item item)
+        {
+            if (_item == item) throw new InvalidOperationException("Cannot remove items in OrItem");
+
+            return _item.Remove(item);
+        }
     }
 }
