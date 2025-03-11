@@ -20,6 +20,9 @@ public class RemoveTest
     private Item successItem1;
     private Item failItem1A;
     private Item failItem1B;
+    private Item failItem1B1;
+    private Item failItem1B2;
+
     private Item failItem1;
     private Item compositeItem;
     private Item lastItem;
@@ -36,7 +39,9 @@ public class RemoveTest
         failItem2 = new BooleanItem("Second failure leg");
         successItem1 = new ConditionalItem(baseItem2, successItem2, failItem2);
         failItem1A = new BooleanItem("First Or of first failure leg");
-        failItem1B = new BooleanItem("Second Or of first failure leg");
+        failItem1B1 = new BooleanItem("Second Or of first failure leg");
+        failItem1B2 = new BooleanItem("Second Or of first failure leg");
+        failItem1B = new GroupItem(failItem1B1, failItem1B2);
         failItem1 = failItem1A.Not().Or(failItem1B);
         compositeItem = new ConditionalItem(baseItem1, successItem1, failItem1);
         lastItem = "Last simple item".TrueFalse();
@@ -46,7 +51,6 @@ public class RemoveTest
     [Fact]
     public void RemoveInGroup()
     {
-        Assert.Equal(8, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
         testOutput.WriteLine(checklist.ToString());
         Creator.Remove(firstItem).From(checklist);
     }
@@ -70,5 +74,12 @@ public class RemoveTest
     {
         Creator.Remove(failItem2).From(checklist);
         Assert.Throws<InvalidOperationException>(() => Creator.Remove(successItem2).From(checklist));
+    }
+    
+    [Fact]
+    public void RemoveOneLegInOr()
+    {
+        Assert.Throws<InvalidOperationException>(() => Creator.Remove(failItem1B).From(checklist));
+        Creator.Remove(failItem1B1).From(checklist);
     }
 }

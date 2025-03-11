@@ -69,5 +69,13 @@ namespace Engine.Items
             _item2.Simplify();
         }
 
+        internal override bool Remove(Item item)
+        {
+            if (_item1 == item || _item2 == item) throw new InvalidOperationException("Cannot remove items in OrItem");
+
+            var result = _item1.Remove(item);
+            return _item2.Remove(item) || result;
+        }
+
     }
 }
