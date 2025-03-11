@@ -22,16 +22,12 @@ namespace Engine.Tests.Unit
             var item1 = "Which Carpet Color?".Choices(RedCarpet, GreenCarpet, NoCarpet);
             var item2 = "Is US citizen?".TrueFalse();
             var item3 = "Which country?".Choices("India", "Iceland", "Norway");
-
             var checklist = new Checklist(Creator, item1, item2, item3);
+            Assert.Equal(3, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
 
             var item4 = "Vehicle Type?".Choices("Car", "Bike", "Bus");
             var item5 = item2.Not();
-
-            Assert.Equal(3, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
-
             Creator.Replace1(item2).With(item4, item5).In(checklist);
-
             Assert.Equal(4, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
         }
 
@@ -47,11 +43,12 @@ namespace Engine.Tests.Unit
             var failItem1A = new BooleanItem("First Or of first failure leg");
             var failItem1B = new BooleanItem("Second Or of first failure leg");
             var failItem1 = failItem1A.Not().Or(failItem1B);
-            var lastItem = "Last simple item".TrueFalse();
-
             var compositeItem = new ConditionalItem(baseItem1, successItem1, failItem1);
+            var lastItem = "Last simple item".TrueFalse();
             var checklist = new Checklist(Creator, firstItem, compositeItem, lastItem);
             Assert.Equal(8,new MultipleChoiceItemTest.QuestionCount(checklist).Count);
+            testOutput.WriteLine(checklist.ToString());
+            
             var replace1 = "Replace1".TrueFalse();
             var replace2 = "Replace2".TrueFalse();
             Creator.Replace1(successItem2).With(replace1,replace2).In(checklist);
@@ -70,11 +67,12 @@ namespace Engine.Tests.Unit
             var failItem1A = new BooleanItem("First Or of first failure leg");
             var failItem1B = new BooleanItem("Second Or of first failure leg");
             var failItem1 = failItem1A.Not().Or(failItem1B);
-            var lastItem = "Last simple item".TrueFalse();
-
             var compositeItem = new ConditionalItem(baseItem1, successItem1, failItem1);
+            var lastItem = "Last simple item".TrueFalse();
             var checklist = new Checklist(Creator, firstItem, compositeItem, lastItem);
             Assert.Equal(8, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
+            testOutput.WriteLine(checklist.ToString());
+            
             var replace1 = "Replace1".TrueFalse();
             var replace2 = "Replace2".TrueFalse();
             Creator.Replace1(baseItem2).With(replace1, replace2).In(checklist);

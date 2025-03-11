@@ -4,7 +4,6 @@
  * @author Fred George  fredgeorge@acm.org
  */
 
-using System.Collections.Specialized;
 using Engine.Persons;
 
 namespace Engine.Items;
@@ -29,22 +28,34 @@ public class PrettyPrint : ChecklistVisitor {
         _indentionLevel--;
     }
 
-    public void Visit(BooleanItem item, string question, bool? value, Dictionary<Person, List<Operation>> operations) {
+    public void Visit(
+        BooleanItem item,
+        string question,
+        bool? value,
+        Dictionary<Person, List<Operation>> operations
+    ) {
         LabelIndention(item);
         _result += String.Format("{0}Question: {1} Value: {2}\n", Indention, question, Format(value));
         OperationsDescription(operations);
         LabelUndention(item);
     }
 
-    public void Visit(MultipleChoiceItem item, object? value, Dictionary<Person, List<Operation>> operations) {
+    public void Visit(
+        MultipleChoiceItem item,
+        string question,
+        object? value,
+        Dictionary<Person, List<Operation>> operations
+    ) {
+        LabelIndention(item);
         _result += String.Format("{0}Boolean Item with value {1}\n", Indention, Format(value));
         OperationsDescription(operations);
+        LabelUndention(item);
     }
 
     public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) {
         LabelIndention(item);
         _result += String.Format("{0}Conditional\n", Indention);
-        _conditionalItems.Insert(0, new Triple(baseItem, successItem, failureItem));
+        _conditionalItems.Add(new Triple(baseItem, successItem, failureItem));
         _indentionLevel++;
     }
 
@@ -54,28 +65,37 @@ public class PrettyPrint : ChecklistVisitor {
     }
 
     public void PreVisit(OrItem item, Item item1, Item item2) {
+        LabelIndention(item);
         _result += String.Format("{0}Either/Or\n", Indention);
         _indentionLevel++;
     }
 
     public void PostVisit(OrItem item, Item item1, Item item2) {
         _indentionLevel--;
+        LabelUndention(item);
     }
-    
-    public void PreVisit(NotItem item, Item negatedItem) {
-        _result += String.Format("{0}Not (the following)\n", Indention);
-        _indentionLevel++;}
-    
-    public void PostVisit(NotItem item, Item negatedItem) {
-        _indentionLevel--;}
 
-    
+    public void PreVisit(NotItem item, Item negatedItem) {
+        LabelIndention(item);
+        _result += String.Format("{0}Not (the following)\n", Indention);
+        _indentionLevel++;
+    }
+
+    public void PostVisit(NotItem item, Item negatedItem) {
+        _indentionLevel--;
+        LabelUndention(item);
+    }
+
     public void PreVisit(GroupItem item, List<Item> childItems) {
+        LabelIndention(item);
         _result += String.Format("{0}Group of Items\n", Indention);
-        _indentionLevel++;}
-    
+        _indentionLevel++;
+    }
+
     public void PostVisit(GroupItem item, List<Item> childItems) {
-        _indentionLevel--;}
+        _indentionLevel--;
+        LabelUndention(item);
+    }
 
     private void OperationsDescription(Dictionary<Person, List<Operation>> operations) {
         _indentionLevel++;
@@ -99,20 +119,15 @@ public class PrettyPrint : ChecklistVisitor {
 
     private void LabelIndention(Item item) {
         if (_conditionalItems.Count == 0) return;
-        var label = _conditionalItems[0].Matches(item);
+        var label = Triple.Matches(_conditionalItems, item);
         if (label.Length == 0) return;
         _extraIndentedItems.Add(item);
         _result += $"{Indention}{label}\n";
-        removeTripleIfEmpty();
         _indentionLevel++;
     }
 
     private void LabelUndention(Item item) {
         if (_extraIndentedItems.Remove(item)) _indentionLevel--;
-    }
-
-    private void removeTripleIfEmpty() {
-        if (_conditionalItems[0].IsEmpty()) _conditionalItems.RemoveAt(0);
     }
 
     public string Result() => _result;
@@ -126,6 +141,15 @@ public class PrettyPrint : ChecklistVisitor {
             _baseItem = baseItem;
             _successItem = successItem;
             _failItem = failItem;
+        }
+
+        internal static string Matches(List<Triple> triples, Item item) {
+            foreach (var triple in triples) {
+                var result = triple.Matches(item);
+                if (result.Length > 0) return result;
+            }
+
+            return "";
         }
 
         internal string Matches(Item item) {
