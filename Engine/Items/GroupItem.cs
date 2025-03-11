@@ -80,7 +80,11 @@ namespace Engine.Items
                 foreach(var childItem in _childItems) childItem.Remove(item);
                 return true;
             }
-            return _childItems.Select(childItem => childItem.Remove(item)).Any();
+            
+            var result = false;
+            foreach (var childItem in _childItems) result = childItem.Remove(item) || result;
+
+            return result;
         }
     }
 }

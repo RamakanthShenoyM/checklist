@@ -61,5 +61,16 @@ namespace Engine.Items
             successItem?.Simplify();
             failItem?.Simplify();
         }
+
+        internal override bool Remove(Item item)
+        {
+            if (baseItem == item) throw new InvalidOperationException("Cannot remove the base item");
+            
+            var baseResult = baseItem.Remove(item);
+            var successResult = successItem?.Remove(item) ?? false;
+            var failItemResult = failItem?.Remove(item) ?? false;
+
+            return baseResult || successResult || failItemResult;
+        }
     }
 }

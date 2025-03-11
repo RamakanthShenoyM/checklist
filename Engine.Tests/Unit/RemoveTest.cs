@@ -3,6 +3,7 @@ using Xunit.Sdk;
 using Xunit;
 using Engine.Persons;
 using Xunit.Abstractions;
+using System;
 
 namespace Engine.Tests.Unit;
 
@@ -45,9 +46,22 @@ public class RemoveTest
     [Fact]
     public void RemoveInGroup()
     {
-        
         Assert.Equal(8, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
         testOutput.WriteLine(checklist.ToString());
         Creator.Remove(firstItem).From(checklist);
+    }
+
+    [Fact]
+    public void RemoveLastInGroup()
+    {
+        Creator.Remove(firstItem).From(checklist);
+        Creator.Remove(compositeItem).From(checklist);
+        Assert.Throws<InvalidOperationException>(() => Creator.Remove(lastItem).From(checklist));
+    }
+
+    [Fact]
+    public void RemoveBaseInConditional()
+    {
+        Assert.Throws<InvalidOperationException>(() => Creator.Remove(baseItem1).From(checklist));
     }
 }
