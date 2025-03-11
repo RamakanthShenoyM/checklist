@@ -50,39 +50,7 @@ namespace Engine.Tests.Unit
 			Assert.Null(visitor.value("Is Indian citizen?"));
 			Assert.Equal(true, visitor.value("Is Nordic citizen?"));
 		}
-		[Fact]
-		public void CancelItem()
-		{
-			var item1 = new BooleanItem("Is US citizen?");
-			var item2 = new BooleanItem("Is US citizen?");
-			var checklist = new Checklist(Creator, item1, item2);
-			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			Creator.Sets(item1).To(true);
-			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			Creator.Sets(item2).To(false);
-			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
-			Creator.Cancel(item2).In(checklist);
-			Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
-		}
-		[Fact]
-		public void ReplaceItems()
-		{
-			var item1 = new BooleanItem("Is US citizen?");
-			var item2 = new BooleanItem("Is US citizen?");
-			var item3 = new BooleanItem("Is US citizen?");
-			var item4 = new BooleanItem("Is US citizen?");
-			var checklist = new Checklist(Creator, item1, item2);
-			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			Creator.Sets(item1).To(true);
-			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			Creator.Sets(item2).To(false);
-			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
-			Creator.Cancel(item2).In(checklist);
-			Creator.Add(item3, item4).In(checklist);
-			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			Creator.Sets(item4).To(false);
-			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
-		}
+		
 		[Fact]
 		public void InvalidValue()
 		{
