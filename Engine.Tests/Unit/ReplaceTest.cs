@@ -27,7 +27,7 @@ namespace Engine.Tests.Unit
 
             var item4 = "Vehicle Type?".Choices("Car", "Bike", "Bus");
             var item5 = item2.Not();
-            Creator.Replace1(item2).With(item4, item5).In(checklist);
+            Creator.Replace(item2).With(item4, item5).In(checklist);
             Assert.Equal(4, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
         }
 
@@ -51,7 +51,7 @@ namespace Engine.Tests.Unit
             
             var replace1 = "Replace1".TrueFalse();
             var replace2 = "Replace2".TrueFalse();
-            Creator.Replace1(successItem2).With(replace1,replace2).In(checklist);
+            Creator.Replace(successItem2).With(replace1,replace2).In(checklist);
             Assert.Equal(9, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
         }
 
@@ -75,7 +75,7 @@ namespace Engine.Tests.Unit
             
             var replace1 = "Replace1".TrueFalse();
             var replace2 = "Replace2".TrueFalse();
-            Creator.Replace1(baseItem2).With(replace1, replace2).In(checklist);
+            Creator.Replace(baseItem2).With(replace1, replace2).In(checklist);
             Assert.Equal(9, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
             testOutput.WriteLine(checklist.ToString());
         } 
@@ -99,7 +99,7 @@ namespace Engine.Tests.Unit
             Assert.Equal(8, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
             var replace1 = "Replace1".TrueFalse();
             var replace2 = "Replace2".TrueFalse();
-            Creator.Replace1(failItem1A).With(replace1, replace2).In(checklist);
+            Creator.Replace(failItem1A).With(replace1, replace2).In(checklist);
             Assert.Equal(9, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
             testOutput.WriteLine(checklist.ToString());
         }
@@ -123,7 +123,7 @@ namespace Engine.Tests.Unit
             Assert.Equal(8, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
             var replace1 = "Replace1".TrueFalse();
             var replace2 = "Replace2".TrueFalse();
-            Creator.Replace1(successItem1).With(replace1, replace2).In(checklist);
+            Creator.Replace(successItem1).With(replace1, replace2).In(checklist);
             Assert.Equal(7, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
             testOutput.WriteLine(checklist.ToString());
         } 
@@ -148,13 +148,13 @@ namespace Engine.Tests.Unit
             var replace1 = "Replace1".TrueFalse();
             var replace2 = "Replace2".TrueFalse();
             var group1 = new GroupItem(replace1, replace2);
-            Creator.Replace1(compositeItem).With(group1).In(checklist);
+            Creator.Replace(compositeItem).With(group1).In(checklist);
             Assert.Equal(4, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
             testOutput.WriteLine(checklist.ToString());
             var replace3 = "Replace3".TrueFalse();
             var replace4 = "Replace4".TrueFalse();
             var replace5 = "Replace5".TrueFalse();
-            Creator.Replace1(group1).With(replace3,replace4,replace5).In(checklist);
+            Creator.Replace(group1).With(replace3,replace4,replace5).In(checklist);
             Assert.Equal(5, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
             testOutput.WriteLine(checklist.ToString());
         }
@@ -179,7 +179,7 @@ namespace Engine.Tests.Unit
             var addition1 = "Addition1".TrueFalse();
             var addition2 = "Addition2".TrueFalse();
             var group1 = new GroupItem(addition1, addition2);
-            Creator.Insert1(addition1, addition2).After(successItem1).In(checklist);
+            Creator.Insert(addition1, addition2).After(successItem1).In(checklist);
             testOutput.WriteLine(checklist.ToString());
             Assert.Equal(10, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
         }
@@ -204,7 +204,7 @@ namespace Engine.Tests.Unit
             var addition1 = "Addition1".TrueFalse();
             var addition2 = "Addition2".TrueFalse();
             var group1 = new GroupItem(addition1, addition2);
-            Creator.Insert1(addition1, addition2).Before(successItem1).In(checklist);
+            Creator.Insert(addition1, addition2).Before(successItem1).In(checklist);
             testOutput.WriteLine(checklist.ToString());
             Assert.Equal(10, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
         }
