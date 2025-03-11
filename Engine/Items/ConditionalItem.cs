@@ -64,13 +64,28 @@ namespace Engine.Items
 
         internal override bool Remove(Item item)
         {
+            var result = false;
+
             if (baseItem == item) throw new InvalidOperationException("Cannot remove the base item");
-            
+            if (successItem == item)
+            {
+                if (failItem == null) throw new InvalidOperationException("Cannot remove the last leg in a conditional");
+                successItem = null;
+                result = true;
+            }
+
+            if (failItem == item)
+            {
+                if (successItem == null) throw new InvalidOperationException("Cannot remove the last leg in a conditional");
+                failItem = null;
+                result = true;
+            }
+
             var baseResult = baseItem.Remove(item);
             var successResult = successItem?.Remove(item) ?? false;
             var failItemResult = failItem?.Remove(item) ?? false;
 
-            return baseResult || successResult || failItemResult;
+            return result || baseResult || successResult || failItemResult;
         }
     }
 }

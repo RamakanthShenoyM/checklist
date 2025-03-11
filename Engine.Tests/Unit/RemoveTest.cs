@@ -62,6 +62,13 @@ public class RemoveTest
     [Fact]
     public void RemoveBaseInConditional()
     {
-        Assert.Throws<InvalidOperationException>(() => Creator.Remove(baseItem1).From(checklist));
+        Assert.Throws<InvalidOperationException>(() => Creator.Remove(baseItem2).From(checklist));
+    }
+
+    [Fact]
+    public void RemoveOneLegInConditional()
+    {
+        Creator.Remove(failItem2).From(checklist);
+        Assert.Throws<InvalidOperationException>(() => Creator.Remove(successItem2).From(checklist));
     }
 }
