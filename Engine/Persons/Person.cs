@@ -87,7 +87,7 @@ namespace Engine.Persons
             }
         }
 
-        public ReplaceEngine Replace1(Item originalItem)
+        public ReplaceEngine Replace(Item originalItem)
         {
             if (!originalItem.DoesAllow(this,ModifyChecklist))
                 throw new InvalidOperationException("Does not have permission to modify checklist");
@@ -130,7 +130,7 @@ namespace Engine.Persons
                 _items = items.ToList();
             }
 
-            public void In(Checklist checklist) => _person.Replace1(_originalItem).With(_newItem).In(checklist);
+            public void In(Checklist checklist) => _person.Replace(_originalItem).With(_newItem).In(checklist);
 
             public InsertEngine After(Item originalItem)
             {
@@ -149,7 +149,7 @@ namespace Engine.Persons
             }
         }
 
-        public InsertEngine Insert1(Item firstItem, params Item[] items) => new InsertEngine(this, firstItem,items);
+        public InsertEngine Insert(Item firstItem, params Item[] items) => new InsertEngine(this, firstItem,items);
 
         public RemoveEngine Remove(Item item)
         {
