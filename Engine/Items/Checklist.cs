@@ -40,6 +40,7 @@ namespace Engine.Items
 
         public void Replace(Item originalItem, Item newItem)
         {
+			if (newItem.Contains(originalItem)) throw new InvalidOperationException("can't reinsert item being replaced");
 			newItem.AddPerson(_creator,Creator);
 
 			if (_item == originalItem)

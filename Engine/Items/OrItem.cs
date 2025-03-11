@@ -33,17 +33,19 @@ namespace Engine.Items
 
         internal override bool Replace(Item originalItem, Item newItem)
         {
+            var result = false;
             if (_item1 == originalItem)
             {
                 _item1 = newItem;
-                return true;
+                result = true;
             }
             if (_item2 == originalItem)
             {
                 _item2 = newItem;
-                return true;
+                result = true;
             }
-            return new List<Item> { _item1, _item2 }.Any(item => item.Replace(originalItem, newItem));
+            result = _item1.Replace(originalItem, newItem) || result;
+            return _item2.Replace(originalItem, newItem) || result;
         }
 
         internal override ItemStatus Status()

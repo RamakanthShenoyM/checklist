@@ -33,14 +33,16 @@ namespace Engine.Items
 
         internal override bool Replace(Item originalItem, Item newItem)
         {
+            var result = false;
             if (_childItems.Contains(originalItem))
             {
                 var index = _childItems.IndexOf(originalItem);
                 _childItems.RemoveAt(index);
                 _childItems.Insert(index, newItem);
-                return true;
+                result = true;
             }
-            return _childItems.Any(item => item.Replace(originalItem, newItem));
+            foreach (var item in _childItems) result = item.Replace(originalItem, newItem) || result;
+            return result;
         }
 
         internal override void Accept(ChecklistVisitor visitor)

@@ -6,7 +6,8 @@ namespace Engine.Items
     public class ConditionalItem(Item baseItem, Item? successItem = null, Item? failItem = null) : Item
     {
 
-        internal override void Accept(ChecklistVisitor visitor) {
+        internal override void Accept(ChecklistVisitor visitor)
+        {
             visitor.PreVisit(this, baseItem, successItem, failItem);
             baseItem.Accept(visitor);
             successItem?.Accept(visitor);
@@ -19,22 +20,21 @@ namespace Engine.Items
         internal override void Reset() => throw new InvalidOperationException("can't set the Conditional Item");
         internal override bool Replace(Item originalItem, Item newItem)
         {
-            if (baseItem == originalItem)
+            var result = Replace(ref baseItem, originalItem, newItem);
+            result = Replace(ref successItem, originalItem, newItem) || result;
+           return Replace(ref failItem, originalItem, newItem) || result;
+        }
+        private bool Replace(ref Item? currentItem, Item originalItem, Item newItem)
+        {
+            if (currentItem == null) return false;
+            if (currentItem == originalItem)
             {
-                baseItem = newItem;
+                currentItem = newItem;
                 return true;
             }
-            if (successItem == originalItem)
-            {
-                successItem = newItem;
-                return true;
-            }
-            if (failItem == originalItem)
-            {
-                failItem = newItem;
-                return true;
-            }
-            return new List<Item>{baseItem,successItem,failItem}.Any(item => item.Replace(originalItem, newItem));
+
+            return currentItem.Replace(originalItem, newItem);
+
         }
         internal override ItemStatus Status()
         {
@@ -50,13 +50,14 @@ namespace Engine.Items
             successItem?.AddPerson(person, role);
             failItem?.AddPerson(person, role);
         }
-        
+
         internal override bool Contains(Item desiredItem) =>
             baseItem.Contains(desiredItem)
                 || (successItem?.Contains(desiredItem) ?? false)
                 || (failItem?.Contains(desiredItem) ?? false);
 
-        internal override void Simplify() {
+        internal override void Simplify()
+        {
             baseItem.Simplify();
             successItem?.Simplify();
             failItem?.Simplify();
