@@ -10,7 +10,7 @@ namespace Engine.Items
 
 		public Checklist(Person creator, Item firstItem, params Item[] items)
 		{
-            _item = new GroupItem(firstItem, items);
+            _item = (items.Length == 0) ? firstItem : new GroupItem(firstItem, items);
 			_creator = creator;
 			_item.AddPerson(_creator, Creator);	
 		}
