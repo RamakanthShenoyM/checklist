@@ -1,10 +1,5 @@
 ﻿using CommandEngine.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using static CommandEngine.Tests.Unit.PermanentStatus;
-using System.Threading.Tasks;
 using static CommandEngine.Commands.CommandStatus;
 
 namespace CommandEngine.Tests.Unit
@@ -14,35 +9,35 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void Successful()
         {
-            var command = new SimpleCommand(alwaysSuccessfull, alwaysSuccessfull);
+            var command = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
             Assert.Equal(Succeeded,command.Execute());
             Assert.Equal(Reverted,command.Undo());
         }
         [Fact]
         public void FailedTask()
         {
-            Assert.Equal(Failed, new SimpleCommand(alwaysFail, alwaysFail).Execute());
+            Assert.Equal(Failed, new SimpleCommand(AlwaysFail, AlwaysFail).Execute());
         }
         [Fact]
         public void SuspendedTask()
         {
-            Assert.Throws<TaskSuspendedException>(() => new SimpleCommand(alwaysSuspended, alwaysSuspended).Execute());
+            Assert.Throws<TaskSuspendedException>(() => new SimpleCommand(AlwaysSuspended, AlwaysSuspended).Execute());
         }
         [Fact]
         public void TaskCrashed()
         {
-            Assert.Equal(Failed, new SimpleCommand(new CrashingTask(), alwaysSuspended).Execute());
+            Assert.Equal(Failed, new SimpleCommand(new CrashingTask(), AlwaysSuspended).Execute());
         }
         [Fact]
         public void UndoFails()
-        {   var command = new SimpleCommand(alwaysSuccessfull, alwaysFail);
+        {   var command = new SimpleCommand(AlwaysSuccessful, AlwaysFail);
             Assert.Equal(Succeeded, command.Execute());
             Assert.Throws<UndoTaskFailureException>(()=>command.Undo());
         }
         
         [Fact]
         public void UndoCrashes()
-        {   var command = new SimpleCommand(alwaysSuccessfull, new CrashingTask());
+        {   var command = new SimpleCommand(AlwaysSuccessful, new CrashingTask());
             Assert.Equal(Succeeded, command.Execute());
             Assert.Throws<UndoTaskFailureException>(()=>command.Undo());
         }
@@ -50,7 +45,7 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void UndoSuspends()
         {
-            var command = new SimpleCommand(alwaysSuccessfull, alwaysSuspended);
+            var command = new SimpleCommand(AlwaysSuccessful, AlwaysSuspended);
             Assert.Equal(Succeeded, command.Execute());
             Assert.Throws<TaskSuspendedException>(() => command.Undo());
         }
@@ -58,7 +53,7 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void ExecuteTwice()
         {
-            var command = new SimpleCommand(new RunOnceTask(), alwaysSuccessfull);
+            var command = new SimpleCommand(new RunOnceTask(), AlwaysSuccessful);
             Assert.Equal(Succeeded, command.Execute());
             Assert.Equal(Succeeded, command.Execute());
         }
@@ -66,7 +61,7 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void UndoBeforeExecute()
         {
-            var command = new SimpleCommand(alwaysSuccessfull, alwaysSuccessfull);
+            var command = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
             Assert.Throws<InvalidOperationException>(() => command.Undo());
         }
 
@@ -74,32 +69,27 @@ namespace CommandEngine.Tests.Unit
     }
     internal class PermanentStatus(CommandStatus status) : CommandTask
     {
-        internal readonly static PermanentStatus alwaysSuccessfull = new(Succeeded);
-        internal readonly static PermanentStatus alwaysFail = new(Failed);
-        internal readonly static PermanentStatus alwaysSuspended = new(Suspended);
+        internal static readonly PermanentStatus AlwaysSuccessful = new(Succeeded);
+        internal static readonly PermanentStatus AlwaysFail = new(Failed);
+        internal static readonly PermanentStatus AlwaysSuspended = new(Suspended);
 
         public CommandStatus Execute() => status;
 
     }
     internal class CrashingTask : CommandTask
     {
-        public CommandStatus Execute()
-        {
-            throw new InvalidOperationException("unable to execute this task");
-        }
+        public CommandStatus Execute() => throw new InvalidOperationException("unable to execute this task");
     }
 
     internal class RunOnceTask : CommandTask
     {
-        private bool _hasRun = false;
+        private bool _hasRun;
+        
         public CommandStatus Execute()
         {
-            if (!_hasRun)
-            {
-                _hasRun = true;
-                return Succeeded;
-            }
-            throw new InvalidOperationException("unable to execute this task twice");
+            if (_hasRun) throw new InvalidOperationException("unable to execute this task twice");
+            _hasRun = true;
+            return Succeeded;
         }
     }
 }
