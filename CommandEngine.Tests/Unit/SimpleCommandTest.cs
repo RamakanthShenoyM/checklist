@@ -55,6 +55,21 @@ namespace CommandEngine.Tests.Unit
             Assert.Throws<TaskSuspendedException>(() => command.Undo());
         }
 
+        [Fact]
+        public void ExecuteTwice()
+        {
+            var command = new SimpleCommand(new RunOnceTask(), alwaysSuccessfull);
+            Assert.Equal(Succeeded, command.Execute());
+            Assert.Equal(Succeeded, command.Execute());
+        }
+
+        [Fact]
+        public void UndoBeforeExecute()
+        {
+            var command = new SimpleCommand(alwaysSuccessfull, alwaysSuccessfull);
+            Assert.Throws<InvalidOperationException>(() => command.Undo());
+        }
+
 
     }
     internal class PermanentStatus(CommandStatus status) : CommandTask
@@ -71,6 +86,20 @@ namespace CommandEngine.Tests.Unit
         public CommandStatus Execute()
         {
             throw new InvalidOperationException("unable to execute this task");
+        }
+    }
+
+    internal class RunOnceTask : CommandTask
+    {
+        private bool _hasRun = false;
+        public CommandStatus Execute()
+        {
+            if (!_hasRun)
+            {
+                _hasRun = true;
+                return Succeeded;
+            }
+            throw new InvalidOperationException("unable to execute this task twice");
         }
     }
 }
