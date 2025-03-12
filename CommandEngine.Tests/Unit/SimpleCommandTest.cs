@@ -13,21 +13,25 @@ namespace CommandEngine.Tests.Unit
             Assert.Equal(Succeeded,command.Execute());
             Assert.Equal(Reverted,command.Undo());
         }
+        
         [Fact]
         public void FailedTask()
         {
             Assert.Equal(Failed, new SimpleCommand(AlwaysFail, AlwaysFail).Execute());
         }
+        
         [Fact]
         public void SuspendedTask()
         {
             Assert.Throws<TaskSuspendedException>(() => new SimpleCommand(AlwaysSuspended, AlwaysSuspended).Execute());
         }
+        
         [Fact]
         public void TaskCrashed()
         {
             Assert.Equal(Failed, new SimpleCommand(new CrashingTask(), AlwaysSuspended).Execute());
         }
+        
         [Fact]
         public void UndoFails()
         {   var command = new SimpleCommand(AlwaysSuccessful, AlwaysFail);
@@ -64,8 +68,7 @@ namespace CommandEngine.Tests.Unit
             var command = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
             Assert.Throws<InvalidOperationException>(() => command.Undo());
         }
-
-
+        
     }
     internal class PermanentStatus(CommandStatus status) : CommandTask
     {
