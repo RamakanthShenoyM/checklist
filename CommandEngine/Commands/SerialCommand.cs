@@ -17,16 +17,33 @@ namespace CommandEngine.Commands
             _commands.Insert(0, firstCommand);
         }
 
+        private SerialCommand(List<Command> commands)
+        {
+            _commands = commands;
+        }
+
         public CommandStatus Execute()
         {
-            foreach (var command in _commands)
+            var status = _commands[0].Execute();
+            switch (status)
             {
-                if (command.Execute() == Failed)
-                {
+                case Succeeded:
+                    if (_commands.Count == 1) return Succeeded;
+                    var restStatus = new SerialCommand(_commands.GetRange(1, _commands.Count - 1)).Execute();
+                    switch (restStatus)
+                    {
+                        case Succeeded:
+                            return Succeeded;
+                        case Failed:
+                            return _commands[0].Undo();
+                    }
+                    break;
+                case Failed:
                     return Failed;
-                }
+                default:
+                    throw new InvalidOperationException("Unexpected result from execution");
             }
-            return Succeeded;
+            throw new InvalidOperationException("Unexpected result from execution");
         }
 
         public CommandStatus Undo()
