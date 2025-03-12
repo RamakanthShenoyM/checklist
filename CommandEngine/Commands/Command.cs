@@ -10,5 +10,6 @@ namespace CommandEngine.Commands
     {
         public CommandStatus Execute();
         public CommandStatus Undo();
+        public void Accept(CommandVisitor visitor);
     }
 }

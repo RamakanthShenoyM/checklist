@@ -5,6 +5,11 @@ namespace CommandEngine.Commands {
     public class SimpleCommand(CommandTask task, CommandTask revertTask) : Command {
         private State _state = new Initial();
 
+        public void Accept(CommandVisitor visitor)
+        {
+            visitor.Visit(this, _state.State());
+        }
+
         public CommandStatus Execute() => _state.Execute(this);
 
         public CommandStatus Undo() => _state.Undo(this);
@@ -43,6 +48,7 @@ namespace CommandEngine.Commands {
         private interface State {
             public CommandStatus Execute(SimpleCommand command);
             public CommandStatus Undo(SimpleCommand command);
+            public CommandState State();
         }
 
         private class Initial : State {
@@ -52,11 +58,14 @@ namespace CommandEngine.Commands {
                 return status;
             }
 
+            public CommandState State() => CommandState.Initial;
+
             public CommandStatus Undo(SimpleCommand command) =>
                 throw new InvalidOperationException("Command has not been executed yet.");
         }
 
         private class Executed : State {
+            public CommandState State() => CommandState.Executed;
             public CommandStatus Execute(SimpleCommand command) => Succeeded;
             public CommandStatus Undo(SimpleCommand command)
             {
@@ -68,11 +77,19 @@ namespace CommandEngine.Commands {
 
         private class Reversed : State
         {
+            public CommandState State() => CommandState.Reversed;
             public CommandStatus Execute(SimpleCommand command) => 
                 throw new InvalidOperationException("Command has already been executed");
 
             public CommandStatus Undo(SimpleCommand command) => 
                 throw new InvalidOperationException("Command has already been undone");
         }
+    }
+
+    public enum CommandState
+    {
+        Initial,
+        Executed,
+        Reversed
     }
 }

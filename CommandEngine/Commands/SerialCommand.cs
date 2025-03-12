@@ -22,6 +22,13 @@ namespace CommandEngine.Commands
             _commands = commands;
         }
 
+        public void Accept(CommandVisitor visitor)
+        {
+            visitor.PreVisit(this);
+            foreach (var command in _commands) command.Accept(visitor);
+            visitor.PostVisit(this);
+        }
+
         public CommandStatus Execute()
         {
             var status = _commands[0].Execute();
