@@ -63,6 +63,16 @@ namespace CommandEngine.Tests.Unit
         }
 
         [Fact]
+        public void UndoTwice()
+        {
+            var command = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
+            Assert.Equal(Succeeded, command.Execute());
+            Assert.Equal(Reverted, command.Undo());
+            Assert.Throws<InvalidOperationException>(()=> command.Undo());
+            Assert.Throws<InvalidOperationException>(() => command.Execute());
+        }
+
+        [Fact]
         public void UndoBeforeExecute()
         {
             var command = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);

@@ -2,7 +2,7 @@
 
 namespace CommandEngine.Commands {
     
-    public class SimpleCommand(CommandTask task, CommandTask revertTask) {
+    public class SimpleCommand(CommandTask task, CommandTask revertTask) : Command {
         private State _state = new Initial();
 
         public CommandStatus Execute() => _state.Execute(this);
@@ -58,7 +58,21 @@ namespace CommandEngine.Commands {
 
         private class Executed : State {
             public CommandStatus Execute(SimpleCommand command) => Succeeded;
-            public CommandStatus Undo(SimpleCommand command) => command.RealUndo();
+            public CommandStatus Undo(SimpleCommand command)
+            {
+                var status = command.RealUndo();
+                command._state = new Reversed();
+                return status;
+            }
+        }
+
+        private class Reversed : State
+        {
+            public CommandStatus Execute(SimpleCommand command) => 
+                throw new InvalidOperationException("Command has already been executed");
+
+            public CommandStatus Undo(SimpleCommand command) => 
+                throw new InvalidOperationException("Command has already been undone");
         }
     }
 }
