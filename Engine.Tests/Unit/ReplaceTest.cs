@@ -1,14 +1,9 @@
-﻿using Engine.Items;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using Engine.Items;
 using Engine.Persons;
 using Xunit;
-using static Engine.Tests.Unit.CarpetColor;
-using Xunit.Sdk;
 using Xunit.Abstractions;
+using static Engine.Tests.Unit.CarpetColor;
 
 
 namespace Engine.Tests.Unit
@@ -54,8 +49,6 @@ namespace Engine.Tests.Unit
             var item1Not = item1.Not();
             Assert.Throws<InvalidOperationException>(() => Creator.Replace(item1).With(item1Not).In(checklist));
         }
-
-
 
         [Fact]
         public void ConditionalWithConditional()
@@ -186,7 +179,7 @@ namespace Engine.Tests.Unit
             testOutput.WriteLine(checklist.ToString());
         }
         
-        //[Fact(Skip = "To Do")]
+        [Fact]
         public void InsertAfterToConditional()
         {
             var firstItem = "First simple item".TrueFalse();
@@ -211,8 +204,7 @@ namespace Engine.Tests.Unit
             Assert.Equal(10, new MultipleChoiceItemTest.QuestionCount(checklist).Count);
         }
 
-       // [Fact(Skip = "")]
-
+        [Fact]
         public void InsertBeforeToConditional()
         {
             var firstItem = "First simple item".TrueFalse();
