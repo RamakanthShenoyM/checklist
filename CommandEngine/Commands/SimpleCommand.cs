@@ -29,5 +29,19 @@ namespace CommandEngine.Commands
                 return Failed;
             }
         }
+
+        public CommandStatus Undo()
+        {
+            try
+            {
+                if (_revertTask.Execute() == Failed) throw new UndoTaskFailureException(_revertTask, this);
+                return Reverted;
+            }
+            catch (Exception)
+            {
+                throw new UndoTaskFailureException(_revertTask, this);
+            }
+          
+        }
     }
 }

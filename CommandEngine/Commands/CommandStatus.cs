@@ -10,6 +10,7 @@ namespace CommandEngine.Commands
     {
         Succeeded,
         Failed,
-        Suspended
+        Suspended,
+        Reverted,
     }
 }

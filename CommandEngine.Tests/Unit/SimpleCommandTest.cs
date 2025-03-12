@@ -12,9 +12,11 @@ namespace CommandEngine.Tests.Unit
     public class SimpleCommandTest
     {
         [Fact]
-        public void Successfull()
+        public void Successful()
         {
-            Assert.Equal(Succeeded, new SimpleCommand(alwaysSuccessfull, alwaysSuccessfull).Execute());
+            var command = new SimpleCommand(alwaysSuccessfull, alwaysSuccessfull);
+            Assert.Equal(Succeeded,command.Execute());
+            Assert.Equal(Reverted,command.Undo());
         }
         [Fact]
         public void FailedTask()
@@ -30,6 +32,19 @@ namespace CommandEngine.Tests.Unit
         public void TaskCrashed()
         {
             Assert.Equal(Failed, new SimpleCommand(new CrashingTask(), alwaysSuspended).Execute());
+        }
+        [Fact]
+        public void UndoFails()
+        {   var command = new SimpleCommand(alwaysSuccessfull, alwaysFail);
+            Assert.Equal(Succeeded, command.Execute());
+            Assert.Throws<UndoTaskFailureException>(()=>command.Undo());
+        }
+        
+        [Fact]
+        public void UndoCrashes()
+        {   var command = new SimpleCommand(alwaysSuccessfull, new CrashingTask());
+            Assert.Equal(Succeeded, command.Execute());
+            Assert.Throws<UndoTaskFailureException>(()=>command.Undo());
         }
 
     }
