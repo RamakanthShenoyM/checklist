@@ -23,6 +23,8 @@ namespace Engine.Items
 			return _answers[question];
 		}
 
+		public object? this[string question] => Value(question);
+
 		public void Visit(BooleanItem item,string question, bool? value, Dictionary<Person, List<Operation>> operations)
 		{
 			_answers[question]= value;

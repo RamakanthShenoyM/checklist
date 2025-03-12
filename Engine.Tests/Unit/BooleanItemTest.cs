@@ -45,10 +45,10 @@ namespace Engine.Tests.Unit
 			Assert.Equal(ChecklistStatus.Failed, checklist.Status());
 			Creator.Reset(item2);
 			Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-			var visitor = new CurrentAnswers(checklist);
-			Assert.Null(visitor.Value("Is US citizen?"));
-			Assert.Null(visitor.Value("Is Indian citizen?"));
-			Assert.Equal(true, visitor.Value("Is Nordic citizen?"));
+			var answers = new CurrentAnswers(checklist);
+			Assert.Null(answers["Is US citizen?"]);
+			Assert.Null(answers["Is Indian citizen?"]);
+			Assert.Equal(true, answers["Is Nordic citizen?"]);
 		}
 		
 		[Fact]
