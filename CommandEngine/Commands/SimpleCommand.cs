@@ -22,7 +22,13 @@ namespace CommandEngine.Commands
         {
             try
             {
-                return _task.Execute();
+                var status = _task.Execute();
+                if (status == Suspended) throw new TaskSuspendedException(_task, this);
+                return status;
+            }
+            catch (TaskSuspendedException)
+            {
+                throw;
             }
             catch (Exception)
             {
@@ -35,7 +41,16 @@ namespace CommandEngine.Commands
             try
             {
                 if (_revertTask.Execute() == Failed) throw new UndoTaskFailureException(_revertTask, this);
+                if (_revertTask.Execute() == Suspended) throw new TaskSuspendedException(_revertTask, this);           
                 return Reverted;
+            }
+            catch (TaskSuspendedException)
+            {
+                throw;
+            }
+            catch (UndoTaskFailureException)
+            {
+                throw;
             }
             catch (Exception)
             {

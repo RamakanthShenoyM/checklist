@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CommandEngine.Commands
 {
-    public class UndoTaskFailureException(CommandTask undoTask, SimpleCommand command) : Exception("Undo Failure")
+    public class TaskSuspendedException(CommandTask suspendedTask, SimpleCommand command) : Exception("Task suspended")
     {
     }
 }
