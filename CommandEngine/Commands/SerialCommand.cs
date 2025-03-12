@@ -42,6 +42,7 @@ namespace CommandEngine.Commands
                         case Succeeded:
                             return Succeeded;
                         case Failed:
+                        case Reverted:
                             return _commands[0].Undo();
                     }
                     break;
