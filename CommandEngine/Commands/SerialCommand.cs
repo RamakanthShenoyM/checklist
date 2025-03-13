@@ -12,10 +12,8 @@ namespace CommandEngine.Commands
             _commands.Insert(0, firstCommand);
         }
 
-        public SerialCommand(List<Command> commands)
-        {
-            _commands = commands;
-        }
+        public SerialCommand(List<Command> commands) 
+            : this(commands[0],commands.GetRange(1,commands.Count()-1).ToArray()) { }
 
         public Command this[int index] => _commands[index];
 
@@ -55,9 +53,7 @@ namespace CommandEngine.Commands
 
         public CommandStatus Undo()
         {
-            var reversedCommand = new List<Command>(_commands);
-            reversedCommand.Reverse();
-            foreach (var command in reversedCommand) command.Undo();
+            foreach (var command in _commands.AsEnumerable().Reverse().ToList()) command.Undo();
             return Reverted;
         }
     }

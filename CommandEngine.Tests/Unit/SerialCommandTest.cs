@@ -6,7 +6,7 @@ using static CommandEngine.Commands.CommandState;
 
 namespace CommandEngine.Tests.Unit
 {
-    public class SerialCommandTest 
+    public class SerialCommandTest
     {
         [Fact]
         public void HappyPath()
@@ -30,7 +30,7 @@ namespace CommandEngine.Tests.Unit
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 new SuspendFirstOnly().Otherwise(AlwaysSuccessful)
             }.ToCommand();
-            var e=Assert.Throws<TaskSuspendedException>(()=> command.Execute());
+            var e = Assert.Throws<TaskSuspendedException>(() => command.Execute());
             Assert.Equal(command[2], e.Command);
             command.AssertStates(Executed, Executed, Initial);
             Assert.Equal(Succeeded, command.Execute());
@@ -49,7 +49,7 @@ namespace CommandEngine.Tests.Unit
             Assert.Equal(Failed, command.Execute());
             command.AssertStates(FailedToExecute, Initial, Initial);
         }
-        
+
         [Fact]
         public void SecondFailure()
         {
@@ -62,7 +62,7 @@ namespace CommandEngine.Tests.Unit
             Assert.Equal(Reverted, command.Execute());
             command.AssertStates(Reversed, FailedToExecute, Initial);
         }
-        
+
         [Fact]
         public void ThirdFailure()
         {
@@ -82,7 +82,7 @@ namespace CommandEngine.Tests.Unit
             var command = new Command[]
             {
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
-                AlwaysSuccessful.Otherwise(AlwaysSuccessful), 
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 new Command[]
                 {
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
@@ -92,16 +92,16 @@ namespace CommandEngine.Tests.Unit
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             }.ToCommand();
             Assert.Equal(Succeeded, command.Execute());
-            command.AssertStates(Executed,Executed, Executed, Executed, Executed, Executed);
-        } 
-        
+            command.AssertStates(Executed, Executed, Executed, Executed, Executed, Executed);
+        }
+
         [Fact]
         public void SerialWithSerialFailure()
         {
             var command = new Command[]
             {
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
-                AlwaysSuccessful.Otherwise(AlwaysSuccessful), 
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 new Command[]
                 {
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
@@ -112,15 +112,15 @@ namespace CommandEngine.Tests.Unit
             }.ToCommand();
             Assert.Equal(Reverted, command.Execute());
             command.AssertStates(Reversed, Reversed, Reversed, Reversed, FailedToExecute, Initial);
-        } 
-        
+        }
+
         [Fact]
         public void SerialWithSerialSuspend()
         {
             var command = new Command[]
             {
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
-                AlwaysSuccessful.Otherwise(AlwaysSuccessful), 
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 new Command[]
                 {
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
@@ -152,6 +152,12 @@ namespace CommandEngine.Tests.Unit
             }.ToCommand();
             Assert.Throws<UndoTaskFailureException>(() => command.Execute());
             command.AssertStates(Executed, Executed, Executed, Executed, FailedToUndo, FailedToExecute);
+        }
+
+        [Fact]
+        public void SerialWithNoContent()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(()=>new Command[] { }.ToCommand());
         }
     }
 }
