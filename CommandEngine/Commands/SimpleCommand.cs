@@ -23,11 +23,8 @@ namespace CommandEngine.Commands
                 if (status == Suspended) throw new TaskSuspendedException(task, this);
                 return status;
             }
-            catch (ConclusionException)
+            catch (CommandException)
             {
-                throw;
-            }
-            catch (TaskSuspendedException) {
                 throw;
             }
             catch (Exception) {
@@ -45,13 +42,7 @@ namespace CommandEngine.Commands
                 if (revertTask.Execute(c) == Suspended) throw new TaskSuspendedException(revertTask, this);
                 return Reverted;
             }
-            catch (TaskSuspendedException) {
-                throw;
-            }
-            catch (UndoTaskFailureException) {
-                throw;
-            }
-            catch (ConclusionException)
+            catch (CommandException)
             {
                 throw;
             }

@@ -1,6 +1,8 @@
-﻿namespace CommandEngine.Tasks
+﻿using CommandEngine.Commands;
+
+namespace CommandEngine.Tasks
 {
-    public class ConclusionException(object conclusion) : Exception("Process Completed with " + conclusion)
+    public class ConclusionException(object conclusion) : CommandException("Process Completed with " + conclusion)
     {
         public object Conclusion => conclusion;
     }
