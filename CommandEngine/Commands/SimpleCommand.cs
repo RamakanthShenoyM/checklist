@@ -1,4 +1,5 @@
-﻿using static CommandEngine.Commands.CommandStatus;
+﻿using CommandEngine.Tasks;
+using static CommandEngine.Commands.CommandStatus;
 
 namespace CommandEngine.Commands {
     
@@ -10,9 +11,9 @@ namespace CommandEngine.Commands {
             visitor.Visit(this, _state.State());
         }
 
-        public CommandStatus Execute() => _state.Execute(this);
+        public CommandStatus Execute(Context c) => _state.Execute(this, c);
 
-        public CommandStatus Undo() => _state.Undo(this);
+        public CommandStatus Undo(Context c) => _state.Undo(this, c);
 
         private CommandStatus RealExecute() {
             try {
@@ -50,13 +51,13 @@ namespace CommandEngine.Commands {
         }
 
         private interface SimpleCommandState {
-            public CommandStatus Execute(SimpleCommand command);
-            public CommandStatus Undo(SimpleCommand command);
+            public CommandStatus Execute(SimpleCommand command, Context c);
+            public CommandStatus Undo(SimpleCommand command, Context c);
             public CommandState State();
         }
 
         private class Initial : SimpleCommandState {
-            public CommandStatus Execute(SimpleCommand command) {
+            public CommandStatus Execute(SimpleCommand command, Context c) {
                 var status = command.RealExecute();
 
                 command._state = status==Succeeded?new Executed(): new FailedToExecute();
@@ -65,14 +66,14 @@ namespace CommandEngine.Commands {
 
             public CommandState State() => CommandState.Initial;
 
-            public CommandStatus Undo(SimpleCommand command) =>
+            public CommandStatus Undo(SimpleCommand command, Context c) =>
                 throw new InvalidOperationException("Command has not been executed yet.");
         }
 
         private class Executed : SimpleCommandState {
             public CommandState State() => CommandState.Executed;
-            public CommandStatus Execute(SimpleCommand command) => Succeeded;
-            public CommandStatus Undo(SimpleCommand command)
+            public CommandStatus Execute(SimpleCommand command, Context c) => Succeeded;
+            public CommandStatus Undo(SimpleCommand command, Context c)
             {
                 var status = command.RealUndo();
                 command._state = new Reversed();
@@ -83,29 +84,29 @@ namespace CommandEngine.Commands {
         private class Reversed : SimpleCommandState
         {
             public CommandState State() => CommandState.Reversed;
-            public CommandStatus Execute(SimpleCommand command) => 
+            public CommandStatus Execute(SimpleCommand command, Context c) => 
                 throw new InvalidOperationException("Command has already been executed");
 
-            public CommandStatus Undo(SimpleCommand command) => 
+            public CommandStatus Undo(SimpleCommand command, Context c) => 
                 throw new InvalidOperationException("Command has already been undone");
         }
         
         private class FailedToExecute : SimpleCommandState
         {
             public CommandState State() => CommandState.FailedToExecute;
-            public CommandStatus Execute(SimpleCommand command) => 
+            public CommandStatus Execute(SimpleCommand command, Context c) => 
                 throw new InvalidOperationException("Command has already failed");
 
-            public CommandStatus Undo(SimpleCommand command) => 
+            public CommandStatus Undo(SimpleCommand command, Context c) => 
                 throw new InvalidOperationException("Command has already failed");
         }
         private class FailedToUndo : SimpleCommandState
         {
             public CommandState State() => CommandState.FailedToUndo;
-            public CommandStatus Execute(SimpleCommand command) => 
+            public CommandStatus Execute(SimpleCommand command, Context c) => 
                 throw new InvalidOperationException("Command undo already failed");
 
-            public CommandStatus Undo(SimpleCommand command) => 
+            public CommandStatus Undo(SimpleCommand command, Context c) => 
                 throw new InvalidOperationException("Command undo already failed");
         }
     }

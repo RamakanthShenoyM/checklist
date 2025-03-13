@@ -4,6 +4,7 @@ using static CommandEngine.Commands.CommandStatus;
 using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandState;
 using static CommandEngine.Commands.SerialCommand;
+using CommandEngine.Tasks;
 
 namespace CommandEngine.Tests.Unit
 {
@@ -17,7 +18,7 @@ namespace CommandEngine.Tests.Unit
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             );
-            Assert.Equal(Succeeded, command.Execute());
+            Assert.Equal(Succeeded, command.Execute(new Context()));
             command.AssertStates(Executed, Executed, Executed);
         }
 
@@ -29,10 +30,10 @@ namespace CommandEngine.Tests.Unit
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 new SuspendFirstOnly().Otherwise(AlwaysSuccessful)
             );
-            var e = Assert.Throws<TaskSuspendedException>(() => command.Execute());
+            var e = Assert.Throws<TaskSuspendedException>(() => command.Execute(new Context()));
             Assert.Equal(command[2], e.Command);
             command.AssertStates(Executed, Executed, Initial);
-            Assert.Equal(Succeeded, command.Execute());
+            Assert.Equal(Succeeded, command.Execute(new Context()));
             command.AssertStates(Executed, Executed, Executed);
         }
 
@@ -44,7 +45,7 @@ namespace CommandEngine.Tests.Unit
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             );
-            Assert.Equal(Failed, command.Execute());
+            Assert.Equal(Failed, command.Execute(new Context()));
             command.AssertStates(FailedToExecute, Initial, Initial);
         }
 
@@ -56,7 +57,7 @@ namespace CommandEngine.Tests.Unit
                 AlwaysFail.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             );
-            Assert.Equal(Reverted, command.Execute());
+            Assert.Equal(Reverted, command.Execute(new Context()));
             command.AssertStates(Reversed, FailedToExecute, Initial);
         }
 
@@ -68,7 +69,7 @@ namespace CommandEngine.Tests.Unit
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysFail.Otherwise(AlwaysSuccessful)
             );
-            Assert.Equal(Reverted, command.Execute());
+            Assert.Equal(Reverted, command.Execute(new Context()));
             command.AssertStates(Reversed, Reversed, FailedToExecute);
         }
 
@@ -84,7 +85,7 @@ namespace CommandEngine.Tests.Unit
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful)),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             );
-            Assert.Equal(Succeeded, command.Execute());
+            Assert.Equal(Succeeded, command.Execute(new Context()));
             command.AssertStates(Executed, Executed, Executed, Executed, Executed, Executed);
         }
 
@@ -100,7 +101,7 @@ namespace CommandEngine.Tests.Unit
                     AlwaysFail.Otherwise(AlwaysSuccessful)),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             );
-            Assert.Equal(Reverted, command.Execute());
+            Assert.Equal(Reverted, command.Execute(new Context()));
             command.AssertStates(Reversed, Reversed, Reversed, Reversed, FailedToExecute, Initial);
         }
 
@@ -116,9 +117,9 @@ namespace CommandEngine.Tests.Unit
                     new SuspendFirstOnly().Otherwise(AlwaysSuccessful)),
                 AlwaysFail.Otherwise(AlwaysSuccessful)
             );
-            Assert.Throws<TaskSuspendedException>(() => command.Execute());
+            Assert.Throws<TaskSuspendedException>(() => command.Execute(new Context()));
             command.AssertStates(Executed, Executed, Executed, Executed, Initial, Initial);
-            Assert.Equal(Reverted, command.Execute());
+            Assert.Equal(Reverted, command.Execute(new Context()));
             command.AssertStates(Reversed, Reversed, Reversed, Reversed, Reversed, FailedToExecute);
         }
 
@@ -134,7 +135,7 @@ namespace CommandEngine.Tests.Unit
                     AlwaysSuccessful.Otherwise(new CrashingTask())),
                 AlwaysFail.Otherwise(AlwaysSuccessful)
             );
-            Assert.Throws<UndoTaskFailureException>(() => command.Execute());
+            Assert.Throws<UndoTaskFailureException>(() => command.Execute(new Context()));
             command.AssertStates(Executed, Executed, Executed, Executed, FailedToUndo, FailedToExecute);
         }
 

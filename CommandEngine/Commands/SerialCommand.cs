@@ -1,4 +1,5 @@
-﻿using static CommandEngine.Commands.CommandStatus;
+﻿using CommandEngine.Tasks;
+using static CommandEngine.Commands.CommandStatus;
 
 namespace CommandEngine.Commands {
     public class SerialCommand : Command {
@@ -23,18 +24,18 @@ namespace CommandEngine.Commands {
             visitor.PostVisit(this);
         }
 
-        public CommandStatus Execute() {
-            var status = _commands[0].Execute();
+        public CommandStatus Execute(Context c) {
+            var status = _commands[0].Execute(c);
             switch (status) {
                 case Succeeded:
                     if (_commands.Count == 1) return Succeeded;
-                    var restStatus = new SerialCommand(_commands.GetRange(1, _commands.Count - 1)).Execute();
+                    var restStatus = new SerialCommand(_commands.GetRange(1, _commands.Count - 1)).Execute(c);
                     switch (restStatus) {
                         case Succeeded:
                             return Succeeded;
                         case Failed:
                         case Reverted:
-                            return _commands[0].Undo();
+                            return _commands[0].Undo(c);
                     }
 
                     break;
@@ -49,8 +50,8 @@ namespace CommandEngine.Commands {
             throw new InvalidOperationException("Unexpected result from execution");
         }
 
-        public CommandStatus Undo() {
-            foreach (var command in _commands.AsEnumerable().Reverse().ToList()) command.Undo();
+        public CommandStatus Undo(Context c) {
+            foreach (var command in _commands.AsEnumerable().Reverse().ToList()) command.Undo(c);
             return Reverted;
         }
     }
