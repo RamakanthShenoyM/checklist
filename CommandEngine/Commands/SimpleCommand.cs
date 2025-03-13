@@ -30,7 +30,10 @@ namespace CommandEngine.Commands {
 
         private CommandStatus RealUndo() {
             try {
-                if (revertTask.Execute() == Failed) throw new UndoTaskFailureException(revertTask, this);
+                if (revertTask.Execute() == Failed)
+                {   _state= new FailedToUndo();
+                    throw new UndoTaskFailureException(revertTask, this);
+                }
                 if (revertTask.Execute() == Suspended) throw new TaskSuspendedException(revertTask, this);
                 return Reverted;
             }
@@ -41,6 +44,7 @@ namespace CommandEngine.Commands {
                 throw;
             }
             catch (Exception) {
+                _state = new FailedToUndo();
                 throw new UndoTaskFailureException(revertTask, this);
             }
         }
@@ -54,7 +58,8 @@ namespace CommandEngine.Commands {
         private class Initial : SimpleCommandState {
             public CommandStatus Execute(SimpleCommand command) {
                 var status = command.RealExecute();
-                command._state = new Executed();
+
+                command._state = status==Succeeded?new Executed(): new FailedToExecute();
                 return status;
             }
 
@@ -84,12 +89,33 @@ namespace CommandEngine.Commands {
             public CommandStatus Undo(SimpleCommand command) => 
                 throw new InvalidOperationException("Command has already been undone");
         }
+        
+        private class FailedToExecute : SimpleCommandState
+        {
+            public CommandState State() => CommandState.FailedToExecute;
+            public CommandStatus Execute(SimpleCommand command) => 
+                throw new InvalidOperationException("Command has already failed");
+
+            public CommandStatus Undo(SimpleCommand command) => 
+                throw new InvalidOperationException("Command has already failed");
+        }
+        private class FailedToUndo : SimpleCommandState
+        {
+            public CommandState State() => CommandState.FailedToUndo;
+            public CommandStatus Execute(SimpleCommand command) => 
+                throw new InvalidOperationException("Command undo already failed");
+
+            public CommandStatus Undo(SimpleCommand command) => 
+                throw new InvalidOperationException("Command undo already failed");
+        }
     }
 
     public enum CommandState
     {
         Initial,
         Executed,
-        Reversed
+        Reversed,
+        FailedToExecute,
+        FailedToUndo
     }
 }

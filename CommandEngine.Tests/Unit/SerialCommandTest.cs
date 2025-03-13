@@ -47,7 +47,7 @@ namespace CommandEngine.Tests.Unit
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             }.ToCommand();
             Assert.Equal(Failed, command.Execute());
-            command.AssertStates(Executed, Initial, Initial);
+            command.AssertStates(FailedToExecute, Initial, Initial);
         }
         
         [Fact]
@@ -60,7 +60,7 @@ namespace CommandEngine.Tests.Unit
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             }.ToCommand();
             Assert.Equal(Reverted, command.Execute());
-            command.AssertStates(Reversed, Executed, Initial);
+            command.AssertStates(Reversed, FailedToExecute, Initial);
         }
         
         [Fact]
@@ -73,7 +73,7 @@ namespace CommandEngine.Tests.Unit
                 AlwaysFail.Otherwise(AlwaysSuccessful)
             }.ToCommand();
             Assert.Equal(Reverted, command.Execute());
-            command.AssertStates(Reversed, Reversed, Executed);
+            command.AssertStates(Reversed, Reversed, FailedToExecute);
         }
 
         [Fact]
@@ -111,7 +111,7 @@ namespace CommandEngine.Tests.Unit
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             }.ToCommand();
             Assert.Equal(Reverted, command.Execute());
-            command.AssertStates(Reversed, Reversed, Reversed, Reversed, Executed, Initial);
+            command.AssertStates(Reversed, Reversed, Reversed, Reversed, FailedToExecute, Initial);
         } 
         
         [Fact]
@@ -132,7 +132,26 @@ namespace CommandEngine.Tests.Unit
             Assert.Throws<TaskSuspendedException>(() => command.Execute());
             command.AssertStates(Executed, Executed, Executed, Executed, Initial, Initial);
             Assert.Equal(Reverted, command.Execute());
-            command.AssertStates(Reversed, Reversed, Reversed, Reversed, Reversed, Executed);
+            command.AssertStates(Reversed, Reversed, Reversed, Reversed, Reversed, FailedToExecute);
+        }
+
+        [Fact]
+        public void SerialWithSerialCrashed()
+        {
+            var command = new Command[]
+            {
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                new Command[]
+                {
+                    AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                    AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                    AlwaysSuccessful.Otherwise(new CrashingTask())
+                }.ToCommand(),
+                AlwaysFail.Otherwise(AlwaysSuccessful)
+            }.ToCommand();
+            Assert.Throws<UndoTaskFailureException>(() => command.Execute());
+            command.AssertStates(Executed, Executed, Executed, Executed, FailedToUndo, FailedToExecute);
         }
     }
 }
