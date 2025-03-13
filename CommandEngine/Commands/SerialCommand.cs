@@ -43,6 +43,8 @@ namespace CommandEngine.Commands
                             return _commands[0].Undo();
                     }
                     break;
+                case Reverted:
+                    return Reverted;                
                 case Failed:
                     return Failed;
                 default:
@@ -53,7 +55,10 @@ namespace CommandEngine.Commands
 
         public CommandStatus Undo()
         {
-            throw new NotImplementedException();
+            var reversedCommand = new List<Command>(_commands);
+            reversedCommand.Reverse();
+            foreach (var command in reversedCommand) command.Undo();
+            return Reverted;
         }
     }
 }
