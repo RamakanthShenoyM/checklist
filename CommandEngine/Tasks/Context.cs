@@ -1,4 +1,5 @@
-﻿namespace CommandEngine.Tasks
+﻿
+namespace CommandEngine.Tasks
 {
     public class Context
     {
@@ -15,5 +16,16 @@
                 _values[label] = value;
             }
         }
-    }
+
+        public Context SubContext(params object[] labels)
+        {
+            var result = new Context();
+            foreach (var label in labels)
+            {
+                if (!_values.ContainsKey(label)) throw new MissingContextInformationException(label);
+                result[label] = _values[label];
+            }
+            return result;
+        }
+	}
 }

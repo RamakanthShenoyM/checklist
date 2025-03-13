@@ -7,7 +7,6 @@ namespace CommandEngine.Tasks
     {
         public CommandStatus Execute(Context c)
         {
-            c[Conclusion] = conclusion;
             throw new ConclusionException(conclusion);
         }
     }
