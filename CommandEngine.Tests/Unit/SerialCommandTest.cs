@@ -11,79 +11,69 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void HappyPath()
         {
-            var first = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
-            var second = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
-            var third = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
-            var command = new SerialCommand(first,second,third);
+            var command = new Command[]
+            {
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful)
+            }.ToCommand();
             Assert.Equal(Succeeded, command.Execute());
-            var states = new StateVisitor(command);
-            Assert.Equal(Executed, states[first]);
-            Assert.Equal(Executed, states[second]);
-            Assert.Equal(Executed, states[third]);
+            command.AssertStates(Executed, Executed, Executed);
         }
 
         [Fact]
         public void Suspend()
         {
-            var first = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
-            var second = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
-            var third = new SimpleCommand(new SuspendFirstOnly(), AlwaysSuccessful);
-            var command = new SerialCommand(first, second, third);
-            var e = Assert.Throws<TaskSuspendedException>(()=> command.Execute());
-            Assert.Equal(third, e.Command);
-            var states = new StateVisitor(command);
-            Assert.Equal(Executed, states[first]);
-            Assert.Equal(Executed, states[second]);
-            Assert.Equal(Initial, states[third]);
-            
+            var command = new Command[]
+            {
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                new SuspendFirstOnly().Otherwise(AlwaysSuccessful)
+            }.ToCommand();
+            var e=Assert.Throws<TaskSuspendedException>(()=> command.Execute());
+            Assert.Equal(command[2], e.Command);
+            command.AssertStates(Executed, Executed, Initial);
             Assert.Equal(Succeeded, command.Execute());
-
-            states = new StateVisitor(command);
-            Assert.Equal(Executed, states[first]);
-            Assert.Equal(Executed, states[second]);
-            Assert.Equal(Executed, states[third]);
+            command.AssertStates(Executed, Executed, Executed);
         }
 
         [Fact]
         public void FirstFailure()
         {
-            var first = new SimpleCommand(AlwaysFail, AlwaysSuccessful);
-            var second = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
-            var third = new SimpleCommand(AlwaysFail, AlwaysSuccessful);
-            var command = new SerialCommand(first, second, third);
+            var command = new Command[]
+            {
+                AlwaysFail.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful)
+            }.ToCommand();
             Assert.Equal(Failed, command.Execute());
-            var states = new StateVisitor(command);
-            Assert.Equal(Executed, states[first]);
-            Assert.Equal(Initial, states[second]);
-            Assert.Equal(Initial, states[third]);
+            command.AssertStates(Executed, Initial, Initial);
         }
         
         [Fact]
         public void SecondFailure()
         {
-            var first = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
-            var second = new SimpleCommand(AlwaysFail, AlwaysSuccessful);
-            var third = new SimpleCommand(AlwaysFail, AlwaysSuccessful);
-            var command = new SerialCommand(first, second, third);
+            var command = new Command[]
+            {
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysFail.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful)
+            }.ToCommand();
             Assert.Equal(Reverted, command.Execute());
-            var states = new StateVisitor(command);
-            Assert.Equal(Reversed, states[first]);
-            Assert.Equal(Executed, states[second]);
-            Assert.Equal(Initial, states[third]);
+            command.AssertStates(Reversed, Executed, Initial);
         }
         
         [Fact]
         public void ThirdFailure()
         {
-            var first = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
-            var second = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
-            var third = new SimpleCommand(AlwaysFail, AlwaysSuccessful);
-            var command = new SerialCommand(first, second, third);
+            var command = new Command[]
+            {
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysFail.Otherwise(AlwaysSuccessful)
+            }.ToCommand();
             Assert.Equal(Reverted, command.Execute());
-            var states = new StateVisitor(command);
-            Assert.Equal(Reversed, states[first]);
-            Assert.Equal(Reversed, states[second]);
-            Assert.Equal(Executed, states[third]);
+            command.AssertStates(Reversed, Reversed, Executed);
         }
     }
 }

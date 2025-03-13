@@ -3,13 +3,15 @@ using CommandEngine.Commands;
 namespace CommandEngine.Tests.Util {
     internal class StateVisitor : CommandVisitor
     {
-        private readonly Dictionary<SimpleCommand, CommandState> _states = new();
-        public StateVisitor(SerialCommand command)
+        private readonly OrderedDictionary<SimpleCommand, CommandState> _states = new();
+        public StateVisitor(Command command)
         {
             command.Accept(this);
         }
 
-        public CommandState this[SimpleCommand command] => _states[command];
+        internal CommandState this[SimpleCommand command] => _states[command];
+
+        internal List<CommandState> States => _states.Values.ToList();
 
         public void PostVisit(SerialCommand command)
         {

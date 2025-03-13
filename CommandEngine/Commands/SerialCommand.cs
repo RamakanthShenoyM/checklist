@@ -12,10 +12,12 @@ namespace CommandEngine.Commands
             _commands.Insert(0, firstCommand);
         }
 
-        private SerialCommand(List<Command> commands)
+        public SerialCommand(List<Command> commands)
         {
             _commands = commands;
         }
+
+        public Command this[int index] => _commands[index];
 
         public void Accept(CommandVisitor visitor)
         {
