@@ -1,8 +1,9 @@
 ﻿using CommandEngine.Tasks;
 using static CommandEngine.Commands.CommandStatus;
 
-namespace CommandEngine.Commands {
-    
+namespace CommandEngine.Commands
+{
+
     public class SimpleCommand(CommandTask task, CommandTask revertTask) : Command {
         private SimpleCommandState _state = new Initial();
 
@@ -15,11 +16,16 @@ namespace CommandEngine.Commands {
 
         public CommandStatus Undo(Context c) => _state.Undo(this, c);
 
-        private CommandStatus RealExecute() {
+        private CommandStatus RealExecute(Context c)
+        {
             try {
-                var status = task.Execute();
+                var status = task.Execute(c);
                 if (status == Suspended) throw new TaskSuspendedException(task, this);
                 return status;
+            }
+            catch (ConclusionException)
+            {
+                throw;
             }
             catch (TaskSuspendedException) {
                 throw;
@@ -29,19 +35,24 @@ namespace CommandEngine.Commands {
             }
         }
 
-        private CommandStatus RealUndo() {
+        private CommandStatus RealUndo(Context c)
+        {
             try {
-                if (revertTask.Execute() == Failed)
+                if (revertTask.Execute(c) == Failed)
                 {   _state= new FailedToUndo();
                     throw new UndoTaskFailureException(revertTask, this);
                 }
-                if (revertTask.Execute() == Suspended) throw new TaskSuspendedException(revertTask, this);
+                if (revertTask.Execute(c) == Suspended) throw new TaskSuspendedException(revertTask, this);
                 return Reverted;
             }
             catch (TaskSuspendedException) {
                 throw;
             }
             catch (UndoTaskFailureException) {
+                throw;
+            }
+            catch (ConclusionException)
+            {
                 throw;
             }
             catch (Exception) {
@@ -58,7 +69,7 @@ namespace CommandEngine.Commands {
 
         private class Initial : SimpleCommandState {
             public CommandStatus Execute(SimpleCommand command, Context c) {
-                var status = command.RealExecute();
+                var status = command.RealExecute(c);
 
                 command._state = status==Succeeded?new Executed(): new FailedToExecute();
                 return status;
@@ -75,7 +86,7 @@ namespace CommandEngine.Commands {
             public CommandStatus Execute(SimpleCommand command, Context c) => Succeeded;
             public CommandStatus Undo(SimpleCommand command, Context c)
             {
-                var status = command.RealUndo();
+                var status = command.RealUndo(c);
                 command._state = new Reversed();
                 return status;
             }

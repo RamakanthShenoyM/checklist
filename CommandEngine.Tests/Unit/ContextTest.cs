@@ -27,9 +27,10 @@ namespace CommandEngine.Tests.Unit
                 new ConclusionTask(NotPay).Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             );
+            var context = new Context();
+            var e = Assert.Throws<ConclusionException>(() => command.Execute(context));
+            Assert.Equal(NotPay, e.Conclusion);
         }
-
-
     }
     internal enum TestConclusion
     {

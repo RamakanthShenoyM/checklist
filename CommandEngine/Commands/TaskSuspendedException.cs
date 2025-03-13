@@ -1,4 +1,6 @@
 ﻿
+using CommandEngine.Tasks;
+
 namespace CommandEngine.Commands
 {
     public class TaskSuspendedException(CommandTask suspendedTask, SimpleCommand command) 
