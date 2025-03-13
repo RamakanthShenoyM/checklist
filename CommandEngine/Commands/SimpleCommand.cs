@@ -3,7 +3,7 @@
 namespace CommandEngine.Commands {
     
     public class SimpleCommand(CommandTask task, CommandTask revertTask) : Command {
-        private State _state = new Initial();
+        private SimpleCommandState _state = new Initial();
 
         public void Accept(CommandVisitor visitor)
         {
@@ -45,13 +45,13 @@ namespace CommandEngine.Commands {
             }
         }
 
-        private interface State {
+        private interface SimpleCommandState {
             public CommandStatus Execute(SimpleCommand command);
             public CommandStatus Undo(SimpleCommand command);
             public CommandState State();
         }
 
-        private class Initial : State {
+        private class Initial : SimpleCommandState {
             public CommandStatus Execute(SimpleCommand command) {
                 var status = command.RealExecute();
                 command._state = new Executed();
@@ -64,7 +64,7 @@ namespace CommandEngine.Commands {
                 throw new InvalidOperationException("Command has not been executed yet.");
         }
 
-        private class Executed : State {
+        private class Executed : SimpleCommandState {
             public CommandState State() => CommandState.Executed;
             public CommandStatus Execute(SimpleCommand command) => Succeeded;
             public CommandStatus Undo(SimpleCommand command)
@@ -75,7 +75,7 @@ namespace CommandEngine.Commands {
             }
         }
 
-        private class Reversed : State
+        private class Reversed : SimpleCommandState
         {
             public CommandState State() => CommandState.Reversed;
             public CommandStatus Execute(SimpleCommand command) => 

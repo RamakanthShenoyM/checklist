@@ -1,13 +1,8 @@
 ﻿using CommandEngine.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CommandEngine.Tests.Util;
 using static CommandEngine.Commands.CommandStatus;
-using static CommandEngine.Tests.Unit.PermanentStatus;
+using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandState;
-
 
 namespace CommandEngine.Tests.Unit
 {
@@ -89,39 +84,6 @@ namespace CommandEngine.Tests.Unit
             Assert.Equal(Reversed, states[first]);
             Assert.Equal(Reversed, states[second]);
             Assert.Equal(Executed, states[third]);
-        }
-
-        private class SuspendFirstOnly : CommandTask
-        {
-            private bool _hasSuspended;
-            public CommandStatus Execute()
-            {
-                if (_hasSuspended)
-                    return Succeeded;
-                _hasSuspended = true;
-                return Suspended;
-            }
-        }
-
-        private class StateVisitor : CommandVisitor
-        {
-            private readonly Dictionary<SimpleCommand, CommandState> _states = new();
-            public StateVisitor(SerialCommand command)
-            {
-                command.Accept(this);
-            }
-
-            public CommandState this[SimpleCommand command] => _states[command];
-
-            public void PostVisit(SerialCommand command)
-            {
-            }
-
-            public void PreVisit(SerialCommand command)
-            {
-            }
-
-            public void Visit(SimpleCommand command, CommandState state) => _states[command] = state;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CommandEngine.Commands;
-using static CommandEngine.Tests.Unit.PermanentStatus;
+using CommandEngine.Tests.Util;
+using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandStatus;
 
 namespace CommandEngine.Tests.Unit
@@ -77,32 +78,6 @@ namespace CommandEngine.Tests.Unit
         {
             var command = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
             Assert.Throws<InvalidOperationException>(() => command.Undo());
-        }
-        
-    }
-    internal class PermanentStatus(CommandStatus status) : CommandTask
-    {
-        internal static readonly PermanentStatus AlwaysSuccessful = new(Succeeded);
-        internal static readonly PermanentStatus AlwaysFail = new(Failed);
-        internal static readonly PermanentStatus AlwaysSuspended = new(Suspended);
-
-        public CommandStatus Execute() => status;
-
-    }
-    internal class CrashingTask : CommandTask
-    {
-        public CommandStatus Execute() => throw new InvalidOperationException("unable to execute this task");
-    }
-
-    internal class RunOnceTask : CommandTask
-    {
-        private bool _hasRun;
-        
-        public CommandStatus Execute()
-        {
-            if (_hasRun) throw new InvalidOperationException("unable to execute this task twice");
-            _hasRun = true;
-            return Succeeded;
         }
     }
 }
