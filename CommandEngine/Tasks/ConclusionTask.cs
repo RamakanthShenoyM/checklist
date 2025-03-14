@@ -1,5 +1,4 @@
 ﻿using CommandEngine.Commands;
-using static CommandEngine.Tasks.CommandTask;
 
 namespace CommandEngine.Tasks
 {

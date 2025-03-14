@@ -1,10 +1,9 @@
 ﻿using CommandEngine.Tasks;
+using CommandEngine.Tests.Util;
 using static CommandEngine.Tests.Unit.TestConclusion;
 using static CommandEngine.Tests.Unit.TestLabels;
 using static CommandEngine.Commands.SerialCommand;
 using static CommandEngine.Tests.Util.PermanentStatus;
-using CommandEngine.Tests.Util;
-using static CommandEngine.Commands.CommandStatus;
 using static CommandEngine.Commands.CommandState;
 
 namespace CommandEngine.Tests.Unit
@@ -19,6 +18,7 @@ namespace CommandEngine.Tests.Unit
 			context[Conclusion] = NotPay;
 			Assert.Equal(NotPay, context[Conclusion]);
 		}
+		
 		[Fact]
 		public void TaskWithConclusion()
 		{
@@ -33,6 +33,7 @@ namespace CommandEngine.Tests.Unit
 			command.AssertStates(Executed, Executed, Initial);
 
 		}
+		
 		[Fact]
 		public void ExtractSubContext()
 		{
@@ -66,6 +67,7 @@ namespace CommandEngine.Tests.Unit
 			);
 			var c = new Context();
 			c["A"] = "A";
+			// TODO: SubContext should be created by SimpleCommand!
 			var e = Assert.Throws<ConclusionException>(() => command.Execute(c.SubContext("A")));
 			Assert.Equal(NotPay, e.Conclusion);
 			command.AssertStates(Executed, Executed, Initial);
