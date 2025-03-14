@@ -23,6 +23,7 @@ namespace CommandEngine.Tests.Unit
             Assert.Equal(Succeeded, command.Execute(c));
             command.AssertStates(Executed, Executed, Executed);
             Assert.Equal(3, c.History.Events(CommandStateChange).Count);
+            Assert.Equal(3,c.History.Events(TaskExecuted).Count);
         }
 
         [Fact]

@@ -25,6 +25,7 @@ namespace CommandEngine.Commands
         private CommandStatus RealExecute(Context c)
 		{
             var subContext = c.SubContext(task.NeededLabels);
+			c.History.Event(this, task);
             try
 			{
 				var status = task.Execute(subContext);
