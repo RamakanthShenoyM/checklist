@@ -46,18 +46,22 @@ namespace CommandEngine.Commands
 
 		private CommandStatus RealUndo(Context c)
 		{
-			try
+            var subContext = c.SubContext(revertTask.NeededLabels);
+            try
 			{
-				if (revertTask.Execute(c) == Failed)
+				var status = revertTask.Execute(subContext);
+                if (status == Failed)
 				{
 					_state = new FailedToUndo();
 					throw new UndoTaskFailureException(revertTask, this);
 				}
-				if (revertTask.Execute(c) == Suspended) throw new TaskSuspendedException(revertTask, this);
+				c.Update(subContext, revertTask.ChangedLabels);
+				if (status == Suspended) throw new TaskSuspendedException(revertTask, this);
 				return Reverted;
 			}
 			catch (CommandException)
 			{
+				c.Update(subContext, revertTask.ChangedLabels);
 				throw;
 			}
 			catch (Exception)

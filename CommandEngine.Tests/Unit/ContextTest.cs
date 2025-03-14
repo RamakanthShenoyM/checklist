@@ -59,7 +59,7 @@ namespace CommandEngine.Tests.Unit
 		}
 
 		[Fact]
-		public void TaskWithSubContextConclusion()
+		public void TaskWithSubContext()
 		{
 			var c = Context("A", "B", "C");
 			var neededLabels = Labels("A", "B");
@@ -74,6 +74,22 @@ namespace CommandEngine.Tests.Unit
 			Assert.Equal("DChanged", c["D"]);
 			Assert.Equal("BChanged", c["B"]);
 		}
+        [Fact]
+        public void UndoTaskWithSubContext()
+        {
+            var c = Context("A", "B", "C");
+            var neededLabels = Labels("A", "B");
+            var changedLabels = Labels("D", "B");
+            var missingLabels = Labels("C");
+            var command = Sequence(
+                    AlwaysSuccessful.Otherwise( new ContextTask(neededLabels, changedLabels, missingLabels)),
+                    AlwaysFail.Otherwise(AlwaysSuccessful)
+            );
+            Assert.Throws<MissingContextInformationException>(() => c["D"]);
+            Assert.Equal(Reverted, command.Execute(c));
+            Assert.Equal("DChanged", c["D"]);
+            Assert.Equal("BChanged", c["B"]);
+        }
 
         private List<object> Labels(params string[] labels) => new List<object>(labels);
 
