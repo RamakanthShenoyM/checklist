@@ -1,11 +1,16 @@
 ﻿
 
 
+
+using CommandEngine.Commands;
+
 namespace CommandEngine.Tasks
 {
     public class Context
     {
         private readonly Dictionary<object, object> _values = new();
+        private readonly CommandHistory _history = new();
+
         public object this[object label]
         {
             get
@@ -21,6 +26,8 @@ namespace CommandEngine.Tasks
 
         public bool Has(object label) => _values.ContainsKey(label);
 
+        public CommandHistory History => _history;
+
         public Context SubContext(List<object> labels)
         {
             var result = new Context();
@@ -32,6 +39,12 @@ namespace CommandEngine.Tasks
         {
             foreach (var label in changedLabels) 
                 if (subContext.Has(label)) this[label] = subContext[label];
+        }
+
+        internal void Event(Command command, CommandState originalState, CommandState newState)
+        {
+            _history.Event(command, originalState, newState);
+            
         }
     }
 }

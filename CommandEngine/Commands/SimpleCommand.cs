@@ -16,8 +16,13 @@ namespace CommandEngine.Commands
 		public CommandStatus Execute(Context c) => _state.Execute(this, c);
 
 		public CommandStatus Undo(Context c) => _state.Undo(this, c);
-
-		private CommandStatus RealExecute(Context c)
+		private void State(SimpleCommandState newState, Context c)
+        {
+			c.Event(this, _state.State(), newState.State());
+			_state = newState;
+		}
+        public override string ToString() => $"Command with Task <{task}> and revert Task <{revertTask}>";
+        private CommandStatus RealExecute(Context c)
 		{
             var subContext = c.SubContext(task.NeededLabels);
             try
@@ -30,7 +35,7 @@ namespace CommandEngine.Commands
 			catch (ConclusionException)
 			{
                 c.Update(subContext, task.ChangedLabels);
-                _state = new Executed();
+                 State(new Executed(), c);
 				throw;
 			}
 			catch (CommandException)
@@ -52,7 +57,7 @@ namespace CommandEngine.Commands
 				var status = revertTask.Execute(subContext);
                 if (status == Failed)
 				{
-					_state = new FailedToUndo();
+					State(new FailedToUndo(), c);
 					throw new UndoTaskFailureException(revertTask, this);
 				}
 				c.Update(subContext, revertTask.ChangedLabels);
@@ -65,8 +70,8 @@ namespace CommandEngine.Commands
 				throw;
 			}
 			catch (Exception)
-			{
-				_state = new FailedToUndo();
+			{	
+				State(new FailedToUndo(), c);
 				throw new UndoTaskFailureException(revertTask, this);
 			}
 		}
@@ -84,7 +89,7 @@ namespace CommandEngine.Commands
 			{
 				var status = command.RealExecute(c);
 
-				command._state = status == Succeeded ? new Executed() : new FailedToExecute();
+				command.State(status == Succeeded ? new Executed() : new FailedToExecute(), c);
 				return status;
 			}
 
@@ -101,7 +106,7 @@ namespace CommandEngine.Commands
 			public CommandStatus Undo(SimpleCommand command, Context c)
 			{
 				var status = command.RealUndo(c);
-				command._state = new Reversed();
+				command.State(new Reversed(), c);
 				return status;
 			}
 		}

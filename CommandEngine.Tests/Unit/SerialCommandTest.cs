@@ -5,6 +5,7 @@ using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandState;
 using static CommandEngine.Commands.SerialCommand;
 using CommandEngine.Tasks;
+using static CommandEngine.Commands.CommandEventType;
 
 namespace CommandEngine.Tests.Unit
 {
@@ -13,13 +14,15 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void HappyPath()
         {
+            var c = new Context();
             var command = Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             );
-            Assert.Equal(Succeeded, command.Execute(new Context()));
+            Assert.Equal(Succeeded, command.Execute(c));
             command.AssertStates(Executed, Executed, Executed);
+            Assert.Equal(3, c.History.Events(CommandStateChange).Count);
         }
 
         [Fact]

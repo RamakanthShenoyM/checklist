@@ -14,6 +14,7 @@ namespace CommandEngine.Tests.Util
         public CommandStatus Execute(Context c) => status;
         public List<object> NeededLabels => new();
         public List<object> ChangedLabels => new();
+        public override string ToString() => $"Task always is {status} ";
     }
 
     internal class CrashingTask : CommandTask
@@ -21,6 +22,7 @@ namespace CommandEngine.Tests.Util
         public List<object> NeededLabels => new();
 
         public List<object> ChangedLabels => new();
+        public override string ToString() => $"Task always Crashes ";
 
         public CommandStatus Execute(Context c) => throw new InvalidOperationException("unable to execute this task");
     }
@@ -31,6 +33,7 @@ namespace CommandEngine.Tests.Util
         public List<object> NeededLabels => new();
 
         public List<object> ChangedLabels => new();
+        public override string ToString() => $"Task only run once";
         public CommandStatus Execute(Context c)
         {
             if (_hasRun) throw new InvalidOperationException("unable to execute this task twice");
@@ -45,6 +48,7 @@ namespace CommandEngine.Tests.Util
         public List<object> NeededLabels => new();
 
         public List<object> ChangedLabels => new();
+        public override string ToString() => $"Task Suspends on first Execution ";
         public CommandStatus Execute(Context c)
         {
             if (_hasSuspended) return Succeeded;
@@ -57,6 +61,7 @@ namespace CommandEngine.Tests.Util
         public List<object> NeededLabels => neededLabels;
 
         public List<object> ChangedLabels => changedLabels;
+        public override string ToString() => $"Task needs labels {neededLabels} and sets {changedLabels} ";
 
         public CommandStatus Execute(Context c)
         {
