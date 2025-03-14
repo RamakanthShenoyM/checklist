@@ -1,4 +1,5 @@
-﻿using CommandEngine.Tasks;
+﻿using CommandEngine.Commands;
+using CommandEngine.Tasks;
 using CommandEngine.Tests.Util;
 using static CommandEngine.Tests.Unit.TestConclusion;
 using static CommandEngine.Tests.Unit.TestLabels;
@@ -6,9 +7,7 @@ using static CommandEngine.Commands.SerialCommand;
 using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandState;
 using static CommandEngine.Commands.CommandStatus;
-using System.ComponentModel.Design.Serialization;
-using static CommandEngine.Tasks.MandatoryTask;
-using CommandEngine.Commands;
+using static CommandEngine.Tasks.CommandTask;
 
 namespace CommandEngine.Tests.Unit
 {
@@ -41,10 +40,11 @@ namespace CommandEngine.Tests.Unit
 		[Fact]
 		public void ExtractSubContext()
 		{
-			var c = new Context();
-			c["A"] = "A";
-			c["B"] = "B";
-			c["C"] = "C";
+			var c = new Context {
+				["A"] = "A",
+				["B"] = "B",
+				["C"] = "C"
+			};
 			var sub = c.SubContext(Labels("A", "B"));
 			Assert.Equal("A", sub["A"]);
 			Assert.Equal("B", sub["B"]);
@@ -110,9 +110,9 @@ namespace CommandEngine.Tests.Unit
             var missingLabels = Labels("C");
             var command = Sequence(
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
-                    new ContextTask(neededLabels, changedLabels, missingLabels).Mandatory().Otherwise(AlwaysSuccessful)
+                    Mandatory(new ContextTask(neededLabels, changedLabels, missingLabels)).Otherwise(AlwaysSuccessful)
             );
-            Assert.Throws<MissingContextInformationException>(() => c["D"]);
+            Assert.False(c.Has("D"));
             Assert.Throws<TaskSuspendedException>(() => command.Execute(c));
 			c["D"] = "D";
             Assert.Equal(Succeeded, command.Execute(c));
@@ -120,9 +120,9 @@ namespace CommandEngine.Tests.Unit
             Assert.Equal("BChanged", c["B"]);
         }
 
-        private List<object> Labels(params string[] labels) => new List<object>(labels);
+        private static List<object> Labels(params string[] labels) => [..labels];
 
-        private Context Context(params string[] labels)
+        private static Context Context(params string[] labels)
         {
             var result = new Context();
 			foreach(var label in labels) result[label] = label.ToUpper();
