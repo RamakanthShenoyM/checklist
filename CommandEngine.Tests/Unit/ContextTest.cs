@@ -6,6 +6,9 @@ using static CommandEngine.Commands.SerialCommand;
 using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandState;
 using static CommandEngine.Commands.CommandStatus;
+using System.ComponentModel.Design.Serialization;
+using static CommandEngine.Tasks.MandatoryTask;
+using CommandEngine.Commands;
 
 namespace CommandEngine.Tests.Unit
 {
@@ -49,16 +52,6 @@ namespace CommandEngine.Tests.Unit
 		}
 
 		[Fact]
-		public void ExtractSubContextWithInvalid()
-		{
-			var c = new Context();
-			c["A"] = "A";
-			c["B"] = "B";
-			var e = Assert.Throws<MissingContextInformationException>(() => c.SubContext(Labels("A", "B", "D")));
-			Assert.Equal("D", e.MissingLabel);
-		}
-
-		[Fact]
 		public void TaskWithSubContext()
 		{
 			var c = Context("A", "B", "C");
@@ -87,6 +80,42 @@ namespace CommandEngine.Tests.Unit
             );
             Assert.Throws<MissingContextInformationException>(() => c["D"]);
             Assert.Equal(Reverted, command.Execute(c));
+            Assert.Equal("DChanged", c["D"]);
+            Assert.Equal("BChanged", c["B"]);
+        }
+
+        [Fact]
+        public void TaskWithMissingLabel()
+        {
+            var c = Context("A", "B", "C");
+            var neededLabels = Labels("A", "B", "D");
+            var changedLabels = Labels("D", "B");
+            var missingLabels = Labels("C");
+            var command = Sequence(
+                    AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                    new ContextTask(neededLabels, changedLabels, missingLabels).Otherwise(AlwaysSuccessful)
+            );
+            Assert.Throws<MissingContextInformationException>(() => c["D"]);
+            Assert.Equal(Succeeded, command.Execute(c));
+            Assert.Equal("DChanged", c["D"]);
+            Assert.Equal("BChanged", c["B"]);
+        }
+		
+		[Fact]
+        public void TaskWithRequiredLabel()
+        {
+            var c = Context("A", "B", "C");
+            var neededLabels = Labels("A", "B", "D");
+            var changedLabels = Labels("D", "B");
+            var missingLabels = Labels("C");
+            var command = Sequence(
+                    AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                    new ContextTask(neededLabels, changedLabels, missingLabels).Mandatory().Otherwise(AlwaysSuccessful)
+            );
+            Assert.Throws<MissingContextInformationException>(() => c["D"]);
+            Assert.Throws<TaskSuspendedException>(() => command.Execute(c));
+			c["D"] = "D";
+            Assert.Equal(Succeeded, command.Execute(c));
             Assert.Equal("DChanged", c["D"]);
             Assert.Equal("BChanged", c["B"]);
         }

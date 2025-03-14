@@ -1,4 +1,5 @@
-﻿using CommandEngine.Commands;
+﻿using System.ComponentModel.Design.Serialization;
+using CommandEngine.Commands;
 
 namespace CommandEngine.Tasks
 {
@@ -7,6 +8,5 @@ namespace CommandEngine.Tasks
         CommandStatus Execute(Context c);
         List<object> NeededLabels { get; }
         List<object> ChangedLabels { get; }
-
     }
 }

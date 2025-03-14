@@ -38,7 +38,7 @@ namespace CommandEngine.Commands
                 c.Update(subContext, task.ChangedLabels);
                 throw;
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
 				return Failed;
 			}

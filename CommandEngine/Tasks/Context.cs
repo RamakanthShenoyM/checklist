@@ -24,11 +24,7 @@ namespace CommandEngine.Tasks
         public Context SubContext(List<object> labels)
         {
             var result = new Context();
-            foreach (var label in labels)
-            {
-                if (!_values.ContainsKey(label)) throw new MissingContextInformationException(label);
-                result[label] = _values[label];
-            }
+            foreach (var label in labels) if (this.Has(label)) result[label] = this[label];
             return result;
         }
 

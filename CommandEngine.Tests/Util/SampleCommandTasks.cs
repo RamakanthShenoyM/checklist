@@ -60,7 +60,6 @@ namespace CommandEngine.Tests.Util
 
         public CommandStatus Execute(Context c)
         {
-            foreach (var label in neededLabels) Assert.True(c.Has(label), $"Missing label {label}");
             foreach (var label in missingLabels) Assert.False(c.Has(label), $"Unexpected label {label}");
             foreach (var label in changedLabels) c[label] = (label.ToString() ?? "null").ToUpper() + "Changed";
             return Succeeded;
