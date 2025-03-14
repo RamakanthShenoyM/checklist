@@ -10,17 +10,24 @@ namespace CommandEngine.Tests.Util
         internal static readonly PermanentStatus AlwaysSuccessful = new(Succeeded);
         internal static readonly PermanentStatus AlwaysFail = new(Failed);
         internal static readonly PermanentStatus AlwaysSuspended = new(Suspended);
-
         public CommandStatus Execute(Context c) => status;
+        public List<object> NeededLabels => new();
+        public List<object> ChangedLabels => new();
     }
 
     internal class CrashingTask : CommandTask {
+        public List<object> NeededLabels => new();
+
+        public List<object> ChangedLabels => new();
+
         public CommandStatus Execute(Context c) => throw new InvalidOperationException("unable to execute this task");
     }
 
     internal class RunOnceTask : CommandTask {
         private bool _hasRun;
+        public List<object> NeededLabels => new();
 
+        public List<object> ChangedLabels => new();
         public CommandStatus Execute(Context c)
         {
             if (_hasRun) throw new InvalidOperationException("unable to execute this task twice");
@@ -31,7 +38,9 @@ namespace CommandEngine.Tests.Util
 
     internal class SuspendFirstOnly : CommandTask {
         private bool _hasSuspended;
+        public List<object> NeededLabels => new();
 
+        public List<object> ChangedLabels => new();
         public CommandStatus Execute(Context c)
         {
             if (_hasSuspended) return Succeeded;

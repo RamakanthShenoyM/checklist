@@ -4,6 +4,9 @@ namespace CommandEngine.Tasks
 {
     public interface CommandTask
     {
-        public CommandStatus Execute(Context c);
+        CommandStatus Execute(Context c);
+        List<object> NeededLabels { get; }
+        List<object> ChangedLabels { get; }
+
     }
 }
