@@ -1,4 +1,6 @@
 ﻿
+
+
 namespace CommandEngine.Tasks
 {
     public class Context
@@ -17,7 +19,9 @@ namespace CommandEngine.Tasks
             }
         }
 
-        public Context SubContext(params object[] labels)
+        public bool Has(object label) => _values.ContainsKey(label);
+
+        public Context SubContext(List<object> labels)
         {
             var result = new Context();
             foreach (var label in labels)
@@ -27,5 +31,11 @@ namespace CommandEngine.Tasks
             }
             return result;
         }
-	}
+
+        internal void Update(Context subContext, List<object> changedLabels)
+        {
+            foreach (var label in changedLabels) 
+                if (subContext.Has(label)) this[label] = subContext[label];
+        }
+    }
 }

@@ -5,6 +5,7 @@ using static CommandEngine.Tests.Unit.TestLabels;
 using static CommandEngine.Commands.SerialCommand;
 using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandState;
+using static CommandEngine.Commands.CommandStatus;
 
 namespace CommandEngine.Tests.Unit
 {
@@ -41,7 +42,7 @@ namespace CommandEngine.Tests.Unit
 			c["A"] = "A";
 			c["B"] = "B";
 			c["C"] = "C";
-			var sub = c.SubContext("A", "B");
+			var sub = c.SubContext(Labels("A", "B"));
 			Assert.Equal("A", sub["A"]);
 			Assert.Equal("B", sub["B"]);
 			Assert.Throws<MissingContextInformationException>(() => sub["C"]);
@@ -53,27 +54,36 @@ namespace CommandEngine.Tests.Unit
 			var c = new Context();
 			c["A"] = "A";
 			c["B"] = "B";
-			var e = Assert.Throws<MissingContextInformationException>(() => c.SubContext("A", "B", "D"));
+			var e = Assert.Throws<MissingContextInformationException>(() => c.SubContext(Labels("A", "B", "D")));
 			Assert.Equal("D", e.MissingLabel);
 		}
 
 		[Fact]
 		public void TaskWithSubContextConclusion()
 		{
+			var c = Context("A", "B", "C");
+			var neededLabels = Labels("A", "B");
+			var changedLabels = Labels("D", "B");
+			var missingLabels = Labels("C");
 			var command = Sequence(
 					AlwaysSuccessful.Otherwise(AlwaysSuccessful),
-					new ConclusionTask(NotPay).Otherwise(AlwaysSuccessful),
-					AlwaysSuccessful.Otherwise(AlwaysSuccessful)
+					new ContextTask(neededLabels, changedLabels, missingLabels).Otherwise(AlwaysSuccessful)
 			);
-			var c = new Context();
-			c["A"] = "A";
-			// TODO: SubContext should be created by SimpleCommand!
-			var e = Assert.Throws<ConclusionException>(() => command.Execute(c.SubContext("A")));
-			Assert.Equal(NotPay, e.Conclusion);
-			command.AssertStates(Executed, Executed, Initial);
-
+			Assert.Throws<MissingContextInformationException>(() => c["D"]);
+			Assert.Equal(Succeeded, command.Execute(c));
+			Assert.Equal("DChanged", c["D"]);
+			Assert.Equal("BChanged", c["B"]);
 		}
-	}
+
+        private List<object> Labels(params string[] labels) => new List<object>(labels);
+
+        private Context Context(params string[] labels)
+        {
+            var result = new Context();
+			foreach(var label in labels) result[label] = label.ToUpper();
+			return result;
+        }
+    }
 	internal enum TestConclusion
 	{
 		Pay,

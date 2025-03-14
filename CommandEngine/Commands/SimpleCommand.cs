@@ -19,20 +19,24 @@ namespace CommandEngine.Commands
 
 		private CommandStatus RealExecute(Context c)
 		{
-			try
+            var subContext = c.SubContext(task.NeededLabels);
+            try
 			{
-				var status = task.Execute(c);
+				var status = task.Execute(subContext);
+				c.Update(subContext, task.ChangedLabels);
 				if (status == Suspended) throw new TaskSuspendedException(task, this);
 				return status;
 			}
 			catch (ConclusionException)
 			{
-				_state = new Executed();
+                c.Update(subContext, task.ChangedLabels);
+                _state = new Executed();
 				throw;
 			}
 			catch (CommandException)
 			{
-				throw;
+                c.Update(subContext, task.ChangedLabels);
+                throw;
 			}
 			catch (Exception)
 			{
