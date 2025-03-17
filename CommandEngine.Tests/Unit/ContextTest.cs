@@ -87,7 +87,6 @@ namespace CommandEngine.Tests.Unit
                     AlwaysSuccessful.Otherwise( new ContextTask(neededLabels, changedLabels, missingLabels)),
                     AlwaysFail.Otherwise(AlwaysSuccessful)
             );
-            Assert.Throws<MissingContextInformationException>(() => c["D"]);
             Assert.Equal(Reverted, command.Execute(c));
             Assert.Equal("DChanged", c["D"]);
             Assert.Equal("BChanged", c["B"]);

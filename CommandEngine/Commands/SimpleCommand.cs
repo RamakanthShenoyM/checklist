@@ -30,19 +30,19 @@ namespace CommandEngine.Commands
             try
 			{
 				var status = task.Execute(subContext);
-				Update(task,c, subContext);
 				if (status == Suspended) throw new TaskSuspendedException(task, this);
-				return status;
+                Update(task, c, subContext);
+                return status;
 			}
 			catch (ConclusionException)
 			{
-                c.Update(subContext, task.ChangedLabels);
+                Update(task, c, subContext);
                 State(new Executed(), c);
 				throw;
 			}
-			catch (CommandException)
+			catch (TaskSuspendedException)
 			{
-                c.Update(subContext, task.ChangedLabels);
+                Update(task, c, subContext);
                 throw;
 			}
 			catch (Exception e)
@@ -73,13 +73,21 @@ namespace CommandEngine.Commands
 					State(new FailedToUndo(), c);
 					throw new UndoTaskFailureException(revertTask, this);
 				}
-				c.Update(subContext, revertTask.ChangedLabels);
-				if (status == Suspended) throw new TaskSuspendedException(revertTask, this);
-				return Reverted;
+                Update(revertTask, c, subContext);
+                if (status == Suspended) throw new TaskSuspendedException(revertTask, this);
+                return Reverted;
 			}
-			catch (CommandException)
+            catch (UndoTaskFailureException)
+            {
+                throw;
+            }
+            catch (TaskSuspendedException)
 			{
-				c.Update(subContext, revertTask.ChangedLabels);
+				throw;
+			}
+			catch (ConclusionException)
+			{
+				Update(revertTask, c, subContext);
 				throw;
 			}
 			catch (Exception)
