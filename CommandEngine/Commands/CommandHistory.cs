@@ -26,9 +26,14 @@ namespace CommandEngine.Commands
             _events.Add(new ValueChangedEvent(command, task,label,previousValue,newValue));
 
         }
-        internal void Event(SerialCommand command)
+        internal void StartEvent(SerialCommand command)
         {
             _events.Add(new GroupSerialStartEvent(command));
+        }
+
+        internal void CompletedEvent(SerialCommand command)
+        {
+            _events.Add(new GroupSerialCompletedEvent(command));
         }
     }
 
@@ -36,6 +41,12 @@ namespace CommandEngine.Commands
     {
         public CommandEventType EventType => GroupSerialStart;
         public override string ToString() => $"Group Command <{command}> started";
+    }
+
+    internal class GroupSerialCompletedEvent(SerialCommand command) : CommandEvent
+    {
+        public CommandEventType EventType => GroupSerialComplete;
+        public override string ToString() => $"Group Command <{command}> completed";
     }
 
     internal class ValueChangedEvent(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue) : CommandEvent
@@ -68,6 +79,7 @@ namespace CommandEngine.Commands
         CommandStateChange,
         TaskExecuted,
         ValueChanged,
-        GroupSerialStart
+        GroupSerialStart,
+        GroupSerialComplete
     }
 }

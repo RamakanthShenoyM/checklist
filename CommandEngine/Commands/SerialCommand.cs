@@ -31,8 +31,10 @@ namespace CommandEngine.Commands {
 
         public CommandStatus Execute(Context c)
         {
-            c.Event(this);
-            return RealExecute(c);
+            c.StartEvent(this);
+            var result = RealExecute(c);
+            c.CompletedEvent(this);
+            return result;
         }
 
         private CommandStatus RealExecute(Context c) {

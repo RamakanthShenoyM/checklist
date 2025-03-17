@@ -70,6 +70,7 @@ namespace CommandEngine.Tests.Unit
 			Assert.Equal("BChanged", c["B"]);
 			Assert.Equal(2, c.History.Events(ValueChanged).Count);
             Assert.Single(c.History.Events(GroupSerialStart));
+            Assert.Single(c.History.Events(GroupSerialComplete));
 
             testOutput.WriteLine(c.History.ToString());	
         }

@@ -52,9 +52,14 @@ namespace CommandEngine.Tasks
             _history.Event(command, task, label,previousValue,newValue);
         }
 
-        internal void Event(SerialCommand command)
+        internal void StartEvent(SerialCommand command)
         {
-            _history.Event(command);
+            _history.StartEvent(command);
+        }
+
+        internal void CompletedEvent(SerialCommand command)
+        {
+            _history.CompletedEvent(command);
         }
     }
 }
