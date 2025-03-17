@@ -67,6 +67,7 @@ namespace CommandEngine.Tests.Unit
 			Assert.Equal(Succeeded, command.Execute(c));
 			Assert.Equal("DChanged", c["D"]);
 			Assert.Equal("BChanged", c["B"]);
+			Assert.Equal(2, c.History.Events(CommandEventType.ValueChanged).Count);
 			testOutput.WriteLine(c.History.ToString());	
         }
 

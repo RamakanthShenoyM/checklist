@@ -1,4 +1,5 @@
 ﻿using CommandEngine.Tasks;
+using System.Reflection.Emit;
 using static CommandEngine.Commands.CommandStatus;
 
 namespace CommandEngine.Commands
@@ -29,14 +30,14 @@ namespace CommandEngine.Commands
             try
 			{
 				var status = task.Execute(subContext);
-				c.Update(subContext, task.ChangedLabels);
+				Update(task,c, subContext);
 				if (status == Suspended) throw new TaskSuspendedException(task, this);
 				return status;
 			}
 			catch (ConclusionException)
 			{
                 c.Update(subContext, task.ChangedLabels);
-                 State(new Executed(), c);
+                State(new Executed(), c);
 				throw;
 			}
 			catch (CommandException)
@@ -50,7 +51,18 @@ namespace CommandEngine.Commands
 			}
 		}
 
-		private CommandStatus RealUndo(Context c)
+        private void Update(CommandTask task, Context c, Context subContext)
+        {
+            Dictionary<object, object?> previousValues = task.ChangedLabels.ToDictionary(label => label, label=> c.Has(label)?c[label]:null);
+			c.Update(subContext, task.ChangedLabels);
+            foreach (var keyValuePair in previousValues)
+            {
+				if (keyValuePair.Value != (c.Has(keyValuePair.Key) ? c[keyValuePair.Key] : null))
+				 c.Event(this,task, keyValuePair.Key, keyValuePair.Value, c.Has(keyValuePair.Key) ? c[keyValuePair.Key] : null);
+            }
+        }
+
+        private CommandStatus RealUndo(Context c)
 		{
             var subContext = c.SubContext(revertTask.NeededLabels);
             try

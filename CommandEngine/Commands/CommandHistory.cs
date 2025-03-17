@@ -18,9 +18,21 @@ namespace CommandEngine.Commands
 
 		internal void Event(SimpleCommand command, CommandTask task) => 
             _events.Add(new TaskStartedEvent(command, task));
-	}
 
-	internal class TaskStartedEvent(SimpleCommand command, CommandTask task) : CommandEvent
+        internal void Event(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue)
+        {
+            _events.Add(new ValueChangedEvent(command, task,label,previousValue,newValue));
+
+        }
+    }
+
+    internal class ValueChangedEvent(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue) : CommandEvent
+    {
+        public CommandEventType EventType => ValueChanged;
+        public override string ToString() => $"Task <{task}> in Command <{command}> changed <{label}> from <{previousValue}> to <{newValue}>";
+    }
+
+    internal class TaskStartedEvent(SimpleCommand command, CommandTask task) : CommandEvent
 	{
         public CommandEventType EventType => TaskExecuted;
 
@@ -42,6 +54,7 @@ namespace CommandEngine.Commands
     public enum CommandEventType
     {
         CommandStateChange,
-        TaskExecuted
+        TaskExecuted,
+        ValueChanged
     }
 }
