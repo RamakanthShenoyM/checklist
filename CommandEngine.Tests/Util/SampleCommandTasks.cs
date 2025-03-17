@@ -61,7 +61,7 @@ namespace CommandEngine.Tests.Util
         public List<object> NeededLabels => neededLabels;
 
         public List<object> ChangedLabels => changedLabels;
-        public override string ToString() => $"Task needs labels {neededLabels} and sets {changedLabels} ";
+        public override string ToString() => $"Task needs labels {string.Join(", ", neededLabels)} and sets {string.Join(", ",changedLabels)} ";
 
         public CommandStatus Execute(Context c)
         {

@@ -8,10 +8,11 @@ using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandState;
 using static CommandEngine.Commands.CommandStatus;
 using static CommandEngine.Tasks.CommandTask;
+using Xunit.Abstractions;
 
 namespace CommandEngine.Tests.Unit
 {
-	public class ContextTest
+	public class ContextTest(ITestOutputHelper testOutput)
 	{
 		[Fact]
 		public void SimpleConclusion()
@@ -66,7 +67,10 @@ namespace CommandEngine.Tests.Unit
 			Assert.Equal(Succeeded, command.Execute(c));
 			Assert.Equal("DChanged", c["D"]);
 			Assert.Equal("BChanged", c["B"]);
-		}
+			testOutput.WriteLine(c.History.ToString());	
+        }
+
+
         [Fact]
         public void UndoTaskWithSubContext()
         {

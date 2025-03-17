@@ -26,6 +26,8 @@ namespace CommandEngine.Tests.Unit
             Assert.Equal(3,c.History.Events(TaskExecuted).Count);
         }
 
+        
+
         [Fact]
         public void Suspend()
         {

@@ -9,7 +9,9 @@ namespace CommandEngine.Commands
 
         internal CommandHistory() { }
 
-		public List<CommandEvent> Events(CommandEventType type) => 
+        override public string ToString() => string.Join("\n", _events);
+
+        public List<CommandEvent> Events(CommandEventType type) => 
             _events.FindAll(e => e.EventType == type);
 		internal void Event(Command command, CommandState originalState, CommandState newState) => 
             _events.Add(new CommandStateEvent(command, originalState, newState));
