@@ -4,17 +4,22 @@ using static CommandEngine.Commands.CommandStatus;
 namespace CommandEngine.Commands {
     public class SerialCommand : Command {
         private readonly List<Command> _commands;
+        private readonly string _groupName;
 
-        public SerialCommand(Command firstCommand, params Command[] commands) {
+        public SerialCommand(string groupName, Command firstCommand, params Command[] commands)
+        {
             _commands = commands.ToList();
             _commands.Insert(0, firstCommand);
+            _groupName = groupName;
         }
 
+        public override string ToString() => _groupName;
+
         public SerialCommand(List<Command> commands)
-            : this(commands[0], commands.GetRange(1, commands.Count() - 1).ToArray()) { }
+            : this("first group", commands[0], commands.GetRange(1, commands.Count() - 1).ToArray()) { }
 
         public static SerialCommand Sequence(Command firstCommand, params Command[] commands) =>
-            new SerialCommand(firstCommand, commands);
+            new SerialCommand("first group", firstCommand, commands);
 
         public Command this[int index] => _commands[index];
 
@@ -24,12 +29,18 @@ namespace CommandEngine.Commands {
             visitor.PostVisit(this);
         }
 
-        public CommandStatus Execute(Context c) {
+        public CommandStatus Execute(Context c)
+        {
+            c.Event(this);
+            return RealExecute(c);
+        }
+
+        private CommandStatus RealExecute(Context c) {
             var status = _commands[0].Execute(c);
             switch (status) {
                 case Succeeded:
                     if (_commands.Count == 1) return Succeeded;
-                    var restStatus = new SerialCommand(_commands.GetRange(1, _commands.Count - 1)).Execute(c);
+                    var restStatus = new SerialCommand(_commands.GetRange(1, _commands.Count - 1)).RealExecute(c);
                     switch (restStatus) {
                         case Succeeded:
                             return Succeeded;

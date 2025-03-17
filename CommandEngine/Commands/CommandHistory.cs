@@ -1,4 +1,6 @@
 ﻿
+using System.Reflection.Emit;
+using System.Threading.Tasks;
 using CommandEngine.Tasks;
 using static CommandEngine.Commands.CommandEventType;
 namespace CommandEngine.Commands
@@ -24,6 +26,16 @@ namespace CommandEngine.Commands
             _events.Add(new ValueChangedEvent(command, task,label,previousValue,newValue));
 
         }
+        internal void Event(SerialCommand command)
+        {
+            _events.Add(new GroupSerialStartEvent(command));
+        }
+    }
+
+    internal class GroupSerialStartEvent(SerialCommand command) : CommandEvent
+    {
+        public CommandEventType EventType => GroupSerialStart;
+        public override string ToString() => $"Group Command <{command}> started";
     }
 
     internal class ValueChangedEvent(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue) : CommandEvent
@@ -36,7 +48,7 @@ namespace CommandEngine.Commands
 	{
         public CommandEventType EventType => TaskExecuted;
 
-		public override string ToString() => $"Command <{command}> will execute Task <{task}>";
+		public override string ToString() => $"Starting Command <{command}>, executing Task <{task}>";
 	}
 
 	internal class CommandStateEvent(Command command, CommandState originalState, CommandState newState) : CommandEvent
@@ -55,6 +67,7 @@ namespace CommandEngine.Commands
     {
         CommandStateChange,
         TaskExecuted,
-        ValueChanged
+        ValueChanged,
+        GroupSerialStart
     }
 }

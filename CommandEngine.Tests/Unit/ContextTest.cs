@@ -8,6 +8,7 @@ using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandState;
 using static CommandEngine.Commands.CommandStatus;
 using static CommandEngine.Tasks.CommandTask;
+using static CommandEngine.Commands.CommandEventType;
 using Xunit.Abstractions;
 
 namespace CommandEngine.Tests.Unit
@@ -59,7 +60,7 @@ namespace CommandEngine.Tests.Unit
 			var neededLabels = Labels("A", "B");
 			var changedLabels = Labels("D", "B");
 			var missingLabels = Labels("C");
-			var command = Sequence(
+			var command = "Primary Group".Sequence(
 					AlwaysSuccessful.Otherwise(AlwaysSuccessful),
 					new ContextTask(neededLabels, changedLabels, missingLabels).Otherwise(AlwaysSuccessful)
 			);
@@ -67,8 +68,10 @@ namespace CommandEngine.Tests.Unit
 			Assert.Equal(Succeeded, command.Execute(c));
 			Assert.Equal("DChanged", c["D"]);
 			Assert.Equal("BChanged", c["B"]);
-			Assert.Equal(2, c.History.Events(CommandEventType.ValueChanged).Count);
-			testOutput.WriteLine(c.History.ToString());	
+			Assert.Equal(2, c.History.Events(ValueChanged).Count);
+            Assert.Single(c.History.Events(GroupSerialStart));
+
+            testOutput.WriteLine(c.History.ToString());	
         }
 
 

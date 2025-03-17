@@ -51,5 +51,10 @@ namespace CommandEngine.Tasks
         {
             _history.Event(command, task, label,previousValue,newValue);
         }
+
+        internal void Event(SerialCommand command)
+        {
+            _history.Event(command);
+        }
     }
 }
