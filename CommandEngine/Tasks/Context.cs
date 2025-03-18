@@ -1,8 +1,4 @@
-﻿
-
-
-
-using CommandEngine.Commands;
+﻿using CommandEngine.Commands;
 
 namespace CommandEngine.Tasks
 {
@@ -38,35 +34,20 @@ namespace CommandEngine.Tasks
                 if (subContext.Has(label)) this[label] = subContext[label];
         }
 
-        internal void Event(Command command, CommandState originalState, CommandState newState)
-        {
+        internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
             _history.Event(command, originalState, newState);
-            
-        }
-        internal void Event(Command command, CommandTask task, CommandStatus status)
-        {
+
+        internal void Event(SimpleCommand command, CommandTask task, CommandStatus status) => 
             _history.Event(command, task, status);
-            
-        }
-        internal void Event(Command command, CommandTask task, Exception e)
-        {
+
+        internal void Event(SimpleCommand command, CommandTask task, Exception e) => 
             _history.Event(command, task, e);
-            
-        }
 
-        internal void Event(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue)
-        {
+        internal void Event(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue) => 
             _history.Event(command, task, label,previousValue,newValue);
-        }
 
-        internal void StartEvent(SerialCommand command)
-        {
-            _history.StartEvent(command);
-        }
+        internal void StartEvent(SerialCommand command) => _history.StartEvent(command);
 
-        internal void CompletedEvent(SerialCommand command)
-        {
-            _history.CompletedEvent(command);
-        }
+        internal void CompletedEvent(SerialCommand command) => _history.CompletedEvent(command);
     }
 }

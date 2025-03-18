@@ -12,11 +12,11 @@ namespace CommandEngine.Commands
 
         public List<CommandEvent> Events(CommandEventType type) => 
             _events.FindAll(e => e.EventType == type);
-		internal void Event(Command command, CommandState originalState, CommandState newState) => 
+		internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
             _events.Add(new CommandStateEvent(command, originalState, newState));
-        internal void Event(Command command, CommandTask task, CommandStatus status) => 
+        internal void Event(SimpleCommand command, CommandTask task, CommandStatus status) => 
             _events.Add(new TaskStatusEvent(command, task, status));
-        internal void Event(Command command, CommandTask task, Exception e) => 
+        internal void Event(SimpleCommand command, CommandTask task, Exception e) => 
             _events.Add(new TaskExceptionEvent(command, task, e));
 
 		internal void Event(SimpleCommand command, CommandTask task) => 
@@ -47,7 +47,7 @@ namespace CommandEngine.Commands
     internal class GroupSerialCompletedEvent(SerialCommand command) : CommandEvent
     {
         public CommandEventType EventType => GroupSerialComplete;
-        public override string ToString() => $"Group Command <{command}> completed";
+        public override string ToString() => $"Group Command <{command.NameOnly()}> completed";
     }
 
     internal class ValueChangedEvent(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue) : CommandEvent
@@ -63,20 +63,20 @@ namespace CommandEngine.Commands
 		public override string ToString() => $"Starting Command <{command}>, executing Task <{task}>";
 	}
 
-	internal class CommandStateEvent(Command command, CommandState originalState, CommandState newState) : CommandEvent
+	internal class CommandStateEvent(SimpleCommand command, CommandState originalState, CommandState newState) : CommandEvent
     {
 		public CommandEventType EventType => CommandStateChange;
 
 		public override string ToString() => $"Command <{command}> Changed State from <{originalState}> To <{newState}>";
     }
     
-    internal class TaskExceptionEvent(Command command, CommandTask task, Exception e) : CommandEvent
+    internal class TaskExceptionEvent(SimpleCommand command, CommandTask task, Exception e) : CommandEvent
     {
 		public CommandEventType EventType => TaskException;
 
 		public override string ToString() => $"Task <{task}> threw an exception <{e}>";
     }
-    public class TaskStatusEvent(Command command, CommandTask task, CommandStatus status) : CommandEvent
+    public class TaskStatusEvent(SimpleCommand command, CommandTask task, CommandStatus status) : CommandEvent
     {
         public CommandStatus Status => status;
         public CommandEventType EventType => CommandEventType.TaskStatus;
