@@ -112,7 +112,7 @@ namespace CommandEngine.Tests.Unit
             );
             Assert.Equal(Reverted, command.Execute(c));
             command.AssertStates(Reversed, Reversed, Reversed, Reversed, FailedToExecute, Initial);
-            Assert.Equal(5,c.History.Events(CommandEventType.TaskStatus).Count);
+            Assert.Equal(9,c.History.Events(CommandEventType.TaskStatus).Count);
             Assert.Single(c.History.Events(CommandEventType.TaskStatus).FindAll(e =>((TaskStatusEvent) e).Status == Failed));
             testOutput.WriteLine(c.History.ToString());
         }
@@ -168,6 +168,27 @@ namespace CommandEngine.Tests.Unit
             Assert.Throws<UndoTaskFailureException>(() => command.Execute(c));
             command.AssertStates(Executed, Executed, Executed, Executed, FailedToUndo, FailedToExecute);
             Assert.Single(c.History.Events(TaskException));
+        }
+
+        [Fact]
+        public void SerialWithSerialFailedUndo()
+        {
+            var c = new Context();
+            var command = "Master Sequence".Sequence(
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                "Internal Sequence".Sequence(
+                    AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                    AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                    AlwaysSuccessful.Otherwise(AlwaysFail)),
+                AlwaysFail.Otherwise(AlwaysSuccessful)
+            );
+            Assert.Throws<UndoTaskFailureException>(() => command.Execute(c));
+            command.AssertStates(Executed, Executed, Executed, Executed, FailedToUndo, FailedToExecute);
+            testOutput.WriteLine(c.History.ToString());
+            Assert.Equal(7, c.History.Events(CommandEventType.TaskStatus).Count);
+            Assert.Equal(2, c.History.Events(CommandEventType.TaskStatus).FindAll(e => ((TaskStatusEvent)e).Status == Failed).Count);
+           
         }
 
         [Fact]

@@ -69,6 +69,7 @@ namespace CommandEngine.Commands
             try
 			{
 				var status = revertTask.Execute(subContext);
+				c.Event(this, revertTask, status);
                 if (status == Failed)
 				{
 					State(new FailedToUndo(), c);
