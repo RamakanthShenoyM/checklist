@@ -24,9 +24,9 @@ namespace CommandEngine.Commands {
         public Command this[int index] => _commands[index];
 
         public void Accept(CommandVisitor visitor) {
-            visitor.PreVisit(this);
+            visitor.PreVisit(this,  _commands);
             foreach (var command in _commands) command.Accept(visitor);
-            visitor.PostVisit(this);
+            visitor.PostVisit(this, _commands);
         }
 
         public CommandStatus Execute(Context c)

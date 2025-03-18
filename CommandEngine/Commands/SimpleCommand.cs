@@ -1,51 +1,51 @@
 ﻿using CommandEngine.Tasks;
-using System.Reflection.Emit;
 using static CommandEngine.Commands.CommandStatus;
 
 namespace CommandEngine.Commands
 {
 
-	public class SimpleCommand(CommandTask task, CommandTask revertTask) : Command
+	public class SimpleCommand(CommandTask executeTask, CommandTask revertTask) : Command
 	{
 		private SimpleCommandState _state = new Initial();
 
-		public void Accept(CommandVisitor visitor)
-		{
-			visitor.Visit(this, _state.State());
-		}
+		public void Accept(CommandVisitor visitor) => 
+			visitor.Visit(this, _state.State(), executeTask, revertTask);
 
 		public CommandStatus Execute(Context c) => _state.Execute(this, c);
 
 		public CommandStatus Undo(Context c) => _state.Undo(this, c);
+		
 		private void State(SimpleCommandState newState, Context c)
         {
 			c.Event(this, _state.State(), newState.State());
 			_state = newState;
 		}
-        public override string ToString() => $"Command with Task <{task}> and revert Task <{revertTask}>";
+		
+        public override string ToString() => $"Command with Task <{executeTask}> and revert Task <{revertTask}>";
+        
         private CommandStatus RealExecute(Context c)
 		{
-            var subContext = c.SubContext(task.NeededLabels);
-			c.History.Event(this, task);
+            var subContext = c.SubContext(executeTask.NeededLabels);
+			c.History.Event(this, executeTask);
             try
 			{
-				var status = task.Execute(subContext);
-				if (status == Suspended) throw new TaskSuspendedException(task, this);
-                Update(task, c, subContext);
+				var status = executeTask.Execute(subContext);
+				if (status == Suspended) throw new TaskSuspendedException(executeTask, this);
+                Update(executeTask, c, subContext);
                 return status;
 			}
 			catch (ConclusionException)
 			{
-                Update(task, c, subContext);
+                Update(executeTask, c, subContext);
                 State(new Executed(), c);
 				throw;
 			}
 			catch (TaskSuspendedException)
 			{
-                Update(task, c, subContext);
+                Update(executeTask, c, subContext);
                 throw;
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				return Failed;
 			}
