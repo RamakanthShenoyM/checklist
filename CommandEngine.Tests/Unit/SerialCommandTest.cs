@@ -58,12 +58,13 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void SecondFailure()
         {
+            var c = new Context();
             var command = "Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysFail.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             );
-            Assert.Equal(Reverted, command.Execute(new Context()));
+            Assert.Equal(Reverted, command.Execute(c));
             command.AssertStates(Reversed, FailedToExecute, Initial);
         }
 
@@ -94,6 +95,26 @@ namespace CommandEngine.Tests.Unit
             Assert.Equal(Succeeded, command.Execute(new Context()));
             command.AssertStates(Executed, Executed, Executed, Executed, Executed, Executed);
             // testOutput.WriteLine($"{command}");
+        }
+
+        [Fact]
+        public void SerialWithFailedTask()
+        {
+            var c = new Context();
+            var command = "Master Sequence".Sequence(
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                "Internal Sequence".Sequence(
+                    AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                    AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                    AlwaysFail.Otherwise(AlwaysSuccessful)),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful)
+            );
+            Assert.Equal(Reverted, command.Execute(c));
+            command.AssertStates(Reversed, Reversed, Reversed, Reversed, FailedToExecute, Initial);
+            Assert.Equal(5,c.History.Events(CommandEventType.TaskStatus).Count);
+            Assert.Single(c.History.Events(CommandEventType.TaskStatus).FindAll(e =>((TaskStatusEvent) e).Status == Failed));
+            testOutput.WriteLine(c.History.ToString());
         }
 
         [Fact]
@@ -130,9 +151,11 @@ namespace CommandEngine.Tests.Unit
             command.AssertStates(Reversed, Reversed, Reversed, Reversed, Reversed, FailedToExecute);
         }
 
+
         [Fact]
-        public void SerialWithSerialCrashed()
+        public void SerialWithSerialCrashedUndo()
         {
+            var c = new Context();
             var command = "Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
@@ -142,8 +165,27 @@ namespace CommandEngine.Tests.Unit
                     AlwaysSuccessful.Otherwise(new CrashingTask())),
                 AlwaysFail.Otherwise(AlwaysSuccessful)
             );
-            Assert.Throws<UndoTaskFailureException>(() => command.Execute(new Context()));
+            Assert.Throws<UndoTaskFailureException>(() => command.Execute(c));
             command.AssertStates(Executed, Executed, Executed, Executed, FailedToUndo, FailedToExecute);
+            Assert.Single(c.History.Events(TaskException));
+        }
+
+        [Fact]
+        public void SerialWithSerialCrashedExecute()
+        {
+            var c = new Context();
+            var command = "Master Sequence".Sequence(
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                "Internal Sequence".Sequence(
+                    AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                    AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                    new CrashingTask().Otherwise(AlwaysSuccessful)),
+                AlwaysFail.Otherwise(AlwaysSuccessful)
+            );
+            Assert.Equal(Reverted,command.Execute(c));
+            command.AssertStates(Reversed, Reversed, Reversed, Reversed, FailedToExecute, Initial);
+            Assert.Single(c.History.Events(TaskException));
         }
 
         [Fact]

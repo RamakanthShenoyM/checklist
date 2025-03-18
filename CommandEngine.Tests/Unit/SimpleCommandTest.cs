@@ -3,6 +3,8 @@ using CommandEngine.Tests.Util;
 using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandStatus;
 using CommandEngine.Tasks;
+using System;
+using static CommandEngine.Commands.CommandEventType;
 
 namespace CommandEngine.Tests.Unit
 {
@@ -31,7 +33,9 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void TaskCrashed()
         {
-            Assert.Equal(Failed, new SimpleCommand(new CrashingTask(), AlwaysSuspended).Execute(new Context()));
+            var c = new Context();
+            Assert.Equal(Failed, new SimpleCommand(new CrashingTask(), AlwaysSuspended).Execute(c));
+            Assert.Single(c.History.Events(TaskException));
         }
         
         [Fact]

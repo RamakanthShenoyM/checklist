@@ -14,6 +14,10 @@ namespace CommandEngine.Commands
             _events.FindAll(e => e.EventType == type);
 		internal void Event(Command command, CommandState originalState, CommandState newState) => 
             _events.Add(new CommandStateEvent(command, originalState, newState));
+        internal void Event(Command command, CommandTask task, CommandStatus status) => 
+            _events.Add(new TaskStatusEvent(command, task, status));
+        internal void Event(Command command, CommandTask task, Exception e) => 
+            _events.Add(new TaskExceptionEvent(command, task, e));
 
 		internal void Event(SimpleCommand command, CommandTask task) => 
             _events.Add(new TaskStartedEvent(command, task));
@@ -65,6 +69,20 @@ namespace CommandEngine.Commands
 
 		public override string ToString() => $"Command <{command}> Changed State from <{originalState}> To <{newState}>";
     }
+    
+    internal class TaskExceptionEvent(Command command, CommandTask task, Exception e) : CommandEvent
+    {
+		public CommandEventType EventType => TaskException;
+
+		public override string ToString() => $"Task <{task}> threw an exception <{e}>";
+    }
+    public class TaskStatusEvent(Command command, CommandTask task, CommandStatus status) : CommandEvent
+    {
+        public CommandStatus Status => status;
+        public CommandEventType EventType => CommandEventType.TaskStatus;
+
+		public override string ToString() => $"Task <{task}> completed with status <{status}>";
+    }
 
     public interface CommandEvent
     {
@@ -77,6 +95,8 @@ namespace CommandEngine.Commands
         TaskExecuted,
         ValueChanged,
         GroupSerialStart,
-        GroupSerialComplete
+        GroupSerialComplete,
+        TaskException,
+        TaskStatus
     }
 }
