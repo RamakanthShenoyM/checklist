@@ -1,15 +1,14 @@
 ﻿using CommandEngine.Commands;
 using CommandEngine.Tasks;
 using CommandEngine.Tests.Util;
+using Xunit.Abstractions;
 using static CommandEngine.Tests.Unit.TestConclusion;
 using static CommandEngine.Tests.Unit.TestLabels;
-using static CommandEngine.Commands.SerialCommand;
 using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandState;
 using static CommandEngine.Commands.CommandStatus;
 using static CommandEngine.Tasks.CommandTask;
 using static CommandEngine.Commands.CommandEventType;
-using Xunit.Abstractions;
 
 namespace CommandEngine.Tests.Unit
 {

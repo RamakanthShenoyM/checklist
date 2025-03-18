@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.Design.Serialization;
-using CommandEngine.Commands;
+﻿using CommandEngine.Commands;
 
 namespace CommandEngine.Tasks
 {

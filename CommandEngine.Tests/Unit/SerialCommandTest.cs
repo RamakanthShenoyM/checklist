@@ -1,11 +1,10 @@
 ﻿using CommandEngine.Commands;
+using CommandEngine.Tasks;
 using CommandEngine.Tests.Util;
+using Xunit.Abstractions;
 using static CommandEngine.Commands.CommandStatus;
 using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandState;
-using static CommandEngine.Commands.SerialCommand;
-using CommandEngine.Tasks;
-using Xunit.Abstractions;
 using static CommandEngine.Commands.CommandEventType;
 
 namespace CommandEngine.Tests.Unit

@@ -15,13 +15,10 @@ namespace CommandEngine.Tasks
         {
             get
             {
-                if (!_values.ContainsKey(label)) throw new MissingContextInformationException(label);
-                return _values[label];
+                if (!_values.TryGetValue(label, value: out var item)) throw new MissingContextInformationException(label);
+                return item;
             }
-            set
-            {
-                _values[label] = value;
-            }
+            set => _values[label] = value;
         }
 
         public bool Has(object label) => _values.ContainsKey(label);

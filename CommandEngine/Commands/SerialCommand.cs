@@ -14,7 +14,7 @@ namespace CommandEngine.Commands {
         }
 
         public SerialCommand(List<Command> commands)
-            : this("first group", commands[0], commands.GetRange(1, commands.Count() - 1).ToArray()) { }
+            : this("first group", commands[0], commands.GetRange(1, commands.Count - 1).ToArray()) { }
 
         internal string NameOnly() => _groupName;
 

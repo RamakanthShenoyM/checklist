@@ -9,10 +9,7 @@ namespace CommandEngine.Tasks
 
         public List<object> ChangedLabels => subTask.ChangedLabels;
 
-        public CommandStatus Execute(Context c)
-        {
-            if(NeededLabels.All(label=> c.Has(label))) return subTask.Execute(c);
-            return Suspended;
-        }
+        public CommandStatus Execute(Context c) => 
+            NeededLabels.All(c.Has) ? subTask.Execute(c) : Suspended;
     }
 }
