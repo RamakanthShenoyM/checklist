@@ -136,6 +136,7 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void SerialWithSerialSuspend()
         {
+            var c = new Context();
             var command = "Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
@@ -145,10 +146,13 @@ namespace CommandEngine.Tests.Unit
                     new SuspendFirstOnly().Otherwise(AlwaysSuccessful)),
                 AlwaysFail.Otherwise(AlwaysSuccessful)
             );
-            Assert.Throws<TaskSuspendedException>(() => command.Execute(new Context()));
+           
+            Assert.Throws<TaskSuspendedException>(() => command.Execute(c));
             command.AssertStates(Executed, Executed, Executed, Executed, Initial, Initial);
-            Assert.Equal(Reverted, command.Execute(new Context()));
+            testOutput.WriteLine(c.History.ToString());
+            Assert.Equal(Reverted, command.Execute(c));
             command.AssertStates(Reversed, Reversed, Reversed, Reversed, Reversed, FailedToExecute);
+           
         }
 
 
