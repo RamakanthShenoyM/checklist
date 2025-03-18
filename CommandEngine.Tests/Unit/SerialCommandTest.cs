@@ -12,6 +12,28 @@ namespace CommandEngine.Tests.Unit
     public class SerialCommandTest(ITestOutputHelper testOutput)
     {
         [Fact]
+        public void Equality()
+        {
+            var c = new Context();
+            var command1 = "Master Sequence".Sequence(
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful)
+            );
+
+            var command2 = "Master Sequence".Sequence(
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful)
+            );
+
+            Assert.Equal(command1, command2);
+            Assert.NotEqual(command1, new object());
+            Assert.NotEqual(command1, null);
+            Assert.Equal(command1.GetHashCode(), command2.GetHashCode());
+        }
+
+        [Fact]
         public void HappyPath()
         {
             var c = new Context();
@@ -23,10 +45,10 @@ namespace CommandEngine.Tests.Unit
             Assert.Equal(Succeeded, command.Execute(c));
             command.AssertStates(Executed, Executed, Executed);
             Assert.Equal(3, c.History.Events(CommandStateChange).Count);
-            Assert.Equal(3,c.History.Events(TaskExecuted).Count);
+            Assert.Equal(3, c.History.Events(TaskExecuted).Count);
         }
 
-        
+
 
         [Fact]
         public void Suspend()

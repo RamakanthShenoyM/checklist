@@ -20,6 +20,21 @@ namespace CommandEngine.Commands {
 
         public override string ToString() => new PrettyPrint(this).Result;
 
+        public override bool Equals(object? obj)
+        {
+            return this == obj || obj is SerialCommand other && this.Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return _groupName.GetHashCode();
+        }
+
+        private bool Equals(SerialCommand other)
+        {
+            return _groupName == other._groupName;
+        }
+
         public Command this[int index] => _commands[index];
 
         public void Accept(CommandVisitor visitor) {
