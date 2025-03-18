@@ -40,7 +40,7 @@ namespace CommandEngine.Commands
     internal class GroupSerialStartEvent(SerialCommand command) : CommandEvent
     {
         public CommandEventType EventType => GroupSerialStart;
-        public override string ToString() => $"Group Command <{command}> started";
+        public override string ToString() => $"Group Command <{command.NameOnly()}> started";
     }
 
     internal class GroupSerialCompletedEvent(SerialCommand command) : CommandEvent

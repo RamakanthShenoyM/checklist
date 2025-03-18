@@ -5,17 +5,18 @@ using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandState;
 using static CommandEngine.Commands.SerialCommand;
 using CommandEngine.Tasks;
+using Xunit.Abstractions;
 using static CommandEngine.Commands.CommandEventType;
 
 namespace CommandEngine.Tests.Unit
 {
-    public class SerialCommandTest
+    public class SerialCommandTest(ITestOutputHelper testOutput)
     {
         [Fact]
         public void HappyPath()
         {
             var c = new Context();
-            var command = Sequence(
+            var command = "Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
@@ -31,7 +32,7 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void Suspend()
         {
-            var command = Sequence(
+            var command = "Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 new SuspendFirstOnly().Otherwise(AlwaysSuccessful)
@@ -46,7 +47,7 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void FirstFailure()
         {
-            var command = Sequence(
+            var command = "Master Sequence".Sequence(
                 AlwaysFail.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
@@ -58,7 +59,7 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void SecondFailure()
         {
-            var command = Sequence(
+            var command = "Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysFail.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
@@ -70,7 +71,7 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void ThirdFailure()
         {
-            var command = Sequence(
+            var command = "Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysFail.Otherwise(AlwaysSuccessful)
@@ -82,10 +83,10 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void SerialWithSerialSuccessful()
         {
-            var command = Sequence(
+            var command = "Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
-                Sequence(
+                "Internal Sequence".Sequence(
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful)),
@@ -93,15 +94,16 @@ namespace CommandEngine.Tests.Unit
             );
             Assert.Equal(Succeeded, command.Execute(new Context()));
             command.AssertStates(Executed, Executed, Executed, Executed, Executed, Executed);
+            // testOutput.WriteLine($"{command}");
         }
 
         [Fact]
         public void SerialWithSerialFailure()
         {
-            var command = Sequence(
+            var command = "Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
-                Sequence(
+                "Internal Sequence".Sequence(
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                     AlwaysFail.Otherwise(AlwaysSuccessful)),
@@ -114,10 +116,10 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void SerialWithSerialSuspend()
         {
-            var command = Sequence(
+            var command = "Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
-                Sequence(
+                "Internal Sequence".Sequence(
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                     new SuspendFirstOnly().Otherwise(AlwaysSuccessful)),
@@ -132,10 +134,10 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void SerialWithSerialCrashed()
         {
-            var command = Sequence(
+            var command = "Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
-                Sequence(
+                "Internal Sequence".Sequence(
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                     AlwaysSuccessful.Otherwise(new CrashingTask())),

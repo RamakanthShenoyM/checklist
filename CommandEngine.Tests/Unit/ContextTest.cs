@@ -27,7 +27,7 @@ namespace CommandEngine.Tests.Unit
 		[Fact]
 		public void TaskWithConclusion()
 		{
-			var command = Sequence(
+			var command = "Master Sequence".Sequence(
 					AlwaysSuccessful.Otherwise(AlwaysSuccessful),
 					new ConclusionTask(NotPay).Otherwise(AlwaysSuccessful),
 					AlwaysSuccessful.Otherwise(AlwaysSuccessful)
@@ -83,7 +83,7 @@ namespace CommandEngine.Tests.Unit
             var neededLabels = Labels("A", "B");
             var changedLabels = Labels("D", "B");
             var missingLabels = Labels("C");
-            var command = Sequence(
+            var command = "Master Sequence".Sequence(
                     AlwaysSuccessful.Otherwise( new ContextTask(neededLabels, changedLabels, missingLabels)),
                     AlwaysFail.Otherwise(AlwaysSuccessful)
             );
@@ -99,7 +99,7 @@ namespace CommandEngine.Tests.Unit
             var neededLabels = Labels("A", "B", "D");
             var changedLabels = Labels("D", "B");
             var missingLabels = Labels("C");
-            var command = Sequence(
+            var command = "Master Sequence".Sequence(
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                     new ContextTask(neededLabels, changedLabels, missingLabels).Otherwise(AlwaysSuccessful)
             );
@@ -116,7 +116,7 @@ namespace CommandEngine.Tests.Unit
             var neededLabels = Labels("A", "B", "D");
             var changedLabels = Labels("D", "B");
             var missingLabels = Labels("C");
-            var command = Sequence(
+            var command = "Master Sequence".Sequence(
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                     Mandatory(new ContextTask(neededLabels, changedLabels, missingLabels)).Otherwise(AlwaysSuccessful)
             );

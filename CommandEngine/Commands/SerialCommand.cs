@@ -13,20 +13,19 @@ namespace CommandEngine.Commands {
             _groupName = groupName;
         }
 
-        public override string ToString() => _groupName;
-
         public SerialCommand(List<Command> commands)
             : this("first group", commands[0], commands.GetRange(1, commands.Count() - 1).ToArray()) { }
 
-        public static SerialCommand Sequence(Command firstCommand, params Command[] commands) =>
-            new SerialCommand("first group", firstCommand, commands);
+        internal string NameOnly() => _groupName;
+
+        public override string ToString() => new PrettyPrint(this).Result;
 
         public Command this[int index] => _commands[index];
 
         public void Accept(CommandVisitor visitor) {
-            visitor.PreVisit(this,  _commands);
+            visitor.PreVisit(this, _groupName, _commands);
             foreach (var command in _commands) command.Accept(visitor);
-            visitor.PostVisit(this, _commands);
+            visitor.PostVisit(this, _groupName, _commands);
         }
 
         public CommandStatus Execute(Context c)
