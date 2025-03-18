@@ -18,8 +18,13 @@ namespace CommandEngine.Commands
             _events.Add(new TaskStatusEvent(command, task, status));
         internal void Event(SimpleCommand command, CommandTask task, Exception e) => 
             _events.Add(new TaskExceptionEvent(command, task, e));
+        internal void Event(SimpleCommand command, CommandTask task, object conclusion) => 
+            _events.Add(new ConclusionReachedEvent(command, task, conclusion));
 
-		internal void Event(SimpleCommand command, CommandTask task) => 
+        
+
+
+        internal void Event(SimpleCommand command, CommandTask task) => 
             _events.Add(new TaskStartedEvent(command, task));
 
         internal void Event(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue)
@@ -76,6 +81,12 @@ namespace CommandEngine.Commands
 
 		public override string ToString() => $"Task <{task}> threw an exception <{e}>";
     }
+    internal class ConclusionReachedEvent(SimpleCommand command, CommandTask task, object conclusion) : CommandEvent
+    {
+		public CommandEventType EventType => ConclusionReached;
+
+		public override string ToString() => $"Task <{task}> reached a conclusion <{conclusion}>";
+    }
     public class TaskStatusEvent(SimpleCommand command, CommandTask task, CommandStatus status) : CommandEvent
     {
         public CommandStatus Status => status;
@@ -97,6 +108,7 @@ namespace CommandEngine.Commands
         GroupSerialStart,
         GroupSerialComplete,
         TaskException,
-        TaskStatus
+        TaskStatus,
+        ConclusionReached
     }
 }

@@ -35,9 +35,10 @@ namespace CommandEngine.Commands
 				if(status==Succeeded) Update(executeTask, c, subContext);
                 return status;
 			}
-			catch (ConclusionException)
+			catch (ConclusionException e)
 			{
                 Update(executeTask, c, subContext);
+				c.Event(this, executeTask, e.Conclusion);
                 State(new Executed(), c);
 				throw;
 			}
@@ -87,10 +88,11 @@ namespace CommandEngine.Commands
 			{
 				throw;
 			}
-			catch (ConclusionException)
+			catch (ConclusionException e)
 			{
 				Update(revertTask, c, subContext);
-				throw;
+                c.Event(this, revertTask, e.Conclusion);
+                throw;
 			}
 			catch (Exception e)
             {

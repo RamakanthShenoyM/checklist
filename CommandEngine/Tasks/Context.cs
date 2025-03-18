@@ -36,6 +36,8 @@ namespace CommandEngine.Tasks
 
         internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
             _history.Event(command, originalState, newState);
+        internal void Event(SimpleCommand command, CommandTask task, object conclusion) =>
+            _history.Event(command, task, conclusion);
 
         internal void Event(SimpleCommand command, CommandTask task, CommandStatus status) => 
             _history.Event(command, task, status);

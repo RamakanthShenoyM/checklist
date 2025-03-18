@@ -31,11 +31,27 @@ namespace CommandEngine.Tests.Unit
 					new ConclusionTask(NotPay).Otherwise(AlwaysSuccessful),
 					AlwaysSuccessful.Otherwise(AlwaysSuccessful)
 			);
-			var context = new Context();
-			var e = Assert.Throws<ConclusionException>(() => command.Execute(context));
+			var c = new Context();
+			var e = Assert.Throws<ConclusionException>(() => command.Execute(c));
 			Assert.Equal(NotPay, e.Conclusion);
 			command.AssertStates(Executed, Executed, Initial);
-
+			Assert.Single(c.History.Events(ConclusionReached));
+			testOutput.WriteLine(c.History.ToString());
+		}
+		[Fact]
+		public void TaskWithConclusionOnUndo()
+		{
+			var command = "Master Sequence".Sequence(
+					AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+					AlwaysSuccessful.Otherwise(new ConclusionTask(NotPay)),
+					AlwaysFail.Otherwise(AlwaysSuccessful)
+			);
+			var c = new Context();
+			var e = Assert.Throws<ConclusionException>(() => command.Execute(c));
+			Assert.Equal(NotPay, e.Conclusion);
+			command.AssertStates(Executed, Executed, FailedToExecute);
+			Assert.Single(c.History.Events(ConclusionReached));
+			testOutput.WriteLine(c.History.ToString());
 		}
 		
 		[Fact]
