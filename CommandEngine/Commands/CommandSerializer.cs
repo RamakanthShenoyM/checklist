@@ -16,26 +16,38 @@ namespace CommandEngine.Commands
 
         public void PreVisit(SerialCommand command, string name, List<Command> subCommands)
         {
-            _root = new SerialCommandDto(name);
+            _root = new SerialCommandDto(name, new List<SimpleCommandDto>());
+        }
+
+        public void Visit(SimpleCommand command, CommandState state, CommandTask executeTask, CommandTask revertTask)
+        {
+            _root.SubCommands.Add(new SimpleCommandDto(state, executeTask.GetType().ToString(), revertTask.GetType().ToString()));
         }
 
         public interface CommandDto
         {
         }
 
-        public class SerialCommandDto : CommandDto
+        public class SerialCommandDto(string name, List<SimpleCommandDto> subCommands) : CommandDto
         {
-            private string _name;
-            public List<CommandDto> _subCommands = [];
+            public string Name { get => name; set => name = value; }
+            public List<SimpleCommandDto> SubCommands { get => subCommands; set => subCommands = value; }
 
-            public string Name { get => _name; set => _name = value; }
+            internal SerialCommand ToCommand() => name.Sequence(Ignore.Otherwise(Ignore));
+        }
 
-            public SerialCommandDto(string name)
+        public class SimpleCommandDto : CommandDto
+        {
+            public SimpleCommandDto(CommandState state, string executeTaskClass, string revertTaskClass)
             {
-                _name = name;
+                State = state;
+                ExecuteTaskClass = executeTaskClass;
+                RevertTaskClass = revertTaskClass;
             }
 
-            internal SerialCommand ToCommand() => _name.Sequence(Ignore.Otherwise(Ignore));
+            public CommandState State { get; }
+            public string ExecuteTaskClass { get; }
+            public string RevertTaskClass { get; }
         }
     }
 }
