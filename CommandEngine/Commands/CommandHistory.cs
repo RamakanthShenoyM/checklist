@@ -85,14 +85,16 @@ namespace CommandEngine.Commands
     {
 		public CommandEventType EventType => ConclusionReached;
 
-		public override string ToString() => $"Task <{task}> reached a conclusion <{conclusion}>";
+		public override string ToString() => $"Task <{task}> reached a conclusion<{conclusion}>";
     }
     public class TaskStatusEvent(SimpleCommand command, CommandTask task, CommandStatus status) : CommandEvent
     {
         public CommandStatus Status => status;
         public CommandEventType EventType => CommandEventType.TaskStatus;
-
-		public override string ToString() => $"Task <{task}> completed with status <{status}>";
+        public override string ToString() =>
+            (task is IgnoreTask) ?
+            $"Command <{command}> has no Undo"
+            : $"Task <{task}> completed with status <{status}>";
     }
 
     public interface CommandEvent

@@ -81,6 +81,20 @@ namespace CommandEngine.Tests.Unit
         }
 
         [Fact]
+        public void WithoutReverting()
+        {
+            var c = new Context();
+            var command = "Master Sequence".Sequence(
+                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
+                AlwaysSuccessful.NoReverting(),
+                AlwaysFail.Otherwise(AlwaysSuccessful)
+            );
+            Assert.Equal(Reverted, command.Execute(c));
+            command.AssertStates(Reversed, Reversed, FailedToExecute);
+            testOutput.WriteLine(c.History.ToString());
+        }
+
+        [Fact]
         public void SerialWithSerialSuccessful()
         {
             var command = "Master Sequence".Sequence(
