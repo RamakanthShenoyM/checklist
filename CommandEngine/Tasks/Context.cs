@@ -51,5 +51,7 @@ namespace CommandEngine.Tasks
         internal void StartEvent(SerialCommand command) => _history.StartEvent(command);
 
         internal void CompletedEvent(SerialCommand command) => _history.CompletedEvent(command);
+
+        internal void Accept(CommandVisitor visitor) => visitor.Visit(this, _history);
     }
 }

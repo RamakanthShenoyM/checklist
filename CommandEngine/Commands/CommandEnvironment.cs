@@ -14,28 +14,40 @@ namespace CommandEngine.Commands
         private readonly Guid _clientId;
         private readonly Context _context;
 
-        private CommandEnvironment(Command serialCommand, Guid environmentId = new Guid(), Guid clientId = new Guid(), Context? c = null)
+        public Guid EnvironmentId => _environmentId;
+
+        public Guid ClientId => _clientId;
+
+        private CommandEnvironment(Command serialCommand, Guid? environmentId = null, Guid? clientId = null, Context? c = null)
         {
             _command = serialCommand;
-            _environmentId = environmentId;
-            _clientId = clientId;
+            _environmentId = environmentId ?? Guid.NewGuid();
+            _clientId = clientId ?? Guid.NewGuid();
             _context = c ?? new Context();
         }
         public static CommandEnvironment Template(Command command) => new CommandEnvironment(command);
 
         public static CommandEnvironment FreshEnvironment(CommandEnvironment template) =>
-            new CommandEnvironment(template._command.Clone(), template._environmentId);
+            new CommandEnvironment(template._command.Clone(), template.EnvironmentId);
         public static CommandEnvironment RestoredEnvironment(CommandEnvironment template, Guid clientId, Context c) =>
-            new CommandEnvironment(template._command.Clone(), template._environmentId, clientId, c);
+            new CommandEnvironment(template._command.Clone(), template.EnvironmentId, clientId, c);
         public override bool Equals(object? obj) =>
             this == obj || obj is CommandEnvironment other && this.Equals(other);
 
-        public override int GetHashCode() => _environmentId.GetHashCode() * 37 + _clientId.GetHashCode();
+        public override int GetHashCode() => EnvironmentId.GetHashCode() * 37 + ClientId.GetHashCode();
         private bool Equals(CommandEnvironment other) =>
-                this._environmentId == other._environmentId
-                && this._clientId == other._clientId
+                this.EnvironmentId == other.EnvironmentId
+                && this.ClientId == other.ClientId
                 && this._command .Equals( other._command);
 
         public CommandStatus Execute() => _command.Execute(_context);
+
+        internal void Accept(CommandVisitor visitor)
+        {
+            visitor.PreVisit(this, EnvironmentId, ClientId, _command, _context);
+            _command.Accept(visitor);
+            _context.Accept(visitor);
+            visitor.PostVisit(this, _command, _context);
+        }
     }
 }

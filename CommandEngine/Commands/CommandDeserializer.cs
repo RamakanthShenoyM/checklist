@@ -1,4 +1,4 @@
-﻿using static CommandEngine.Commands.CommandSerializer;
+﻿using static CommandEngine.Commands.EnvironmentSerializer;
 
 namespace CommandEngine.Commands
 {
@@ -10,7 +10,5 @@ namespace CommandEngine.Commands
         {
             _json = json;
         }
-
-        public SerialCommand Result => System.Text.Json.JsonSerializer.Deserialize<SerialCommandDto>(_json).ToCommand();
     }
 }

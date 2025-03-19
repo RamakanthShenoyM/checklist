@@ -1,4 +1,4 @@
-﻿using static CommandEngine.Commands.CommandSerializer;
+﻿using static CommandEngine.Commands.EnvironmentSerializer;
 
 namespace CommandEngine.Commands
 {
@@ -7,8 +7,6 @@ namespace CommandEngine.Commands
         public static SerialCommand Sequence(this string groupName, Command firstCommand, params Command[] commands) =>
                         new SerialCommand(groupName, firstCommand, commands);
 
-        public static string ToJson(this SerialCommand command) => new CommandSerializer(command).Result;
-
-        public static SerialCommand FromJson(this string json) => new CommandDeserializer(json).Result;
+        public static string ToJson(this CommandEnvironment command) => new EnvironmentSerializer(command).Result;
     }
 }
