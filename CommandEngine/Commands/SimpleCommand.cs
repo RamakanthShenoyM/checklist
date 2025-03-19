@@ -24,11 +24,25 @@ namespace CommandEngine.Commands
         public override int GetHashCode() => _executeTask.GetHashCode() * 37 + _revertTask.GetHashCode();
         private bool Equals(SimpleCommand other) => 
             this._executeTask.Equals(other._executeTask) 
-            && this._revertTask.Equals(other._revertTask);
+            && this._revertTask.Equals(other._revertTask)
+            && this._state.State() == other._state.State();
         private void State(SimpleCommandState newState, Context c)
         {
             c.Event(this, _state.State(), newState.State());
             _state = newState;
+        }
+
+        internal void State(CommandState state)
+        {
+            _state = state switch
+            {
+                CommandState.Initial => new Initial(),
+                CommandState.Executed => new Executed(),
+                CommandState.Reversed => new Reversed(),
+                CommandState.FailedToExecute => new FailedToExecute(),
+                CommandState.FailedToUndo => new FailedToUndo(),
+                _ => throw new System.InvalidOperationException("Invalid CommandState")
+            };
         }
 
         public override string ToString() =>

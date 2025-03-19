@@ -17,28 +17,32 @@ namespace CommandEngine.Tests.Integration
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             ));
             var originalEnvironment = CommandEnvironment.FreshEnvironment(template);
-            var clonedEnvironment = CommandEnvironment.RestoredEnvironment(template, originalEnvironment.ClientId, new Context());
-            Assert.Equal(originalEnvironment, clonedEnvironment);
             Assert.Equal(Succeeded, originalEnvironment.Execute());
             var json = originalEnvironment.ToJson();
             testOutput.WriteLine(json);
+            var restoredEnvironment = json.ToCommandEnvironment();
+            Assert.Equal(originalEnvironment, restoredEnvironment);
         }
 
         [Fact]
         public void CloneSerialWithSerialCommand()
         {
-            var originalEnvironment = CommandEnvironment.Template("Master Sequence".Sequence(
+            var template = CommandEnvironment.Template("Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 "Inner Sequence".Sequence(
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
-                    AlwaysSuccessful.Otherwise(AlwaysSuccessful)
+                    AlwaysFail.Otherwise(AlwaysSuccessful)
                 ),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             ));
-            var clonedEnvironment = CommandEnvironment.FreshEnvironment(originalEnvironment);
-            Assert.Equal(originalEnvironment, clonedEnvironment);
+            var originalEnvironment = CommandEnvironment.FreshEnvironment(template);
+            Assert.Equal(Reverted, originalEnvironment.Execute());
+            var json = originalEnvironment.ToJson();
+            testOutput.WriteLine(json);
+            var restoredEnvironment = json.ToCommandEnvironment();
+            Assert.Equal(originalEnvironment, restoredEnvironment);
         }
     }
 }

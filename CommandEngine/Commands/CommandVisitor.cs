@@ -4,7 +4,7 @@ namespace CommandEngine.Commands {
     public interface CommandVisitor {
         public void PreVisit(CommandEnvironment environment, Guid environmentId, Guid clientId, Command command, Context c) { }
 
-        public void PostVisit(CommandEnvironment environment, Command command, Context c) { }
+        public void PostVisit(CommandEnvironment environment, Guid environmentId, Guid clientId, Command command, Context c) { }
         public void PreVisit(SerialCommand command, string name, List<Command> subCommands) { }
 
         public void PostVisit(SerialCommand command, string name, List<Command> subCommands) { }

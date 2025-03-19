@@ -13,6 +13,7 @@ namespace CommandEngine.Commands
         private readonly Guid _environmentId;
         private readonly Guid _clientId;
         private readonly Context _context;
+        private static Dictionary<Guid, CommandEnvironment> _environments = new();
 
         public Guid EnvironmentId => _environmentId;
 
@@ -24,6 +25,9 @@ namespace CommandEngine.Commands
             _environmentId = environmentId ?? Guid.NewGuid();
             _clientId = clientId ?? Guid.NewGuid();
             _context = c ?? new Context();
+
+            if(!_environments.ContainsKey(_environmentId))
+                _environments.Add(_environmentId, this);
         }
         public static CommandEnvironment Template(Command command) => new CommandEnvironment(command);
 
@@ -47,7 +51,14 @@ namespace CommandEngine.Commands
             visitor.PreVisit(this, EnvironmentId, ClientId, _command, _context);
             _command.Accept(visitor);
             _context.Accept(visitor);
-            visitor.PostVisit(this, _command, _context);
+            visitor.PostVisit(this, EnvironmentId, ClientId, _command, _context);
+        }
+
+        internal static CommandEnvironment Environment(Guid guid)
+        {
+            if (_environments.ContainsKey(guid))
+                return _environments[guid];
+            throw new InvalidOperationException($"Environment with id {guid} not found");
         }
     }
 }

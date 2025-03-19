@@ -8,5 +8,7 @@ namespace CommandEngine.Commands
                         new SerialCommand(groupName, firstCommand, commands);
 
         public static string ToJson(this CommandEnvironment command) => new EnvironmentSerializer(command).Result;
+
+        public static CommandEnvironment ToCommandEnvironment(this string json) => new EnvironmentDeserializer(json).Result;
     }
 }
