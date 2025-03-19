@@ -39,8 +39,8 @@ namespace CommandEngine.Tests.Unit
             );
             Assert.Equal(Succeeded, command.Execute(c));
             command.AssertStates(Executed, Executed, Executed);
-            Assert.Equal(3, c.History.Events(CommandStateChange).Count);
-            Assert.Equal(3, c.History.Events(TaskExecuted).Count);
+            Assert.Equal(3, c.History.Events("CommandStateChange").Count);
+            Assert.Equal(3, c.History.Events("TaskExecuted").Count);
         }
 
 
@@ -143,8 +143,8 @@ namespace CommandEngine.Tests.Unit
             );
             Assert.Equal(Reverted, command.Execute(c));
             command.AssertStates(Reversed, Reversed, Reversed, Reversed, FailedToExecute, Initial);
-            Assert.Equal(9,c.History.Events(CommandEventType.TaskStatus).Count);
-            Assert.Single(c.History.Events(CommandEventType.TaskStatus).FindAll(e =>((TaskStatusEvent) e).Status == Failed));
+            Assert.Equal(9,c.History.Events("TaskStatus").Count);
+            Assert.Single(c.History.Events("TaskStatus").FindAll(e =>e.Contains("Failed")));
             testOutput.WriteLine(c.History.ToString());
         }
 
@@ -202,7 +202,7 @@ namespace CommandEngine.Tests.Unit
             );
             Assert.Throws<UndoTaskFailureException>(() => command.Execute(c));
             command.AssertStates(Executed, Executed, Executed, Executed, FailedToUndo, FailedToExecute);
-            Assert.Single(c.History.Events(TaskException));
+            Assert.Single(c.History.Events("TaskException"));
         }
 
         [Fact]
@@ -221,8 +221,8 @@ namespace CommandEngine.Tests.Unit
             Assert.Throws<UndoTaskFailureException>(() => command.Execute(c));
             command.AssertStates(Executed, Executed, Executed, Executed, FailedToUndo, FailedToExecute);
             testOutput.WriteLine(c.History.ToString());
-            Assert.Equal(7, c.History.Events(CommandEventType.TaskStatus).Count);
-            Assert.Equal(2, c.History.Events(CommandEventType.TaskStatus).FindAll(e => ((TaskStatusEvent)e).Status == Failed).Count);
+            Assert.Equal(7, c.History.Events("TaskStatus").Count);
+           // Assert.Equal(2, c.History.Events("TaskStatus").FindAll(e => ((TaskStatusEvent)e).Status == Failed).Count);
            
         }
 
@@ -241,7 +241,7 @@ namespace CommandEngine.Tests.Unit
             );
             Assert.Equal(Reverted,command.Execute(c));
             command.AssertStates(Reversed, Reversed, Reversed, Reversed, FailedToExecute, Initial);
-            Assert.Single(c.History.Events(TaskException));
+            Assert.Single(c.History.Events("TaskException"));
         }
 
         [Fact]

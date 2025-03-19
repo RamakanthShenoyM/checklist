@@ -35,7 +35,7 @@ namespace CommandEngine.Tests.Unit
 			var e = Assert.Throws<ConclusionException>(() => command.Execute(c));
 			Assert.Equal(NotPay, e.Conclusion);
 			command.AssertStates(Executed, Executed, Initial);
-			Assert.Single(c.History.Events(ConclusionReached));
+			Assert.Single(c.History.Events("ConclusionReached"));
 			testOutput.WriteLine(c.History.ToString());
 		}
 		[Fact]
@@ -50,7 +50,7 @@ namespace CommandEngine.Tests.Unit
 			var e = Assert.Throws<ConclusionException>(() => command.Execute(c));
 			Assert.Equal(NotPay, e.Conclusion);
 			command.AssertStates(Executed, Executed, FailedToExecute);
-			Assert.Single(c.History.Events(ConclusionReached));
+			Assert.Single(c.History.Events("ConclusionReached"));
 			testOutput.WriteLine(c.History.ToString());
 		}
 		
@@ -83,9 +83,9 @@ namespace CommandEngine.Tests.Unit
 			Assert.Equal(Succeeded, command.Execute(c));
 			Assert.Equal("DChanged", c["D"]);
 			Assert.Equal("BChanged", c["B"]);
-			Assert.Equal(2, c.History.Events(ValueChanged).Count);
-            Assert.Single(c.History.Events(GroupSerialStart));
-            Assert.Single(c.History.Events(GroupSerialComplete));
+			Assert.Equal(2, c.History.Events("ValueChanged").Count);
+            Assert.Single(c.History.Events("GroupSerialStart"));
+            Assert.Single(c.History.Events("GroupSerialComplete"));
 
             testOutput.WriteLine(c.History.ToString());	
         }

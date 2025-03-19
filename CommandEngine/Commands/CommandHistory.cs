@@ -4,97 +4,49 @@ namespace CommandEngine.Commands
 {
     public class CommandHistory
     {
-        private readonly List<CommandEvent> _events = new();
+        private readonly List<string> _events = new();
 
         internal CommandHistory() { }
 
         override public string ToString() => string.Join("\n", _events);
 
-        public List<CommandEvent> Events(CommandEventType type) => 
-            _events.FindAll(e => e.EventType == type);
+        public List<string> Events(string type) => 
+            _events.FindAll(e => e.Contains(type));
 		internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
-            _events.Add(new CommandStateEvent(command, originalState, newState));
-        internal void Event(SimpleCommand command, CommandTask task, CommandStatus status) => 
-            _events.Add(new TaskStatusEvent(command, task, status));
-        internal void Event(SimpleCommand command, CommandTask task, Exception e) => 
-            _events.Add(new TaskExceptionEvent(command, task, e));
+            _events.Add($"{DateTime.Now} >> {CommandStateChange} << Status: Command <{command}> Changed State from <{originalState}> To <{newState}>");
+		internal void Event(SimpleCommand command, CommandTask task, CommandStatus status)
+		{
+            var statusMsg = (task is IgnoreTask) ?
+            $"Command <{command}> has no Undo"
+            : $"Task <{task}> completed with status <{status}>";
+			_events.Add($"{DateTime.Now} >> {CommandEventType.TaskStatus} << Status: {statusMsg}");
+		}
+
+		internal void Event(SimpleCommand command, CommandTask task, Exception e) => 
+            _events.Add($"{DateTime.Now} >> {TaskException} << Status: Task <{task}> threw an exception <{e}>");
         internal void Event(SimpleCommand command, CommandTask task, object conclusion) => 
-            _events.Add(new ConclusionReachedEvent(command, task, conclusion));
+            _events.Add($"{DateTime.Now} >> {ConclusionReached} << Status: Task <{task}> reached a conclusion<{conclusion}>");
 
         
 
 
         internal void Event(SimpleCommand command, CommandTask task) => 
-            _events.Add(new TaskStartedEvent(command, task));
+            _events.Add($"{DateTime.Now} >> {CommandEventType.TaskExecuted} << Status: Starting Command <{command}>, executing Task <{task}>");
 
         internal void Event(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue)
         {
-            _events.Add(new ValueChangedEvent(command, task,label,previousValue,newValue));
+            _events.Add($"{DateTime.Now} >> {ValueChanged} << Status: Task <{task}> in Command <{command}> changed <{label}> from <{previousValue}> to <{newValue}>");
 
         }
         internal void StartEvent(SerialCommand command)
         {
-            _events.Add(new GroupSerialStartEvent(command));
+            _events.Add($"{DateTime.Now} >> {GroupSerialStart} << Status: Group Command <{command.NameOnly()}> started");
         }
 
         internal void CompletedEvent(SerialCommand command)
         {
-            _events.Add(new GroupSerialCompletedEvent(command));
+            _events.Add($"{DateTime.Now} >> {GroupSerialComplete} << Status: Group Command <{command.NameOnly()}> completed");
         }
-    }
-
-    internal class GroupSerialStartEvent(SerialCommand command) : CommandEvent
-    {
-        public CommandEventType EventType => GroupSerialStart;
-        public override string ToString() => $"Group Command <{command.NameOnly()}> started";
-    }
-
-    internal class GroupSerialCompletedEvent(SerialCommand command) : CommandEvent
-    {
-        public CommandEventType EventType => GroupSerialComplete;
-        public override string ToString() => $"Group Command <{command.NameOnly()}> completed";
-    }
-
-    internal class ValueChangedEvent(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue) : CommandEvent
-    {
-        public CommandEventType EventType => ValueChanged;
-        public override string ToString() => $"Task <{task}> in Command <{command}> changed <{label}> from <{previousValue}> to <{newValue}>";
-    }
-
-    internal class TaskStartedEvent(SimpleCommand command, CommandTask task) : CommandEvent
-	{
-        public CommandEventType EventType => TaskExecuted;
-
-		public override string ToString() => $"Starting Command <{command}>, executing Task <{task}>";
-	}
-
-	internal class CommandStateEvent(SimpleCommand command, CommandState originalState, CommandState newState) : CommandEvent
-    {
-		public CommandEventType EventType => CommandStateChange;
-
-		public override string ToString() => $"Command <{command}> Changed State from <{originalState}> To <{newState}>";
-    }
-    
-    internal class TaskExceptionEvent(SimpleCommand command, CommandTask task, Exception e) : CommandEvent
-    {
-		public CommandEventType EventType => TaskException;
-
-		public override string ToString() => $"Task <{task}> threw an exception <{e}>";
-    }
-    internal class ConclusionReachedEvent(SimpleCommand command, CommandTask task, object conclusion) : CommandEvent
-    {
-		public CommandEventType EventType => ConclusionReached;
-
-		public override string ToString() => $"Task <{task}> reached a conclusion<{conclusion}>";
-    }
-    public class TaskStatusEvent(SimpleCommand command, CommandTask task, CommandStatus status) : CommandEvent
-    {
-        public CommandStatus Status => status;
-        public CommandEventType EventType => CommandEventType.TaskStatus;
-        public override string ToString() =>
-            (task is IgnoreTask) ?
-            $"Command <{command}> has no Undo"
-            : $"Task <{task}> completed with status <{status}>";
     }
 
     public interface CommandEvent
