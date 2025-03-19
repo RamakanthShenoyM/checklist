@@ -8,5 +8,6 @@ namespace CommandEngine.Commands
         public CommandStatus Undo(Context c);
         public void Accept(CommandVisitor visitor);
         public Command this[int index]=>throw new InvalidOperationException();
+        public Command Clone();
     }
 }

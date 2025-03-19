@@ -1,4 +1,5 @@
 ﻿using CommandEngine.Tasks;
+using System.Windows.Input;
 using static CommandEngine.Commands.CommandStatus;
 
 namespace CommandEngine.Commands
@@ -7,14 +8,23 @@ namespace CommandEngine.Commands
     public class SimpleCommand(CommandTask executeTask, CommandTask revertTask) : Command
     {
         private SimpleCommandState _state = new Initial();
+        private readonly CommandTask _executeTask = executeTask;
+        private readonly CommandTask _revertTask = revertTask;
 
         public void Accept(CommandVisitor visitor) =>
-            visitor.Visit(this, _state.State(), executeTask, revertTask);
+            visitor.Visit(this, _state.State(), _executeTask, _revertTask);
 
         public CommandStatus Execute(Context c) => _state.Execute(this, c);
 
         public CommandStatus Undo(Context c) => _state.Undo(this, c);
+        public Command Clone() => new SimpleCommand(_executeTask, _revertTask);
+        public override bool Equals(object? obj) =>
+          this == obj || obj is SimpleCommand other && this.Equals(other);
 
+        public override int GetHashCode() => _executeTask.GetHashCode() * 37 + _revertTask.GetHashCode();
+        private bool Equals(SimpleCommand other) => 
+            this._executeTask.Equals(other._executeTask) 
+            && this._revertTask.Equals(other._revertTask);
         private void State(SimpleCommandState newState, Context c)
         {
             c.Event(this, _state.State(), newState.State());
@@ -22,37 +32,37 @@ namespace CommandEngine.Commands
         }
 
         public override string ToString() =>
-            (revertTask is IgnoreTask) ?
-             $"Command with Task <{executeTask}> without Undo"
-            : $"Command with Task <{executeTask}> and revert Task <{revertTask}>";
+            (_revertTask is IgnoreTask) ?
+             $"Command with Task <{_executeTask}> without Undo"
+            : $"Command with Task <{_executeTask}> and revert Task <{_revertTask}>";
 
         private CommandStatus RealExecute(Context c)
         {
-            var subContext = c.SubContext(executeTask.NeededLabels);
-            c.History.Event(this, executeTask);
+            var subContext = c.SubContext(_executeTask.NeededLabels);
+            c.History.Event(this, _executeTask);
             try
             {
-                var status = executeTask.Execute(subContext);
-                c.Event(this, executeTask, status);
-                if (status == Suspended) throw new TaskSuspendedException(executeTask, this);
-                if (status == Succeeded) Update(executeTask, c, subContext);
+                var status = _executeTask.Execute(subContext);
+                c.Event(this, _executeTask, status);
+                if (status == Suspended) throw new TaskSuspendedException(_executeTask, this);
+                if (status == Succeeded) Update(_executeTask, c, subContext);
                 return status;
             }
             catch (ConclusionException e)
             {
-                Update(executeTask, c, subContext);
-                c.Event(this, executeTask, e.Conclusion);
+                Update(_executeTask, c, subContext);
+                c.Event(this, _executeTask, e.Conclusion);
                 State(new Executed(), c);
                 throw;
             }
             catch (TaskSuspendedException)
             {
-                Update(executeTask, c, subContext);
+                Update(_executeTask, c, subContext);
                 throw;
             }
             catch (Exception e)
             {
-                c.Event(this, executeTask, e);
+                c.Event(this, _executeTask, e);
                 return Failed;
             }
         }
@@ -70,18 +80,18 @@ namespace CommandEngine.Commands
 
         private CommandStatus RealUndo(Context c)
         {
-            var subContext = c.SubContext(revertTask.NeededLabels);
+            var subContext = c.SubContext(_revertTask.NeededLabels);
             try
             {
-                var status = revertTask.Execute(subContext);
-                c.Event(this, revertTask, status);
+                var status = _revertTask.Execute(subContext);
+                c.Event(this, _revertTask, status);
                 if (status == Failed)
                 {
                     State(new FailedToUndo(), c);
-                    throw new UndoTaskFailureException(revertTask, this);
+                    throw new UndoTaskFailureException(_revertTask, this);
                 }
-                Update(revertTask, c, subContext);
-                if (status == Suspended) throw new TaskSuspendedException(revertTask, this);
+                Update(_revertTask, c, subContext);
+                if (status == Suspended) throw new TaskSuspendedException(_revertTask, this);
                 return Reverted;
             }
             catch (UndoTaskFailureException)
@@ -94,15 +104,15 @@ namespace CommandEngine.Commands
             }
             catch (ConclusionException e)
             {
-                Update(revertTask, c, subContext);
-                c.Event(this, revertTask, e.Conclusion);
+                Update(_revertTask, c, subContext);
+                c.Event(this, _revertTask, e.Conclusion);
                 throw;
             }
             catch (Exception e)
             {
-                c.Event(this, revertTask, e);
+                c.Event(this, _revertTask, e);
                 State(new FailedToUndo(), c);
-                throw new UndoTaskFailureException(revertTask, this);
+                throw new UndoTaskFailureException(_revertTask, this);
             }
         }
 

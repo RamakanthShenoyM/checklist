@@ -1,8 +1,10 @@
 ﻿using CommandEngine.Tasks;
 using static CommandEngine.Commands.CommandStatus;
 
-namespace CommandEngine.Commands {
-    public class SerialCommand : Command {
+namespace CommandEngine.Commands
+{
+    public class SerialCommand : Command
+    {
         private readonly List<Command> _commands;
         private readonly string _groupName;
 
@@ -30,14 +32,17 @@ namespace CommandEngine.Commands {
             return _groupName.GetHashCode();
         }
 
-        private bool Equals(SerialCommand other)
-        {
-            return _groupName == other._groupName;
-        }
+        private bool Equals(SerialCommand other) =>
+            this._groupName == other._groupName && this._commands.SequenceEqual(other._commands);
 
         public Command this[int index] => _commands[index];
-
-        public void Accept(CommandVisitor visitor) {
+        public Command Clone()
+        {
+            var subCommands = _commands.Select(x => x.Clone()).ToList();
+            return new SerialCommand(_groupName, subCommands[0], subCommands.GetRange(1, subCommands.Count - 1).ToArray());
+        }
+        public void Accept(CommandVisitor visitor)
+        {
             visitor.PreVisit(this, _groupName, _commands);
             foreach (var command in _commands) command.Accept(visitor);
             visitor.PostVisit(this, _groupName, _commands);
@@ -51,13 +56,16 @@ namespace CommandEngine.Commands {
             return result;
         }
 
-        private CommandStatus RealExecute(Context c) {
+        private CommandStatus RealExecute(Context c)
+        {
             var status = _commands[0].Execute(c);
-            switch (status) {
+            switch (status)
+            {
                 case Succeeded:
                     if (_commands.Count == 1) return Succeeded;
                     var restStatus = new SerialCommand(_commands.GetRange(1, _commands.Count - 1)).RealExecute(c);
-                    switch (restStatus) {
+                    switch (restStatus)
+                    {
                         case Succeeded:
                             return Succeeded;
                         case Failed:
@@ -77,9 +85,11 @@ namespace CommandEngine.Commands {
             throw new InvalidOperationException("Unexpected result from execution");
         }
 
-        public CommandStatus Undo(Context c) {
+        public CommandStatus Undo(Context c)
+        {
             foreach (var command in _commands.AsEnumerable().Reverse().ToList()) command.Undo(c);
             return Reverted;
         }
+
     }
 }

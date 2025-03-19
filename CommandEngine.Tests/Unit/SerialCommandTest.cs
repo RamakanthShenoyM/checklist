@@ -21,12 +21,7 @@ namespace CommandEngine.Tests.Unit
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
             );
 
-            var command2 = "Master Sequence".Sequence(
-                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
-                AlwaysSuccessful.Otherwise(AlwaysSuccessful),
-                AlwaysSuccessful.Otherwise(AlwaysSuccessful)
-            );
-
+            var command2 = command1.Clone();
             Assert.Equal(command1, command2);
             Assert.NotEqual(command1, new object());
             Assert.NotEqual(command1, null);
