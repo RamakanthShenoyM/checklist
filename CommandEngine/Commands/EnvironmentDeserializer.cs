@@ -1,19 +1,32 @@
 ﻿using CommandEngine.Tasks;
+using static System.Text.Json.JsonSerializer;
+using static CommandEngine.Commands.CommandEnvironment;
 using static CommandEngine.Commands.EnvironmentSerializer;
 
 namespace CommandEngine.Commands
 {
     internal class EnvironmentDeserializer : CommandVisitor
     {
-        private CommandEnvironment _environment;
-        private List<CommandState> _states;
+        private readonly CommandEnvironment _environment;
+        private readonly List<CommandState> _states;
 
         public EnvironmentDeserializer(string json)
         {
-            var dto = System.Text.Json.JsonSerializer.Deserialize<ExtensionDto>(json) ?? throw new InvalidOperationException("Invalid Json");
-            _states = dto.States;
-            _environment =  CommandEnvironment.RestoredEnvironment(CommandEnvironment.Environment(new Guid(dto.EnvironmentId)), new Guid(dto.ClientId), new Tasks.Context());
-            _environment.Accept(this);
+            try {
+                var dto = Deserialize<ExtensionDto>(json) ?? throw new InvalidOperationException("Invalid Json");
+                _states = dto.States;
+                _environment = RestoredEnvironment(
+                    Environment(new Guid(dto.EnvironmentId)),
+                    new Guid(dto.ClientId),
+                    new Context());
+                _environment.Accept(this);
+            }
+            catch (InvalidOperationException) {
+                throw;
+            }
+            catch (Exception e) {
+                throw new InvalidOperationException($"Error deserializing environment: {e.Message}", e);
+            }
         }
 
         public CommandEnvironment Result => _environment;

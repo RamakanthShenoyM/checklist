@@ -1,9 +1,9 @@
 ﻿using CommandEngine.Commands;
-using static CommandEngine.Tests.Util.PermanentStatus;
 using CommandEngine.Tasks;
-using static CommandEngine.Commands.CommandStatus;
-using Xunit.Sdk;
 using Xunit.Abstractions;
+using static CommandEngine.Tests.Util.PermanentStatus;
+using static CommandEngine.Commands.CommandStatus;
+
 namespace CommandEngine.Tests.Integration
 {
     public class CloneEnvironmentTest(ITestOutputHelper testOutput)
