@@ -18,7 +18,8 @@ namespace CommandEngine.Commands
                 _environment = RestoredEnvironment(
                     Environment(new Guid(dto.EnvironmentId)),
                     new Guid(dto.ClientId),
-                    new Context());
+                    new Context(dto.Events)
+                    );
                 _environment.Accept(this);
             }
             catch (InvalidOperationException) {

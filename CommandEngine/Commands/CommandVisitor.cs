@@ -19,5 +19,7 @@ namespace CommandEngine.Commands {
             Context c,
             CommandHistory history)
         { }
+
+        public void Visit(CommandHistory history, List<string> events){}
     }
 }
