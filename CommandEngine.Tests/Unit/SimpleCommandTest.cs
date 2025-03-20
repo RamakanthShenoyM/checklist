@@ -13,7 +13,7 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void Successful()
         {
-            var command = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
+            var command = AlwaysSuccessful.Otherwise(AlwaysSuccessful);
             Assert.Equal(Succeeded,command.Execute(new Context()));
             Assert.Equal(Reverted,command.Undo(new Context()));
         }
@@ -21,33 +21,33 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void FailedTask()
         {
-            Assert.Equal(Failed, new SimpleCommand(AlwaysFail, AlwaysFail).Execute(new Context()));
+            Assert.Equal(Failed, AlwaysFail.Otherwise(AlwaysFail).Execute(new Context()));
         }
         
         [Fact]
         public void SuspendedTask()
         {
-            Assert.Throws<TaskSuspendedException>(() => new SimpleCommand(AlwaysSuspended, AlwaysSuspended).Execute(new Context()));
+            Assert.Throws<TaskSuspendedException>(() => AlwaysSuspended.Otherwise(AlwaysSuspended).Execute(new Context()));
         }
         
         [Fact]
         public void TaskCrashed()
         {
             var c = new Context();
-            Assert.Equal(Failed, new SimpleCommand(new CrashingTask(), AlwaysSuspended).Execute(c));
+            Assert.Equal(Failed, new CrashingTask().Otherwise(AlwaysSuspended).Execute(c));
             Assert.Single(c.History.Events("TaskException"));
         }
         
         [Fact]
         public void UndoFails()
-        {   var command = new SimpleCommand(AlwaysSuccessful, AlwaysFail);
+        {   var command = AlwaysSuccessful.Otherwise(AlwaysFail);
             Assert.Equal(Succeeded, command.Execute(new Context()));
             Assert.Throws<UndoTaskFailureException>(()=>command.Undo(new Context()));
         }
         
         [Fact]
         public void UndoCrashes()
-        {   var command = new SimpleCommand(AlwaysSuccessful, new CrashingTask());
+        {   var command = AlwaysSuccessful.Otherwise(new CrashingTask());
             Assert.Equal(Succeeded, command.Execute(new Context()));
             Assert.Throws<UndoTaskFailureException>(()=>command.Undo(new Context()));
         }
@@ -55,7 +55,7 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void UndoSuspends()
         {
-            var command = new SimpleCommand(AlwaysSuccessful, AlwaysSuspended);
+            var command = AlwaysSuccessful.Otherwise(AlwaysSuspended);
             Assert.Equal(Succeeded, command.Execute(new Context()));
             Assert.Throws<TaskSuspendedException>(() => command.Undo(new Context()));
         }
@@ -63,7 +63,7 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void ExecuteTwice()
         {
-            var command = new SimpleCommand(new RunOnceTask(), AlwaysSuccessful);
+            var command = new RunOnceTask().Otherwise(AlwaysSuccessful);
             Assert.Equal(Succeeded, command.Execute(new Context()));
             Assert.Equal(Succeeded, command.Execute(new Context()));
         }
@@ -71,7 +71,7 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void UndoTwice()
         {
-            var command = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
+            var command = AlwaysSuccessful.Otherwise(AlwaysSuccessful);
             Assert.Equal(Succeeded, command.Execute(new Context()));
             Assert.Equal(Reverted, command.Undo(new Context()));
             Assert.Throws<InvalidOperationException>(()=> command.Undo(new Context()));
@@ -81,7 +81,7 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void UndoBeforeExecute()
         {
-            var command = new SimpleCommand(AlwaysSuccessful, AlwaysSuccessful);
+            var command = AlwaysSuccessful.Otherwise(       AlwaysSuccessful);
             Assert.Throws<InvalidOperationException>(() => command.Undo(new Context()));
         }
     }
