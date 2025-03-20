@@ -35,7 +35,7 @@ namespace CommandEngine.Tests.Unit
         {
             var c = new Context();
             Assert.Equal(Failed, new CrashingTask().Otherwise(AlwaysSuspended).Execute(c));
-            Assert.Single(c.History.Events("TaskException"));
+            Assert.Single(c.History.Events(TaskException));
         }
         
         [Fact]

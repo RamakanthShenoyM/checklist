@@ -10,8 +10,8 @@ namespace CommandEngine.Commands
 
         override public string ToString() => string.Join("\n", _events);
 
-        public List<string> Events(string type) => 
-            _events.FindAll(e => e.Contains(type));
+        public List<string> Events(CommandEventType type) => 
+            _events.FindAll(e => e.Contains(type.ToString()));
 		internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
             _events.Add($"{DateTime.Now} >> {CommandStateChange} << Status: Command <{command}> Changed State from <{originalState}> To <{newState}>");
 		internal void Event(SimpleCommand command, CommandTask task, CommandStatus status)
@@ -33,20 +33,16 @@ namespace CommandEngine.Commands
         internal void Event(SimpleCommand command, CommandTask task) => 
             _events.Add($"{DateTime.Now} >> {CommandEventType.TaskExecuted} << Status: Starting Command <{command}>, executing Task <{task}>");
 
-        internal void Event(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue)
-        {
+        internal void Event(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue) => 
             _events.Add($"{DateTime.Now} >> {ValueChanged} << Status: Task <{task}> in Command <{command}> changed <{label}> from <{previousValue}> to <{newValue}>");
-
-        }
-        internal void StartEvent(SerialCommand command)
-        {
+        internal void StartEvent(SerialCommand command) => 
             _events.Add($"{DateTime.Now} >> {GroupSerialStart} << Status: Group Command <{command.NameOnly()}> started");
-        }
 
-        internal void CompletedEvent(SerialCommand command)
-        {
+        internal void CompletedEvent(SerialCommand command) => 
             _events.Add($"{DateTime.Now} >> {GroupSerialComplete} << Status: Group Command <{command.NameOnly()}> completed");
-        }
+
+        internal void Event(SimpleCommand simpleCommand, CommandTask task, MissingContextInformationException e, object missingLabel) => 
+            _events.Add($"{DateTime.Now} >> {InvalidAccessAttempt} << Status: Invalid Access to <{missingLabel}> by <{task}>");
     }
 
     public interface CommandEvent
@@ -63,6 +59,7 @@ namespace CommandEngine.Commands
         GroupSerialComplete,
         TaskException,
         TaskStatus,
-        ConclusionReached
+        ConclusionReached,
+        InvalidAccessAttempt
     }
 }

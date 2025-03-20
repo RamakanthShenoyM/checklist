@@ -80,6 +80,11 @@ namespace CommandEngine.Commands
                 Update(_executeTask, c, subContext);
                 throw;
             }
+            catch(MissingContextInformationException e) 
+            {
+                c.Event(this, _executeTask, e, e.MissingLabel);
+                return Failed;
+            }
             catch (Exception e)
             {
                 c.Event(this, _executeTask, e);
