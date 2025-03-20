@@ -8,7 +8,7 @@ namespace CommandEngine.Commands
         private readonly List<Command> _commands;
         private readonly string _groupName;
 
-        public SerialCommand(string groupName, Command firstCommand, params Command[] commands)
+        internal SerialCommand(string groupName, Command firstCommand, params Command[] commands)
         {
             _commands = commands.ToList();
             _commands.Insert(0, firstCommand);

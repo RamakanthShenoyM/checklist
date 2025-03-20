@@ -5,11 +5,17 @@ using static CommandEngine.Commands.CommandStatus;
 namespace CommandEngine.Commands
 {
 
-    public class SimpleCommand(CommandTask executeTask, CommandTask revertTask) : Command
+    public class SimpleCommand : Command
     {
         private SimpleCommandState _state = new Initial();
-        private readonly CommandTask _executeTask = executeTask;
-        private readonly CommandTask _revertTask = revertTask;
+        private readonly CommandTask _executeTask;
+        private readonly CommandTask _revertTask;
+
+        internal SimpleCommand(CommandTask executeTask, CommandTask revertTask)
+        {
+            _executeTask = executeTask;
+            _revertTask = revertTask;
+        }
 
         public void Accept(CommandVisitor visitor) =>
             visitor.Visit(this, _state.State(), _executeTask, _revertTask);
