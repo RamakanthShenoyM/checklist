@@ -16,11 +16,10 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
 
     [Fact]
     public void SingleGroupReplace() {
-        var item1 = "Item1".TrueFalse();
-        var item2 = "Item2".TrueFalse();
-        var item3 = "Item3".TrueFalse();
-        var group = new GroupItem(item1, item2, item3);
-        var checklist = new Checklist(Creator, group);
+        var checklist = Creator.Checklist(
+            "Item1".TrueFalse(),
+            "Item2".TrueFalse(),
+            "Item3".TrueFalse());
         Assert.Equal(3, new QuestionTypes(checklist).Count[BooleanQuestion]);
         Assert.Equal(1, new QuestionTypes(checklist).Count[GroupQuestion]);
         testOutput.WriteLine(checklist.ToString(false));
@@ -28,7 +27,7 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
         var replace2A = "Replace2A".TrueFalse();
         var replace2B = "Replace2B".TrueFalse();
         var replace2C = "Replace2C".TrueFalse();
-        Creator.Replace(item2).With(replace2A, replace2B, replace2C).In(checklist);
+        Creator.Replace(checklist.I(0, 1)).With(replace2A, replace2B, replace2C).In(checklist);
         Assert.Equal(5, new QuestionTypes(checklist).Count[BooleanQuestion]);
         Assert.Equal(2, new QuestionTypes(checklist).Count[GroupQuestion]);
         testOutput.WriteLine(checklist.ToString(false));
@@ -41,28 +40,29 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
 
     [Fact]
     public void MultipleGroupReplace() {
-        var item1 = "Item1".TrueFalse();
-        var item2 = "Item2".TrueFalse();
-        var item3 = "Item3".TrueFalse();
-        var item4 = "Item4".TrueFalse();
-        var group = new GroupItem(item1, item2, item3, item4);
-        var checklist = new Checklist(Creator, group);
+        var checklist = Creator.Checklist(
+            "Item1".TrueFalse(),
+            "Item2".TrueFalse(),
+            "Item3".TrueFalse(),
+            "Item4".TrueFalse());
         Assert.Equal(4, new QuestionTypes(checklist).Count[BooleanQuestion]);
         Assert.Equal(1, new QuestionTypes(checklist).Count[GroupQuestion]);
         testOutput.WriteLine(checklist.ToString(false));
 
-        var replace2A = "Replace2A".TrueFalse();
-        var replace2B = "Replace2B".TrueFalse();
-        var replace2C = "Replace2C".TrueFalse();
-        Creator.Replace(item2).With(replace2A, replace2B, replace2C).In(checklist);
+        Creator.Replace(checklist.I(0, 1)).With(
+            "Replace2A".TrueFalse(), 
+            "Replace2B".TrueFalse(), 
+            "Replace2C".TrueFalse()
+            ).In(checklist);
         Assert.Equal(6, new QuestionTypes(checklist).Count[BooleanQuestion]);
         Assert.Equal(2, new QuestionTypes(checklist).Count[GroupQuestion]);
         testOutput.WriteLine(checklist.ToString(false));
 
-        var replace4A = "Replace4A".TrueFalse();
-        var replace4B = "Replace4B".TrueFalse();
-        var replace4C = "Replace4C".TrueFalse();
-        Creator.Replace(item4).With(replace4A, replace4B, replace4C).In(checklist);
+        Creator.Replace(checklist.I(0, 3)).With(
+            "Replace4A".TrueFalse(), 
+            "Replace4B".TrueFalse(), 
+            "Replace4C".TrueFalse()
+            ).In(checklist);
         Assert.Equal(8, new QuestionTypes(checklist).Count[BooleanQuestion]);
         Assert.Equal(3, new QuestionTypes(checklist).Count[GroupQuestion]);
         testOutput.WriteLine(checklist.ToString(false));
