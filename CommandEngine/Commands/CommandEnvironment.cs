@@ -13,20 +13,21 @@ namespace CommandEngine.Commands
         private readonly Guid _environmentId;
         private readonly Guid _clientId;
         private readonly Context _context;
-        private static Dictionary<Guid, CommandEnvironment> _environments = new();
+        private static readonly Dictionary<Guid, CommandEnvironment> _environments = new();
 
         public Guid EnvironmentId => _environmentId;
 
         public Guid ClientId => _clientId;
+
 
         private CommandEnvironment(Command serialCommand, Guid? environmentId = null, Guid? clientId = null, Context? c = null)
         {
             _command = serialCommand;
             _environmentId = environmentId ?? Guid.NewGuid();
             _clientId = clientId ?? Guid.NewGuid();
-            _context = c ?? new Context();
+            _context = c ?? new Context([]);
 
-            if(!_environments.ContainsKey(_environmentId))
+            if (!_environments.ContainsKey(_environmentId))
                 _environments.Add(_environmentId, this);
         }
         public static CommandEnvironment Template(Command command) => new CommandEnvironment(command);
@@ -39,10 +40,13 @@ namespace CommandEngine.Commands
             this == obj || obj is CommandEnvironment other && this.Equals(other);
 
         public override int GetHashCode() => EnvironmentId.GetHashCode() * 37 + ClientId.GetHashCode();
+
         private bool Equals(CommandEnvironment other) =>
-                this.EnvironmentId == other.EnvironmentId
-                && this.ClientId == other.ClientId
-                && this._command .Equals( other._command);
+            this.EnvironmentId == other.EnvironmentId
+            && this.ClientId == other.ClientId
+            && this._command.Equals(other._command)
+            && this._context.Equals(other._context);
+
 
         public CommandStatus Execute() => _command.Execute(_context);
 

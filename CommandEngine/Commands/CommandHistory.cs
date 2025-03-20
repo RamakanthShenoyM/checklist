@@ -4,16 +4,20 @@ namespace CommandEngine.Commands
 {
     public class CommandHistory
     {
-        private readonly List<string> _events = new();
+        private readonly List<string> _events;
 
-        internal CommandHistory() { }
+        internal CommandHistory(List<string> events)
+        {
+            _events = events;
+        }
 
-        override public string ToString() => string.Join("\n", _events);
+        public override string ToString() => string.Join("\n", _events);
 
         public List<string> Events(CommandEventType type) => 
             _events.FindAll(e => e.Contains(type.ToString()));
 		internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
             _events.Add($"{DateTime.Now} >> {CommandStateChange} << Status: Command <{command}> Changed State from <{originalState}> To <{newState}>");
+
 		internal void Event(SimpleCommand command, CommandTask task, CommandStatus status)
 		{
             var statusMsg = (task is IgnoreTask) ?
@@ -27,8 +31,13 @@ namespace CommandEngine.Commands
         internal void Event(SimpleCommand command, CommandTask task, object conclusion) => 
             _events.Add($"{DateTime.Now} >> {ConclusionReached} << Status: Task <{task}> reached a conclusion<{conclusion}>");
 
-        
 
+        public override bool Equals(object? obj) =>
+            this == obj || obj is CommandHistory other && this.Equals(other);
+
+        public override int GetHashCode() => string.Join("", this._events).GetHashCode();
+        private bool Equals(CommandHistory other) =>
+            this._events.SequenceEqual(other._events);
 
         internal void Event(SimpleCommand command, CommandTask task) => 
             _events.Add($"{DateTime.Now} >> {CommandEventType.TaskExecuted} << Status: Starting Command <{command}>, executing Task <{task}>");
@@ -43,13 +52,10 @@ namespace CommandEngine.Commands
 
         internal void Event(SimpleCommand simpleCommand, CommandTask task, MissingContextInformationException e, object missingLabel) => 
             _events.Add($"{DateTime.Now} >> {InvalidAccessAttempt} << Status: Invalid Access to <{missingLabel}> by <{task}>");
+
+        internal void Accept(CommandVisitor visitor) => visitor.Visit(this,_events);
     }
 
-    public interface CommandEvent
-    {
-        CommandEventType EventType { get; }
-
-    }
     public enum CommandEventType
     {
         CommandStateChange,

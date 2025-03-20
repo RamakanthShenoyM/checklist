@@ -1,11 +1,18 @@
 ﻿using CommandEngine.Commands;
+using System;
 
 namespace CommandEngine.Tasks
 {
     public class Context
     {
         private readonly Dictionary<object, object> _values = new();
-        private readonly CommandHistory _history = new();
+        private readonly CommandHistory _history;
+
+        internal Context(List<string> events)
+        {
+            _history=new (events);
+        }
+        public Context():this([]) { }
 
         public object this[object label]
         {
@@ -23,7 +30,7 @@ namespace CommandEngine.Tasks
 
         public Context SubContext(List<object> labels)
         {
-            var result = new Context();
+            var result = new Context([]);
             foreach (var label in labels) if (this.Has(label)) result[label] = this[label];
             return result;
         }
@@ -33,6 +40,14 @@ namespace CommandEngine.Tasks
             foreach (var label in changedLabels) 
                 if (subContext.Has(label)) this[label] = subContext[label];
         }
+
+        public override bool Equals(object? obj) =>
+            this == obj || obj is Context other && this.Equals(other);
+
+        public override int GetHashCode() => _history.GetHashCode();
+
+        private bool Equals(Context other) => this._history.Equals(other._history);
+            
 
         internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
             _history.Event(command, originalState, newState);
@@ -52,9 +67,12 @@ namespace CommandEngine.Tasks
 
         internal void CompletedEvent(SerialCommand command) => _history.CompletedEvent(command);
 
-        internal void Accept(CommandVisitor visitor) => visitor.Visit(this, _history);
-
         internal void Event(SimpleCommand simpleCommand, CommandTask executeTask, MissingContextInformationException e, object missingLabel) => 
             _history.Event(simpleCommand, executeTask, e, missingLabel);
+        internal void Accept(CommandVisitor visitor)
+        {
+            visitor.Visit(this, _history);
+            _history.Accept(visitor);
+        }
     }
 }
