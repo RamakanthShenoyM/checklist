@@ -4,16 +4,17 @@ namespace CommandEngine.Tasks
 {
     public class Context
     {
-        private readonly Dictionary<object, object> _values = new();
+        private readonly Dictionary<Enum, object> _values = new();
         private readonly CommandHistory _history;
-        private List<object>? _changedLabels;
+        private List<Enum>? _changedLabels;
 
         internal Context(List<string> events)
         {
             _history = new (events);
         }
         public Context():this([]) { }
-        public object this[object label]
+
+        public object this[Enum label]
         {
             get
             {
@@ -26,11 +27,11 @@ namespace CommandEngine.Tasks
                 _values[label] = value;
             }
         }
-        public bool Has(object label) => _values.ContainsKey(label);
+        public bool Has(Enum label) => _values.ContainsKey(label);
 
         public CommandHistory History => _history;
 
-        public Context SubContext(List<object> labelsToCopy, List<object> changedLabels)
+        public Context SubContext(List<Enum> labelsToCopy, List<Enum> changedLabels)
         {
             var result = new Context([]);
             foreach (var label in labelsToCopy) if (this.Has(label)) result[label] = this[label];
@@ -38,7 +39,7 @@ namespace CommandEngine.Tasks
             return result;
         }
 
-        internal void Update(Context subContext, List<object> changedLabels)
+        internal void Update(Context subContext, List<Enum> changedLabels)
         {
             foreach (var label in changedLabels)
                 if (subContext.Has(label)) this[label] = subContext[label];

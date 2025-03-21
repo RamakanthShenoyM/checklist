@@ -56,5 +56,11 @@ namespace Engine.Items
 
             return _item.Remove(item);
         }
+
+        internal override Item I(List<int> indexes) {
+            if (indexes.Count == 1) return this;
+            if (indexes[1] == 0) return _item.I(indexes.Skip(1).ToList());
+            throw new InvalidOperationException($"Invalid index of {indexes[1]} for a NotItem. Should be 0.");
+        }
     }
 }

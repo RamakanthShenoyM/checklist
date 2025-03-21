@@ -5,8 +5,8 @@ namespace CommandEngine.Tasks
     public interface CommandTask
     {
         CommandStatus Execute(Context c);
-        List<object> NeededLabels { get; }
-        List<object> ChangedLabels { get; }
+        List<Enum> NeededLabels { get; }
+        List<Enum> ChangedLabels { get; }
         public static CommandTask Ignore => new IgnoreTask();  
 
         public static CommandTask Mandatory(CommandTask subTask) =>

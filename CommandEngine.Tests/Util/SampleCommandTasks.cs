@@ -12,16 +12,16 @@ namespace CommandEngine.Tests.Util
         internal static readonly PermanentStatus AlwaysFail = new(Failed);
         internal static readonly PermanentStatus AlwaysSuspended = new(Suspended);
         public CommandStatus Execute(Context c) => status;
-        public List<object> NeededLabels => new();
-        public List<object> ChangedLabels => new();
+        public List<Enum> NeededLabels => new();
+        public List<Enum> ChangedLabels => new();
         public override string ToString() => $"Task always is {status} ";
     }
 
     internal class CrashingTask : CommandTask
     {
-        public List<object> NeededLabels => new();
+        public List<Enum> NeededLabels => new();
 
-        public List<object> ChangedLabels => new();
+        public List<Enum> ChangedLabels => new();
         public override string ToString() => $"Task always Crashes ";
 
         public CommandStatus Execute(Context c) => throw new InvalidOperationException("unable to execute this task");
@@ -30,9 +30,9 @@ namespace CommandEngine.Tests.Util
     internal class RunOnceTask : CommandTask
     {
         private bool _hasRun;
-        public List<object> NeededLabels => new();
+        public List<Enum> NeededLabels => new();
 
-        public List<object> ChangedLabels => new();
+        public List<Enum> ChangedLabels => new();
         public override string ToString() => $"Task only run once";
         public CommandStatus Execute(Context c)
         {
@@ -45,9 +45,9 @@ namespace CommandEngine.Tests.Util
     internal class SuspendFirstOnly : CommandTask
     {
         private bool _hasSuspended;
-        public List<object> NeededLabels => new();
+        public List<Enum> NeededLabels => new();
 
-        public List<object> ChangedLabels => new();
+        public List<Enum> ChangedLabels => new();
         public override string ToString() => $"Task Suspends on first Execution ";
         public CommandStatus Execute(Context c)
         {
@@ -56,11 +56,11 @@ namespace CommandEngine.Tests.Util
             return Suspended;
         }
     }
-    internal class ContextTask(List<object> neededLabels, List<object> changedLabels, List<object> missingLabels) : CommandTask
+    internal class ContextTask(List<Enum> neededLabels, List<Enum> changedLabels, List<Enum> missingLabels) : CommandTask
     {
-        public List<object> NeededLabels => neededLabels;
+        public List<Enum> NeededLabels => neededLabels;
 
-        public List<object> ChangedLabels => changedLabels;
+        public List<Enum> ChangedLabels => changedLabels;
         public override string ToString() => $"Task needs labels {string.Join(", ", neededLabels)} and sets {string.Join(", ",changedLabels)} ";
 
         public CommandStatus Execute(Context c)
@@ -70,11 +70,11 @@ namespace CommandEngine.Tests.Util
             return Succeeded;
         }
     }
-    internal class WriteTask(List<object> writtenLabels) : CommandTask
+    internal class WriteTask(List<Enum> writtenLabels) : CommandTask
     {
-        public List<object> NeededLabels => [];
+        public List<Enum> NeededLabels => [];
 
-        public List<object> ChangedLabels => [];
+        public List<Enum> ChangedLabels => [];
         public override string ToString() => $"Task Writes labels {string.Join(", ", writtenLabels)}" ;
 
         public CommandStatus Execute(Context c)
@@ -83,11 +83,11 @@ namespace CommandEngine.Tests.Util
             return Succeeded;
         }
     }
-    internal class ReadTask(List<object> neededLabels) : CommandTask
+    internal class ReadTask(List<Enum> neededLabels) : CommandTask
     {
-        public List<object> NeededLabels => neededLabels;
+        public List<Enum> NeededLabels => neededLabels;
 
-        public List<object> ChangedLabels => [];
+        public List<Enum> ChangedLabels => [];
         public override string ToString() => $"Task needs Reads labels {string.Join(", ", neededLabels)}";
 
         public CommandStatus Execute(Context c)
