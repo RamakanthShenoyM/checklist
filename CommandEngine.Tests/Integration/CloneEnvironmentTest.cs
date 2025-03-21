@@ -69,7 +69,7 @@ namespace CommandEngine.Tests.Integration
         [Fact]
         public void VariousContextTypes()
         {
-            var c = Context(A, B, C, D, E, F);
+            var c = Context();
             c[A] = "A";
             c[B] = 1990;
             c[C] = 3.14;

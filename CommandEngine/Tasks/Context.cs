@@ -23,6 +23,7 @@ namespace CommandEngine.Tasks
             }
             set
             {
+                if(value == null) throw new InvalidOperationException("Can't set a label to null; use Reset()");
                 if (_changedLabels != null && !_changedLabels.Contains(label)) throw new UpdateNotCapturedException(label);
                 _values[label] = value;
             }
@@ -80,6 +81,6 @@ namespace CommandEngine.Tasks
             _history.Accept(visitor);
         }
 
-        
+        public bool Reset(Enum label) => _values.Remove(label);
     }
 }

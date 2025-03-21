@@ -22,6 +22,17 @@ namespace CommandEngine.Tests.Unit
             context[Conclusion] = NotPay;
             Assert.Equal(NotPay, context[Conclusion]);
         }
+        [Fact]
+        public void ResetContextValue()
+        {
+            var c = new Context();
+            c[A] = "A";
+            Assert.Equal("A", c[A]);
+            Assert.True(c.Reset(A));
+            Assert.False(c.Has(A));
+            Assert.Throws<InvalidOperationException>(() => c[A] = null);
+            Assert.False(c.Reset(B));
+        }
 
         [Fact]
         public void TaskWithConclusion()
