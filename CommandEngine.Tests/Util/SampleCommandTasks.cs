@@ -70,11 +70,11 @@ namespace CommandEngine.Tests.Util
             return Succeeded;
         }
     }
-    internal class ReadTask(List<object> neededLabels) : CommandTask
+    internal class ReadTask(List<Enum> neededLabels) : CommandTask
     {
-        public List<object> NeededLabels => neededLabels;
+        public List<Enum> NeededLabels => neededLabels;
 
-        public List<object> ChangedLabels => [];
+        public List<Enum> ChangedLabels => [];
         public override string ToString() => $"Task needs Reads labels {string.Join(", ", neededLabels)}";
 
         public CommandStatus Execute(Context c)
