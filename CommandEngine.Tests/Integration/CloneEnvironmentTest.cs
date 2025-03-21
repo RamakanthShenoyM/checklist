@@ -38,7 +38,7 @@ namespace CommandEngine.Tests.Integration
                     AlwaysFail.Otherwise(AlwaysSuccessful)
                 ),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
-            ));
+            ));                            
             var originalEnvironment = CommandEnvironment.FreshEnvironment(template);
             Assert.Equal(Reverted, originalEnvironment.Execute());
             var json = originalEnvironment.ToJson();

@@ -183,7 +183,7 @@ namespace CommandEngine.Tests.Unit
         CallPolice
     }
 
-    internal enum TestLabels
+    public enum TestLabels
     {
         Conclusion, A, B, C, D
     }

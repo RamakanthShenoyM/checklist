@@ -1,25 +1,23 @@
-﻿using CommandEngine.Tasks;
+﻿using System.Linq.Expressions;
+using CommandEngine.Tasks;
 using static System.Text.Json.JsonSerializer;
 using static CommandEngine.Commands.CommandEnvironment;
 using static CommandEngine.Commands.EnvironmentSerializer;
 
-namespace CommandEngine.Commands
-{
-    internal class EnvironmentDeserializer : CommandVisitor
-    {
+namespace CommandEngine.Commands {
+    internal class EnvironmentDeserializer : CommandVisitor {
         private readonly CommandEnvironment _environment;
         private readonly List<CommandState> _states;
 
-        public EnvironmentDeserializer(string json)
-        {
+        public EnvironmentDeserializer(string json) {
             try {
                 var dto = Deserialize<ExtensionDto>(json) ?? throw new InvalidOperationException("Invalid Json");
                 _states = dto.States;
                 _environment = RestoredEnvironment(
                     Environment(new Guid(dto.EnvironmentId)),
                     new Guid(dto.ClientId),
-                    new Context(dto.Events)
-                    );
+                    Context(dto)
+                );
                 _environment.Accept(this);
             }
             catch (InvalidOperationException) {
@@ -30,10 +28,36 @@ namespace CommandEngine.Commands
             }
         }
 
+        private static Context Context(ExtensionDto dto) {
+            var result = new Context(dto.Events);
+            foreach (var entry in dto.Entries)
+                result[Label(entry.EnumType, entry.EnumValue)] = Value(entry.ValueType, entry.ValueValue);
+            return result;
+        }
+
+        private static object Value(string entryValueType, string entryValueValue) {
+            return "Haven't done this yet";
+        }
+
+        private static Enum Label(string enumTypeName, string enumValue) {
+            Type enumType = FoundType(enumTypeName);
+            if (enumType == null || !enumType.IsEnum) throw new InvalidOperationException(
+                    $"Type '{enumTypeName}' is not an enum.");
+            return (Enum)Enum.Parse(enumType, enumValue);
+        }
+
+        private static Type FoundType(string fullTypeName) {
+            // Check all currently loaded assemblies in the AppDomain
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+                var type = assembly.GetType(fullTypeName);
+                if (type != null) return type;
+            }
+            throw new InvalidOperationException($"Type {fullTypeName} not found");
+        }
+
         public CommandEnvironment Result => _environment;
 
-        public void Visit(SimpleCommand command, CommandState state, CommandTask executeTask, CommandTask revertTask)
-        {
+        public void Visit(SimpleCommand command, CommandState state, CommandTask executeTask, CommandTask revertTask) {
             command.State(_states[0]);
             _states.RemoveAt(0);
         }
