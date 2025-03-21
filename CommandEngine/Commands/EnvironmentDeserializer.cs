@@ -29,14 +29,18 @@ namespace CommandEngine.Commands {
         }
 
         private static Context Context(ExtensionDto dto) {
-            var result = new Context(dto.Events);
+            var c = new Context(dto.Events);
             foreach (var entry in dto.Entries)
-                result[Label(entry.EnumType, entry.EnumValue)] = Value(entry.ValueType, entry.ValueValue);
-            return result;
+                c[Label(entry.EnumType, entry.EnumValue)] = Value(entry.ValueType, entry.ValueValue);
+            return c;
         }
 
         private static object Value(string entryValueType, string entryValueValue) {
-            return "Haven't done this yet";
+			Type valueType = FoundType(entryValueType);
+			if (valueType.IsEnum)
+				return Enum.Parse(valueType, entryValueValue);
+
+			return Convert.ChangeType(entryValueValue, valueType);
         }
 
         private static Enum Label(string enumTypeName, string enumValue) {
