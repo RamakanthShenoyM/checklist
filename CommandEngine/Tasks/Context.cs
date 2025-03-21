@@ -5,7 +5,7 @@ namespace CommandEngine.Tasks
 {
     public class Context
     {
-        private readonly Dictionary<object, object> _values = new();
+        private readonly Dictionary<Enum, object> _values = new();
         private readonly CommandHistory _history;
 
         internal Context(List<string> events)
@@ -14,7 +14,7 @@ namespace CommandEngine.Tasks
         }
         public Context():this([]) { }
 
-        public object this[object label]
+        public object this[Enum label]
         {
             get
             {
@@ -24,18 +24,18 @@ namespace CommandEngine.Tasks
             set => _values[label] = value;
         }
 
-        public bool Has(object label) => _values.ContainsKey(label);
+        public bool Has(Enum label) => _values.ContainsKey(label);
 
         public CommandHistory History => _history;
 
-        public Context SubContext(List<object> labels)
+        public Context SubContext(List<Enum> labels)
         {
-            var result = new Context([]);
+            var result = new Context();
             foreach (var label in labels) if (this.Has(label)) result[label] = this[label];
             return result;
         }
 
-        internal void Update(Context subContext, List<object> changedLabels)
+        internal void Update(Context subContext, List<Enum> changedLabels)
         {
             foreach (var label in changedLabels) 
                 if (subContext.Has(label)) this[label] = subContext[label];

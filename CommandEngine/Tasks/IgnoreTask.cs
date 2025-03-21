@@ -8,9 +8,9 @@ namespace CommandEngine.Tasks
         internal IgnoreTask() { 
         }
 
-        public List<object> NeededLabels => [];
+        public List<Enum> NeededLabels => [];
 
-        public List<object> ChangedLabels => [];
+        public List<Enum> ChangedLabels => [];
 
         public CommandStatus Execute(Context c) => Succeeded;
     }

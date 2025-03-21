@@ -4,9 +4,9 @@ namespace CommandEngine.Tasks
 {
     public class ConclusionTask(object conclusion) : CommandTask
     {
-        public List<object> NeededLabels => new();
+        public List<Enum> NeededLabels => new();
 
-        public List<object> ChangedLabels => new();
+        public List<Enum> ChangedLabels => new();
 
         public CommandStatus Execute(Context c)
         {

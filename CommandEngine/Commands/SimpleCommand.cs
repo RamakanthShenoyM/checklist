@@ -89,7 +89,7 @@ namespace CommandEngine.Commands
 
         private void Update(CommandTask task, Context c, Context subContext)
         {
-            Dictionary<object, object?> previousValues = task.ChangedLabels.ToDictionary(label => label, label => c.Has(label) ? c[label] : null);
+            Dictionary<Enum, object?> previousValues = task.ChangedLabels.ToDictionary(label => label, label => c.Has(label) ? c[label] : null);
             c.Update(subContext, task.ChangedLabels);
             foreach (var keyValuePair in previousValues)
             {

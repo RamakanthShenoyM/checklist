@@ -58,31 +58,31 @@ namespace CommandEngine.Tests.Unit
 		public void ExtractSubContext()
 		{
 			var c = new Context {
-				["A"] = "A",
-				["B"] = "B",
-				["C"] = "C"
+				[A] = A,
+				[B] = B,
+				[C] = C
 			};
-			var sub = c.SubContext(Labels("A", "B"));
-			Assert.Equal("A", sub["A"]);
-			Assert.Equal("B", sub["B"]);
-			Assert.Throws<MissingContextInformationException>(() => sub["C"]);
+			var sub = c.SubContext(Labels(A, B));
+			Assert.Equal(A, sub[A]);
+			Assert.Equal(B, sub[B]);
+			Assert.Throws<MissingContextInformationException>(() => sub[C]);
 		}
 
 		[Fact]
 		public void TaskWithSubContext()
 		{
-			var c = Context("A", "B", "C");
-			var neededLabels = Labels("A", "B");
-			var changedLabels = Labels("D", "B");
-			var missingLabels = Labels("C");
+			var c = Context(A, B, C);
+			var neededLabels = Labels(A, B);
+			var changedLabels = Labels(D, B);
+			var missingLabels = Labels(C);
 			var command = "Primary Group".Sequence(
 					AlwaysSuccessful.Otherwise(AlwaysSuccessful),
 					new ContextTask(neededLabels, changedLabels, missingLabels).Otherwise(AlwaysSuccessful)
 			);
-			Assert.Throws<MissingContextInformationException>(() => c["D"]);
+			Assert.Throws<MissingContextInformationException>(() => c[D]);
 			Assert.Equal(Succeeded, command.Execute(c));
-			Assert.Equal("DChanged", c["D"]);
-			Assert.Equal("BChanged", c["B"]);
+			Assert.Equal("DChanged", c[D]);
+			Assert.Equal("BChanged", c[B]);
 			Assert.Equal(2, c.History.Events("ValueChanged").Count);
             Assert.Single(c.History.Events("GroupSerialStart"));
             Assert.Single(c.History.Events("GroupSerialComplete"));
@@ -94,61 +94,61 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void UndoTaskWithSubContext()
         {
-            var c = Context("A", "B", "C");
-            var neededLabels = Labels("A", "B");
-            var changedLabels = Labels("D", "B");
-            var missingLabels = Labels("C");
+            var c = Context(A, B, C);
+            var neededLabels = Labels(A, B);
+            var changedLabels = Labels(D, B);
+            var missingLabels = Labels(C);
             var command = "Master Sequence".Sequence(
                     AlwaysSuccessful.Otherwise( new ContextTask(neededLabels, changedLabels, missingLabels)),
                     AlwaysFail.Otherwise(AlwaysSuccessful)
             );
             Assert.Equal(Reverted, command.Execute(c));
-            Assert.Equal("DChanged", c["D"]);
-            Assert.Equal("BChanged", c["B"]);
+            Assert.Equal("DChanged", c[D]);
+            Assert.Equal("BChanged", c[B]);
         }
 
         [Fact]
         public void TaskWithMissingLabel()
         {
-            var c = Context("A", "B", "C");
-            var neededLabels = Labels("A", "B", "D");
-            var changedLabels = Labels("D", "B");
-            var missingLabels = Labels("C");
+            var c = Context(A, B, C);
+            var neededLabels = Labels(A, B, D);
+            var changedLabels = Labels(D, B);
+            var missingLabels = Labels(C);
             var command = "Master Sequence".Sequence(
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                     new ContextTask(neededLabels, changedLabels, missingLabels).Otherwise(AlwaysSuccessful)
             );
-            Assert.Throws<MissingContextInformationException>(() => c["D"]);
+            Assert.Throws<MissingContextInformationException>(() => c[D]);
             Assert.Equal(Succeeded, command.Execute(c));
-            Assert.Equal("DChanged", c["D"]);
-            Assert.Equal("BChanged", c["B"]);
+            Assert.Equal("DChanged", c[D]);
+            Assert.Equal("BChanged", c[B]);
         }
 		
 		[Fact]
         public void TaskWithRequiredLabel()
         {
-            var c = Context("A", "B", "C");
-            var neededLabels = Labels("A", "B", "D");
-            var changedLabels = Labels("D", "B");
-            var missingLabels = Labels("C");
+            var c = Context(A, B, C);
+            var neededLabels = Labels(A, B, D);
+            var changedLabels = Labels(D, B);
+            var missingLabels = Labels(C);
             var command = "Master Sequence".Sequence(
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                     Mandatory(new ContextTask(neededLabels, changedLabels, missingLabels)).Otherwise(AlwaysSuccessful)
             );
-            Assert.False(c.Has("D"));
+            Assert.False(c.Has(D));
             Assert.Throws<TaskSuspendedException>(() => command.Execute(c));
-			c["D"] = "D";
+			c[D] = D;
             Assert.Equal(Succeeded, command.Execute(c));
-            Assert.Equal("DChanged", c["D"]);
-            Assert.Equal("BChanged", c["B"]);
+            Assert.Equal("DChanged", c[D]);
+            Assert.Equal("BChanged", c[B]);
         }
 
-        private static List<object> Labels(params string[] labels) => [..labels];
+        private static List<Enum> Labels(params Enum[] labels) => [..labels];
 
-        private static Context Context(params string[] labels)
+        private static Context Context(params Enum[] labels)
         {
             var result = new Context();
-			foreach(var label in labels) result[label] = label.ToUpper();
+			foreach(var label in labels) result[label] = label.ToString().ToUpper();
 			return result;
         }
     }
@@ -161,6 +161,6 @@ namespace CommandEngine.Tests.Unit
 
 	internal enum TestLabels
 	{
-		Conclusion
+		Conclusion,A,B,C,D
 	}
 }
