@@ -51,5 +51,13 @@ namespace Engine.Items {
             if (item == _item) throw new InvalidOperationException("Cannot remove the only item in the checklist");
             if (!_item.Remove(item)) throw new InvalidOperationException("Item not found in checklist");
         }
+
+        public Item I(int firstIndex, params int[] rest) {
+            if (firstIndex != 0) throw new InvalidOperationException(
+                "There is only one item at the root of the Checklist hierarchy, so use index 0.");
+            var indexes = rest.ToList();
+            indexes.Insert(0, firstIndex);
+            return _item.I(indexes);
+        }
     }
 }

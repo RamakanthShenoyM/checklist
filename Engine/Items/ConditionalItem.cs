@@ -88,5 +88,9 @@ namespace Engine.Items
 
             return result || baseResult || successResult || failItemResult;
         }
+
+        internal override Item I(List<int> indexes) {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -67,6 +67,8 @@ namespace CommandEngine.Tasks
 
         internal void CompletedEvent(SerialCommand command) => _history.CompletedEvent(command);
 
+        internal void Event(SimpleCommand simpleCommand, CommandTask executeTask, MissingContextInformationException e, object missingLabel) => 
+            _history.Event(simpleCommand, executeTask, e, missingLabel);
         internal void Accept(CommandVisitor visitor)
         {
             visitor.Visit(this, _history);

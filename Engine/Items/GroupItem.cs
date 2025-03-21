@@ -88,5 +88,12 @@ namespace Engine.Items
 
             return result;
         }
+
+        internal override Item I(List<int> indexes) {
+            if (indexes.Count == 1) return this;
+            if (indexes[1] >= _childItems.Count) throw new InvalidOperationException(
+                $"Invalid index of {indexes[0]} for a Group with only {_childItems.Count} items");
+            return _childItems[indexes[1]].I(indexes.Skip(1).ToList());
+        }
     }
 }

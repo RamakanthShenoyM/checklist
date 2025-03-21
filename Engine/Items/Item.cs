@@ -18,6 +18,13 @@ namespace Engine.Items
         internal virtual void Simplify() {} // Ignore by default
 
 		internal virtual bool Remove(Item item) => false;
+
+		public Item I(int firstIndex, params int[] rest) {
+			var results = rest.ToList();
+			results.Insert(0, firstIndex);
+			return I(results);
+		}
+		internal abstract Item I(List<int> indexes);
     }
 
 	public static class ItemExtensions

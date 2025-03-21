@@ -18,6 +18,11 @@
 	        visitor.Visit(this,_question, _hasSucceeded, Operations);
         }
 
+        internal override Item I(List<int> indexes) {
+	        if (indexes.Count == 1) return this;
+	        throw new InvalidOperationException($"No more items exist to reach with indexes {indexes}");
+        }
+
         internal override ItemStatus Status() => _hasSucceeded switch
         {
             true => ItemStatus.Succeeded,
