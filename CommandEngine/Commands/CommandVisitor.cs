@@ -16,9 +16,10 @@ namespace CommandEngine.Commands {
             CommandTask revertTask)
         { }
         public void Visit(
-            Context c,
+			Context c,
+			Dictionary<Enum, object> entries, 
             CommandHistory history)
-        { }
+		{ }
 
         public void Visit(CommandHistory history, List<string> events){}
     }

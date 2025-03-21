@@ -50,10 +50,13 @@ namespace CommandEngine.Tasks
 
         public override int GetHashCode() => _history.GetHashCode();
 
-        private bool Equals(Context other) => this._history.Equals(other._history);
+		private bool Equals(Context other)
+		{
             
+			return this._history.Equals(other._history);
+		}
 
-        internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
+		internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
             _history.Event(command, originalState, newState);
         internal void Event(SimpleCommand command, CommandTask task, object conclusion) =>
             _history.Event(command, task, conclusion);
@@ -77,7 +80,7 @@ namespace CommandEngine.Tasks
             _history.Event(simpleCommand,  task, changedLabel, e);
         internal void Accept(CommandVisitor visitor)
         {
-            visitor.Visit(this, _history);
+            visitor.Visit(this, _values, _history);
             _history.Accept(visitor);
         }
 
