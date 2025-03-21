@@ -54,6 +54,9 @@ namespace CommandEngine.Commands
             _events.Add($"{DateTime.Now} >> {InvalidAccessAttempt} << Status: Invalid Access to <{missingLabel}> by <{task}>");
 
         internal void Accept(CommandVisitor visitor) => visitor.Visit(this,_events);
+
+        internal void Event(SimpleCommand simpleCommand, CommandTask task, object changedLabel, UpdateNotCapturedException e) => 
+            _events.Add($"{DateTime.Now} >> {UpdateNotCaptured} << Status: Attempt to set <{changedLabel}> in the context, but not marked as a change field");
     }
 
     public enum CommandEventType
@@ -66,6 +69,7 @@ namespace CommandEngine.Commands
         TaskException,
         TaskStatus,
         ConclusionReached,
-        InvalidAccessAttempt
+        InvalidAccessAttempt,
+        UpdateNotCaptured
     }
 }

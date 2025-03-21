@@ -70,6 +70,19 @@ namespace CommandEngine.Tests.Util
             return Succeeded;
         }
     }
+    internal class WriteTask(List<object> writtenLabels) : CommandTask
+    {
+        public List<object> NeededLabels => [];
+
+        public List<object> ChangedLabels => [];
+        public override string ToString() => $"Task Writes labels {string.Join(", ", writtenLabels)}" ;
+
+        public CommandStatus Execute(Context c)
+        {
+            foreach (var label in writtenLabels) c[label] = (label.ToString() ?? "null").ToUpper() + "Changed";
+            return Succeeded;
+        }
+    }
     internal class ReadTask(List<object> neededLabels) : CommandTask
     {
         public List<object> NeededLabels => neededLabels;

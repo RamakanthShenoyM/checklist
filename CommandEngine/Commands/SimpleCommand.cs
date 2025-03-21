@@ -28,8 +28,8 @@ namespace CommandEngine.Commands
           this == obj || obj is SimpleCommand other && this.Equals(other);
 
         public override int GetHashCode() => _executeTask.GetHashCode() * 37 + _revertTask.GetHashCode();
-        private bool Equals(SimpleCommand other) => 
-            this._executeTask.Equals(other._executeTask) 
+        private bool Equals(SimpleCommand other) =>
+            this._executeTask.Equals(other._executeTask)
             && this._revertTask.Equals(other._revertTask)
             && this._state.State() == other._state.State();
         private void State(SimpleCommandState newState, Context c)
@@ -58,7 +58,7 @@ namespace CommandEngine.Commands
 
         private CommandStatus RealExecute(Context c)
         {
-            var subContext = c.SubContext(_executeTask.NeededLabels);
+            var subContext = c.SubContext(_executeTask.NeededLabels, _executeTask.ChangedLabels);
             c.History.Event(this, _executeTask);
             try
             {
@@ -67,6 +67,12 @@ namespace CommandEngine.Commands
                 if (status == Suspended) throw new TaskSuspendedException(_executeTask, this);
                 if (status == Succeeded) Update(_executeTask, c, subContext);
                 return status;
+            }
+
+            catch (UpdateNotCapturedException e)
+            {
+                c.Event(this, _executeTask, e.ChangedLabel, e);
+                return Failed;
             }
             catch (ConclusionException e)
             {
@@ -80,7 +86,7 @@ namespace CommandEngine.Commands
                 Update(_executeTask, c, subContext);
                 throw;
             }
-            catch(MissingContextInformationException e) 
+            catch (MissingContextInformationException e)
             {
                 c.Event(this, _executeTask, e, e.MissingLabel);
                 return Failed;
@@ -105,7 +111,7 @@ namespace CommandEngine.Commands
 
         private CommandStatus RealUndo(Context c)
         {
-            var subContext = c.SubContext(_revertTask.NeededLabels);
+            var subContext = c.SubContext(_revertTask.NeededLabels, _revertTask.ChangedLabels);
             try
             {
                 var status = _revertTask.Execute(subContext);
@@ -140,6 +146,8 @@ namespace CommandEngine.Commands
                 throw new UndoTaskFailureException(_revertTask, this);
             }
         }
+
+
 
         private interface SimpleCommandState
         {

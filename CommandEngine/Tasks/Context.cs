@@ -1,5 +1,4 @@
 ﻿using CommandEngine.Commands;
-using System;
 
 namespace CommandEngine.Tasks
 {
@@ -7,37 +6,41 @@ namespace CommandEngine.Tasks
     {
         private readonly Dictionary<object, object> _values = new();
         private readonly CommandHistory _history;
+        private List<object>? _changedLabels;
 
         internal Context(List<string> events)
         {
-            _history=new (events);
+            _history = new (events);
         }
         public Context():this([]) { }
-
         public object this[object label]
         {
             get
             {
-                if (!_values.TryGetValue(label, value: out var item)) throw new MissingContextInformationException(label);
+                if (!_values.TryGetValue(label, out var item)) throw new MissingContextInformationException(label);
                 return item;
             }
-            set => _values[label] = value;
+            set
+            {
+                if (_changedLabels != null && !_changedLabels.Contains(label)) throw new UpdateNotCapturedException(label);
+                _values[label] = value;
+            }
         }
-
         public bool Has(object label) => _values.ContainsKey(label);
 
         public CommandHistory History => _history;
 
-        public Context SubContext(List<object> labels)
+        public Context SubContext(List<object> labelsToCopy, List<object> changedLabels)
         {
             var result = new Context([]);
-            foreach (var label in labels) if (this.Has(label)) result[label] = this[label];
+            foreach (var label in labelsToCopy) if (this.Has(label)) result[label] = this[label];
+            result._changedLabels = changedLabels;
             return result;
         }
 
         internal void Update(Context subContext, List<object> changedLabels)
         {
-            foreach (var label in changedLabels) 
+            foreach (var label in changedLabels)
                 if (subContext.Has(label)) this[label] = subContext[label];
         }
 
@@ -67,12 +70,16 @@ namespace CommandEngine.Tasks
 
         internal void CompletedEvent(SerialCommand command) => _history.CompletedEvent(command);
 
-        internal void Event(SimpleCommand simpleCommand, CommandTask executeTask, MissingContextInformationException e, object missingLabel) => 
-            _history.Event(simpleCommand, executeTask, e, missingLabel);
+        internal void Event(SimpleCommand simpleCommand, CommandTask task, MissingContextInformationException e, object missingLabel) =>
+            _history.Event(simpleCommand, task, e, missingLabel);
+        internal void Event(SimpleCommand simpleCommand, CommandTask task, object changedLabel, UpdateNotCapturedException e) => 
+            _history.Event(simpleCommand,  task, changedLabel, e);
         internal void Accept(CommandVisitor visitor)
         {
             visitor.Visit(this, _history);
             _history.Accept(visitor);
         }
+
+        
     }
 }
