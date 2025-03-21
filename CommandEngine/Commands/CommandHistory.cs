@@ -16,20 +16,20 @@ namespace CommandEngine.Commands
         public List<string> Events(CommandEventType type) => 
             _events.FindAll(e => e.Contains(type.ToString()));
 		internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
-            _events.Add($"{DateTime.Now} >> {CommandStateChange} << Status: Command <{command}> Changed State from <{originalState}> To <{newState}>");
+            _events.Add($"{Header(CommandStateChange)}Command <{command}> Changed State from <{originalState}> To <{newState}>");
 
 		internal void Event(SimpleCommand command, CommandTask task, CommandStatus status)
 		{
             var statusMsg = (task is IgnoreTask) ?
             $"Command <{command}> has no Undo"
             : $"Task <{task}> completed with status <{status}>";
-			_events.Add($"{DateTime.Now} >> {CommandEventType.TaskStatus} << Status: {statusMsg}");
+			_events.Add($"{Header(CommandEventType.TaskStatus)}{statusMsg}");
 		}
 
 		internal void Event(SimpleCommand command, CommandTask task, Exception e) => 
-            _events.Add($"{DateTime.Now} >> {TaskException} << Status: Task <{task}> threw an exception <{e}>");
+            _events.Add($"{Header(TaskException)}Task <{task}> threw an exception <{e}>");
         internal void Event(SimpleCommand command, CommandTask task, object conclusion) => 
-            _events.Add($"{DateTime.Now} >> {ConclusionReached} << Status: Task <{task}> reached a conclusion<{conclusion}>");
+            _events.Add($"{Header(ConclusionReached)}Task <{task}> reached a conclusion<{conclusion}>");
 
 
         public override bool Equals(object? obj) =>
@@ -40,23 +40,27 @@ namespace CommandEngine.Commands
             this._events.SequenceEqual(other._events);
 
         internal void Event(SimpleCommand command, CommandTask task) => 
-            _events.Add($"{DateTime.Now} >> {CommandEventType.TaskExecuted} << Status: Starting Command <{command}>, executing Task <{task}>");
+            _events.Add($"{Header(TaskExecuted)}Starting Command <{command}>, executing Task <{task}>");
 
         internal void Event(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue) => 
-            _events.Add($"{DateTime.Now} >> {ValueChanged} << Status: Task <{task}> in Command <{command}> changed <{label}> from <{previousValue}> to <{newValue}>");
+            _events.Add($"{Header(ValueChanged)}Task <{task}> in Command <{command}> changed <{label}> from <{previousValue}> to <{newValue}>");
         internal void StartEvent(SerialCommand command) => 
-            _events.Add($"{DateTime.Now} >> {GroupSerialStart} << Status: Group Command <{command.NameOnly()}> started");
+            _events.Add($"{Header(GroupSerialStart)}Group Command <{command.NameOnly()}> started");
 
         internal void CompletedEvent(SerialCommand command) => 
-            _events.Add($"{DateTime.Now} >> {GroupSerialComplete} << Status: Group Command <{command.NameOnly()}> completed");
+            _events.Add($"{Header(GroupSerialComplete)}Group Command <{command.NameOnly()}> completed");
 
         internal void Event(SimpleCommand simpleCommand, CommandTask task, MissingContextInformationException e, object missingLabel) => 
-            _events.Add($"{DateTime.Now} >> {InvalidAccessAttempt} << Status: Invalid Access to <{missingLabel}> by <{task}>");
+            _events.Add($"{Header(InvalidAccessAttempt)}Invalid Access to <{missingLabel}> by <{task}>");
+
+
 
         internal void Accept(CommandVisitor visitor) => visitor.Visit(this,_events);
 
         internal void Event(SimpleCommand simpleCommand, CommandTask task, object changedLabel, UpdateNotCapturedException e) => 
-            _events.Add($"{DateTime.Now} >> {UpdateNotCaptured} << Status: Attempt to set <{changedLabel}> in the context, but not marked as a change field");
+            _events.Add($"{Header(UpdateNotCaptured)}Attempt to set <{changedLabel}> in the context, but not marked as a change field");
+
+        private static string Header(CommandEventType type) => $"{DateTime.Now} >> {type} << Status: ";
     }
 
     public enum CommandEventType
