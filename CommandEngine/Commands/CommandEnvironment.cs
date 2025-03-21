@@ -27,8 +27,8 @@ namespace CommandEngine.Commands
         }
         public static CommandEnvironment Template(Command command) => new CommandEnvironment(command);
 
-        public static CommandEnvironment FreshEnvironment(CommandEnvironment template) =>
-            new CommandEnvironment(template._command.Clone(), template.EnvironmentId);
+        public static CommandEnvironment FreshEnvironment(CommandEnvironment template, Context? c = null) =>
+            new CommandEnvironment(template._command.Clone(), template.EnvironmentId,c:c);
         public static CommandEnvironment RestoredEnvironment(CommandEnvironment template, Guid clientId, Context c) =>
             new CommandEnvironment(template._command.Clone(), template.EnvironmentId, clientId, c);
         public override bool Equals(object? obj) =>

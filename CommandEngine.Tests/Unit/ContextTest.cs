@@ -185,7 +185,7 @@ namespace CommandEngine.Tests.Unit
 
     public enum TestLabels
     {
-        Conclusion, A, B, C, D
-    }
+        Conclusion, A, B, C, D, E, F, G, H, I
+	}
 }
 

@@ -65,6 +65,29 @@ namespace CommandEngine.Tests.Integration
             var restoredEnvironment = json.ToCommandEnvironment();
             Assert.Equal(originalEnvironment, restoredEnvironment);
         }
+        
+        [Fact]
+        public void VariousContextTypes()
+        {
+            var c = Context(A, B, C, D, E, F);
+            c[A] = "A";
+            c[B] = 1990;
+            c[C] = 3.14;
+			c[D] = true;
+            c[E] = 'e';
+			c[F] = new DateTime(2021, 1, 1);
+
+			var template = CommandEnvironment.Template("Primary Group".Sequence(
+                    AlwaysSuccessful.NoReverting()
+
+			));
+            var originalEnvironment = CommandEnvironment.FreshEnvironment(template,c);
+            Assert.Equal(Succeeded, originalEnvironment.Execute());
+            var json = originalEnvironment.ToJson();
+            testOutput.WriteLine(json);
+            var restoredEnvironment = json.ToCommandEnvironment();
+            Assert.Equal(originalEnvironment, restoredEnvironment);
+        }
 
         private static List<Enum> Labels(params Enum[] labels) => [.. labels];
         private static Context Context(params Enum[] labels)
