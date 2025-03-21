@@ -9,7 +9,7 @@ namespace Engine.Tests.Unit
 {
 	public class ConditionalItemTest(ITestOutputHelper testOutput)
 	{
-		private static readonly Person Creator = new();
+		private static readonly Person Creator = new(0, 0);
 		
 		[Fact]
 		public void Boolean()

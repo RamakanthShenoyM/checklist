@@ -5,6 +5,10 @@ namespace Engine.Persons
 {
     public class Person
     {
+        public Person(int organizationId, int personId)
+        {
+
+        }
         public AddingEngine Add(Person owner) => new(this, owner);
 
         public ActionEngine Can(Operation view) => new(this, view);

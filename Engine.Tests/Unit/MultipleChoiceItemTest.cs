@@ -13,7 +13,7 @@ namespace Engine.Tests.Unit
 {
 	public class MultipleChoiceItemTest
 	{
-		private readonly static Person creator = new Person();
+		private readonly static Person creator = new Person(0, 0);
 		[Fact]
 		public void SingleItem()
 		{

@@ -12,7 +12,7 @@ namespace Engine.Tests.Unit;
 
 // Ensures that GroupItems can be merged
 public class GroupMergeTest(ITestOutputHelper testOutput) {
-    private static readonly Person Creator = new();
+    private static readonly Person Creator = new(0, 0);
 
     [Fact]
     public void SingleGroupReplace() {

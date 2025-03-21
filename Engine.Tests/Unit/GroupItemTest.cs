@@ -13,7 +13,7 @@ namespace Engine.Tests.Unit
    
     public class GroupItemTest
     {
-        private static readonly Person Creator = new Person();
+        private static readonly Person Creator = new Person(0, 0);
         [Fact]
         public void Group()
         {

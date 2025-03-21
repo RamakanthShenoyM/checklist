@@ -12,7 +12,7 @@ namespace Engine.Tests.Unit
 {
     public class OrItemTest
     {
-		private readonly static Person creator = new Person();
+		private readonly static Person creator = new Person(0, 0);
 		[Fact]
         public void BooleanItems() {
             var item1 = new BooleanItem("Is US citizen?");
