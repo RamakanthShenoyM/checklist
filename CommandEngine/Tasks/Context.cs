@@ -50,11 +50,7 @@ namespace CommandEngine.Tasks
 
         public override int GetHashCode() => _history.GetHashCode();
 
-		private bool Equals(Context other)
-		{
-            
-			return this._history.Equals(other._history);
-		}
+		private bool Equals(Context other) => this._history.Equals(other._history) && this._values.SequenceEqual(other._values);
 
 		internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
             _history.Event(command, originalState, newState);
