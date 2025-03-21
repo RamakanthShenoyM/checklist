@@ -10,5 +10,7 @@ namespace CommandEngine.Commands
         public static string ToJson(this CommandEnvironment command) => new EnvironmentSerializer(command).Result;
 
         public static CommandEnvironment ToCommandEnvironment(this string json) => new EnvironmentDeserializer(json).Result;
+        public static CommandEnvironment Template(this string name, SerialCommand command) =>
+            CommandEnvironment.Template(name, command);
     }
 }

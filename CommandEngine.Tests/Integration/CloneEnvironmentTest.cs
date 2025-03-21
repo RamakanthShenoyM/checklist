@@ -13,7 +13,7 @@ namespace CommandEngine.Tests.Integration
         [Fact]
         public void CloneSerialCommand()
         {
-            var template = CommandEnvironment.Template("Master Sequence".Sequence(
+            var template = "Incident process one".Template("Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful)
@@ -29,7 +29,7 @@ namespace CommandEngine.Tests.Integration
         [Fact]
         public void CloneSerialWithSerialCommand()
         {
-            var template = CommandEnvironment.Template("Master Sequence".Sequence(
+            var template = "Incident process one".Template("Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 "Inner Sequence".Sequence(
@@ -54,7 +54,7 @@ namespace CommandEngine.Tests.Integration
             var neededLabels = Labels(A, B);
             var changedLabels = Labels(D, B);
             var missingLabels = Labels(C);
-            var template = CommandEnvironment.Template("Primary Group".Sequence(
+            var template = "Incident process one".Template("Primary Group".Sequence(
                     AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                     new ContextTask(neededLabels, changedLabels, missingLabels).Otherwise(AlwaysSuccessful)
             ));
@@ -77,7 +77,7 @@ namespace CommandEngine.Tests.Integration
             c[E] = 'e';
 			c[F] = new DateTime(2021, 1, 1);
 
-			var template = CommandEnvironment.Template("Primary Group".Sequence(
+			var template = "Incident process one".Template("Primary Group".Sequence(
                     AlwaysSuccessful.NoReverting()
 
 			));

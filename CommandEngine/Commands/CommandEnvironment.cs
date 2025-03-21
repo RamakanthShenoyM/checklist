@@ -4,6 +4,7 @@ namespace CommandEngine.Commands
 {
     public class CommandEnvironment
     {
+        private readonly string _name;
         private readonly Command _command;
         private readonly Guid _environmentId;
         private readonly Guid _clientId;
@@ -15,8 +16,9 @@ namespace CommandEngine.Commands
         public Guid ClientId => _clientId;
 
 
-        private CommandEnvironment(Command serialCommand, Guid? environmentId = null, Guid? clientId = null, Context? c = null)
+        private CommandEnvironment(string name, Command serialCommand, Guid? environmentId = null, Guid? clientId = null, Context? c = null)
         {
+            _name = name;
             _command = serialCommand;
             _environmentId = environmentId ?? Guid.NewGuid();
             _clientId = clientId ?? Guid.NewGuid();
@@ -25,12 +27,12 @@ namespace CommandEngine.Commands
             if (!_environments.ContainsKey(_environmentId))
                 _environments.Add(_environmentId, this);
         }
-        public static CommandEnvironment Template(Command command) => new CommandEnvironment(command);
+        internal static CommandEnvironment Template(string name, Command command) => new CommandEnvironment(name, command);
 
         public static CommandEnvironment FreshEnvironment(CommandEnvironment template, Context? c = null) =>
-            new CommandEnvironment(template._command.Clone(), template.EnvironmentId,c:c);
+            new CommandEnvironment(template._name, template._command.Clone(), template.EnvironmentId, c: c);
         public static CommandEnvironment RestoredEnvironment(CommandEnvironment template, Guid clientId, Context c) =>
-            new CommandEnvironment(template._command.Clone(), template.EnvironmentId, clientId, c);
+            new CommandEnvironment(template._name, template._command.Clone(), template.EnvironmentId, clientId, c);
         public override bool Equals(object? obj) =>
             this == obj || obj is CommandEnvironment other && this.Equals(other);
 
