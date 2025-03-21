@@ -9,7 +9,7 @@ namespace Engine.Tests.Unit
     public class NotItemTest
     {
 
-        private readonly static Person creator = new Person();
+        private readonly static Person creator = new Person(0, 0);
 		[Fact]
         public void NotBoolean()
         {

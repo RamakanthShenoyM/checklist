@@ -8,8 +8,8 @@ namespace Engine.Tests.Unit
 {
     public class OperationTest
 	{
-		private static readonly Person _creator = new Person();
-		private static readonly Person _owner = new Person();
+		private static readonly Person _creator = new Person(0, 0);
+		private static readonly Person _owner = new Person(0, 0);
 		[Fact]
 		public void SingleItem()
 		{

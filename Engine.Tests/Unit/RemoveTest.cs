@@ -9,7 +9,7 @@ namespace Engine.Tests.Unit;
 
 public class RemoveTest
 {
-    private static readonly Person Creator = new Person();
+    private static readonly Person Creator = new Person(0, 0);
     private readonly ITestOutputHelper testOutput;
 
     private Item firstItem;
