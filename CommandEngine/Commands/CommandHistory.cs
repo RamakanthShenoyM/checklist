@@ -10,12 +10,23 @@ namespace CommandEngine.Commands
         {
             _events = events;
         }
+        
+        public override bool Equals(object? obj) =>
+            this == obj || obj is CommandHistory other && this.Equals(other);
+        
+        private bool Equals(CommandHistory other) =>
+            this._events.SequenceEqual(other._events);
+
+        public override int GetHashCode() => string.Join("", this._events).GetHashCode();
 
         public override string ToString() => string.Join("\n", _events);
+        
+        internal void Accept(CommandVisitor visitor) => visitor.Visit(this,_events);
 
         public List<string> Events(CommandEventType type) => 
-            _events.FindAll(e => e.Contains(type.ToString()));
-		internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
+            _events.FindAll(e => e.Contains($">> {type} <<"));
+		
+        internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
             _events.Add($"{Header(CommandStateChange)}Command <{command}> Changed State from <{originalState}> To <{newState}>");
 
 		internal void Event(SimpleCommand command, CommandTask task, CommandStatus status)
@@ -28,22 +39,16 @@ namespace CommandEngine.Commands
 
 		internal void Event(SimpleCommand command, CommandTask task, Exception e) => 
             _events.Add($"{Header(TaskException)}Task <{task}> threw an exception <{e}>");
+        
         internal void Event(SimpleCommand command, CommandTask task, object conclusion) => 
             _events.Add($"{Header(ConclusionReached)}Task <{task}> reached a conclusion<{conclusion}>");
-
-
-        public override bool Equals(object? obj) =>
-            this == obj || obj is CommandHistory other && this.Equals(other);
-
-        public override int GetHashCode() => string.Join("", this._events).GetHashCode();
-        private bool Equals(CommandHistory other) =>
-            this._events.SequenceEqual(other._events);
 
         internal void Event(SimpleCommand command, CommandTask task) => 
             _events.Add($"{Header(TaskExecuted)}Starting Command <{command}>, executing Task <{task}>");
 
         internal void Event(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue) => 
             _events.Add($"{Header(ValueChanged)}Task <{task}> in Command <{command}> changed <{label}> from <{previousValue}> to <{newValue}>");
+        
         internal void StartEvent(SerialCommand command) => 
             _events.Add($"{Header(GroupSerialStart)}Group Command <{command.NameOnly()}> started");
 
@@ -52,10 +57,6 @@ namespace CommandEngine.Commands
 
         internal void Event(SimpleCommand simpleCommand, CommandTask task, MissingContextInformationException e, object missingLabel) => 
             _events.Add($"{Header(InvalidAccessAttempt)}Invalid Access to <{missingLabel}> by <{task}>");
-
-
-
-        internal void Accept(CommandVisitor visitor) => visitor.Visit(this,_events);
 
         internal void Event(SimpleCommand simpleCommand, CommandTask task, object changedLabel, UpdateNotCapturedException e) => 
             _events.Add($"{Header(UpdateNotCaptured)}Attempt to set <{changedLabel}> in the context, but not marked as a change field");
