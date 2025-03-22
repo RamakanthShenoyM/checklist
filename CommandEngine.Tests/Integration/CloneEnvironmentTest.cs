@@ -1,10 +1,11 @@
 ﻿using CommandEngine.Commands;
 using CommandEngine.Tasks;
+using CommandEngine.Tests.Util;
 using Xunit.Abstractions;
 using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandStatus;
-using CommandEngine.Tests.Util;
 using static CommandEngine.Tests.Unit.TestLabels;
+using static CommandEngine.Tests.Util.TestExtensions;
 
 namespace CommandEngine.Tests.Integration
 {
@@ -88,8 +89,7 @@ namespace CommandEngine.Tests.Integration
             var restoredEnvironment = json.ToCommandEnvironment();
             Assert.Equal(originalEnvironment, restoredEnvironment);
         }
-
-        private static List<Enum> Labels(params Enum[] labels) => [.. labels];
+        
         private static Context Context(params Enum[] labels)
         {
             var result = new Context();
