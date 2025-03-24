@@ -16,6 +16,7 @@ namespace CommandEngine.Tests.Util
         public List<Enum> NeededLabels => new();
         public List<Enum> ChangedLabels => new();
         public override string ToString() => $"Task always is {status} ";
+        public PermanentStatus Clone() => this;
     }
 
     internal class CrashingTask : CommandTask
@@ -41,8 +42,13 @@ namespace CommandEngine.Tests.Util
             _hasRun = true;
             return Succeeded;
         }
+        public RunOnceTask Clone()
+        {
+            var result = new RunOnceTask();
+            result._hasRun = _hasRun;
+            return result;
+        }
     }
-
     internal class SuspendFirstOnly : CommandTask
     {
         public List<Enum> NeededLabels => new() { HasRun };
@@ -57,9 +63,25 @@ namespace CommandEngine.Tests.Util
         }
        
     }
+    internal class CountingTask(int count = 0) : CommandTask
+    {
+        public List<Enum> NeededLabels => new();
+
+        public List<Enum> ChangedLabels => new() { CountingTaskCount };
+        public override string ToString() => $"Task Suspends on first Execution ";
+        public CommandStatus Execute(Context c)
+        {
+            count++;
+            c[CountingTaskCount] = count;
+            return Succeeded;
+        }
+        public CountingTask Clone() => new CountingTask(count);
+
+    }
     internal enum SuspendLabels
     {
-        HasRun
+        HasRun,
+        CountingTaskCount
     }
     internal class ContextTask(List<Enum> neededLabels, List<Enum> changedLabels, List<Enum> missingLabels) : CommandTask
     {
@@ -74,6 +96,7 @@ namespace CommandEngine.Tests.Util
             foreach (var label in changedLabels) c[label] = (label.ToString() ?? "null").ToUpper() + "Changed";
             return Succeeded;
         }
+        public ContextTask Clone() => this;
     }
     internal class WriteTask(List<Enum> writtenLabels) : CommandTask
     {

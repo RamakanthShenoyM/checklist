@@ -2,6 +2,7 @@
 using static System.Text.Json.JsonSerializer;
 using static CommandEngine.Commands.CommandEnvironment;
 using static CommandEngine.Commands.EnvironmentSerializer;
+using static CommandEngine.Commands.CommandReflection;
 
 namespace CommandEngine.Commands {
     internal class EnvironmentDeserializer : CommandVisitor {
@@ -49,14 +50,7 @@ namespace CommandEngine.Commands {
             return (Enum)Enum.Parse(enumType, enumValue);
         }
 
-        private static Type FoundType(string fullTypeName) {
-            // Check all currently loaded assemblies in the AppDomain
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
-                var type = assembly.GetType(fullTypeName);
-                if (type != null) return type;
-            }
-            throw new InvalidOperationException($"Type {fullTypeName} not found");
-        }
+       
 
         public CommandEnvironment Result => _environment;
 

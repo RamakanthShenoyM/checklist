@@ -6,6 +6,7 @@ using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandStatus;
 using static CommandEngine.Tests.Unit.TestLabels;
 using static CommandEngine.Tests.Util.TestExtensions;
+using static CommandEngine.Tests.Util.SuspendLabels;
 
 namespace CommandEngine.Tests.Integration {
     public class CloneEnvironmentTest(ITestOutputHelper testOutput) {
@@ -94,6 +95,20 @@ namespace CommandEngine.Tests.Integration {
             Assert.Throws<TaskSuspendedException>(() => firstUse.Execute());
             var secondUse = CommandEnvironment.FreshEnvironment(template);
             Assert.Throws<TaskSuspendedException>(() => secondUse.Execute());
+        }
+
+        [Fact]
+        public void CloneTaskWithState() {
+            var template = "Incident process one".Template("Primary Group".Sequence(
+               new CountingTask().NoReverting()
+            ));
+            var redEnvironment = CommandEnvironment.FreshEnvironment(template);
+            Assert.Equal(Succeeded, redEnvironment.Execute());
+            Assert.Equal(1, redEnvironment[CountingTaskCount]);
+            var blueEnvironment = CommandEnvironment.FreshEnvironment(template);
+            Assert.Equal(Succeeded, blueEnvironment.Execute());
+            Assert.Equal(1, blueEnvironment[CountingTaskCount]);
+
         }
 
         private static Context Context(params Enum[] labels) {

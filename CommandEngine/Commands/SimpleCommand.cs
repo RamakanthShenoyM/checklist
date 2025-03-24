@@ -1,4 +1,5 @@
 ﻿using CommandEngine.Tasks;
+using System.Reflection;
 using System.Windows.Input;
 using static CommandEngine.Commands.CommandStatus;
 
@@ -23,7 +24,20 @@ namespace CommandEngine.Commands
         public CommandStatus Execute(Context c) => _state.Execute(this, c);
 
         public CommandStatus Undo(Context c) => _state.Undo(this, c);
-        public Command Clone() => new SimpleCommand(_executeTask, _revertTask);
+        public Command Clone() => new SimpleCommand(CloneIfNecessary(_executeTask), _revertTask);
+
+        private CommandTask CloneIfNecessary(CommandTask task)
+        {
+            var type = task.GetType();
+            var nonPublicFields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+            var publicFields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+            if (nonPublicFields.Length == 0 && publicFields.Length == 0) return task;
+            MethodInfo method = type.GetMethod("Clone", BindingFlags.Instance | BindingFlags.Public)
+                ?? throw new InvalidOperationException($"This task <{task}>is missing his Clone");
+            return (CommandTask) method.Invoke(task, null) ??
+                 throw new InvalidOperationException($"This task <{task}>is missing his Clone"); ;
+        }
+
         public override bool Equals(object? obj) =>
           this == obj || obj is SimpleCommand other && this.Equals(other);
 
