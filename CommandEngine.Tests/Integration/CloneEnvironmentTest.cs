@@ -18,9 +18,9 @@ namespace CommandEngine.Tests.Integration {
             ));
             var originalEnvironment = CommandEnvironment.FreshEnvironment(template);
             Assert.Equal(Succeeded, originalEnvironment.Execute());
-            var json = originalEnvironment.ToJson();
-            testOutput.WriteLine(json);
-            var restoredEnvironment = json.ToCommandEnvironment();
+            var memento = originalEnvironment.ToMemento();
+            testOutput.WriteLine(memento);
+            var restoredEnvironment = CommandEnvironment.FromMemento(memento);
             Assert.Equal(originalEnvironment, restoredEnvironment);
         }
 
@@ -38,9 +38,9 @@ namespace CommandEngine.Tests.Integration {
             ));
             var originalEnvironment = CommandEnvironment.FreshEnvironment(template);
             Assert.Equal(Reverted, originalEnvironment.Execute());
-            var json = originalEnvironment.ToJson();
-            testOutput.WriteLine(json);
-            var restoredEnvironment = json.ToCommandEnvironment();
+            var memento = originalEnvironment.ToMemento();
+            testOutput.WriteLine(memento);
+            var restoredEnvironment = CommandEnvironment.FromMemento(memento);
             Assert.Equal(originalEnvironment, restoredEnvironment);
         }
 
@@ -56,9 +56,9 @@ namespace CommandEngine.Tests.Integration {
             ));
             var originalEnvironment = CommandEnvironment.FreshEnvironment(template);
             Assert.Equal(Succeeded, originalEnvironment.Execute());
-            var json = originalEnvironment.ToJson();
-            testOutput.WriteLine(json);
-            var restoredEnvironment = json.ToCommandEnvironment();
+            var memento = originalEnvironment.ToMemento();
+            testOutput.WriteLine(memento);
+            var restoredEnvironment = CommandEnvironment.FromMemento(memento);
             Assert.Equal(originalEnvironment, restoredEnvironment);
         }
 
@@ -77,9 +77,9 @@ namespace CommandEngine.Tests.Integration {
             ));
             var originalEnvironment = CommandEnvironment.FreshEnvironment(template, c);
             Assert.Equal(Succeeded, originalEnvironment.Execute());
-            var json = originalEnvironment.ToJson();
-            testOutput.WriteLine(json);
-            var restoredEnvironment = json.ToCommandEnvironment();
+            var memento = originalEnvironment.ToMemento();
+            testOutput.WriteLine(memento);
+            var restoredEnvironment = CommandEnvironment.FromMemento(memento);
             Assert.Equal(originalEnvironment, restoredEnvironment);
         }
 

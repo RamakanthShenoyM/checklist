@@ -61,5 +61,8 @@ namespace CommandEngine.Commands
                 return _environments[guid];
             throw new InvalidOperationException($"Environment with id {guid} not found");
         }
+
+        public static CommandEnvironment FromMemento(string memento) =>
+            new EnvironmentDeserializer(memento).Result;
     }
 }
