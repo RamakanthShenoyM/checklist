@@ -1,6 +1,7 @@
 using CommandEngine.Commands;
 using CommandEngine.Tasks;
 using static CommandEngine.Commands.CommandStatus;
+using static CommandEngine.Tests.Util.SuspendLabels;
 
 
 namespace CommandEngine.Tests.Util
@@ -44,17 +45,21 @@ namespace CommandEngine.Tests.Util
 
     internal class SuspendFirstOnly : CommandTask
     {
-        private bool _hasSuspended;
-        public List<Enum> NeededLabels => new();
+        public List<Enum> NeededLabels => new() { HasRun };
 
-        public List<Enum> ChangedLabels => new();
+        public List<Enum> ChangedLabels => new() {HasRun};
         public override string ToString() => $"Task Suspends on first Execution ";
         public CommandStatus Execute(Context c)
         {
-            if (_hasSuspended) return Succeeded;
-            _hasSuspended = true;
+            if (c.Has(HasRun)) return Succeeded;
+            c[HasRun] = true;
             return Suspended;
         }
+       
+    }
+    internal enum SuspendLabels
+    {
+        HasRun
     }
     internal class ContextTask(List<Enum> neededLabels, List<Enum> changedLabels, List<Enum> missingLabels) : CommandTask
     {
