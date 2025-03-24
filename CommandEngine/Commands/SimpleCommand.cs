@@ -143,6 +143,11 @@ namespace CommandEngine.Commands
                 c.Event(this, _revertTask, e.Conclusion);
                 throw;
             }
+            catch (MissingContextInformationException e)
+            {
+                c.Event(this, _revertTask, e, e.MissingLabel);
+                throw new UndoTaskFailureException(_revertTask, this);
+            }
             catch (Exception e)
             {
                 c.Event(this, _revertTask, e);
