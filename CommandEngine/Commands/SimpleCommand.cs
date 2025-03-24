@@ -68,7 +68,6 @@ namespace CommandEngine.Commands
                 if (status == Succeeded) Update(_executeTask, c, subContext);
                 return status;
             }
-
             catch (UpdateNotCapturedException e)
             {
                 c.Event(this, _executeTask, e.ChangedLabel, e);
@@ -124,6 +123,11 @@ namespace CommandEngine.Commands
                 Update(_revertTask, c, subContext);
                 if (status == Suspended) throw new TaskSuspendedException(_revertTask, this);
                 return Reverted;
+            }
+            catch (UpdateNotCapturedException e)
+            {
+                c.Event(this, _revertTask, e.ChangedLabel, e);
+                throw new UndoTaskFailureException(_revertTask, this);
             }
             catch (UndoTaskFailureException)
             {
