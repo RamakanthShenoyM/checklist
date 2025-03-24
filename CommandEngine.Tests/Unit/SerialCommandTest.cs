@@ -48,15 +48,16 @@ namespace CommandEngine.Tests.Unit
         [Fact]
         public void Suspend()
         {
+            var c = new Context();
             var command = "Master Sequence".Sequence(
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 AlwaysSuccessful.Otherwise(AlwaysSuccessful),
                 new SuspendFirstOnly().Otherwise(AlwaysSuccessful)
             );
-            var e = Assert.Throws<TaskSuspendedException>(() => command.Execute(new Context()));
+            var e = Assert.Throws<TaskSuspendedException>(() => command.Execute(c));
             Assert.Equal(command[2], e.Command);
             command.AssertStates(Executed, Executed, Initial);
-            Assert.Equal(Succeeded, command.Execute(new Context()));
+            Assert.Equal(Succeeded, command.Execute(c));
             command.AssertStates(Executed, Executed, Executed);
         }
 
