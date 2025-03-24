@@ -110,6 +110,20 @@ namespace CommandEngine.Tests.Integration {
             Assert.Equal(1, blueEnvironment[CountingTaskCount]);
 
         }
+        [Fact]
+        public void SaveTaskWithState()
+        {
+            var template = "Incident process one".Template("Primary Group".Sequence(
+                new CountingTask().NoReverting()
+            ));
+            var redEnvironment = CommandEnvironment.FreshEnvironment(template);
+            Assert.Equal(Succeeded, redEnvironment.Execute());
+            redEnvironment.Reset(CountingTaskCount);
+            var memento = redEnvironment.ToMemento();
+            var restoredEnvironment = CommandEnvironment.FromMemento(memento);
+            Assert.Equal(redEnvironment,restoredEnvironment);
+
+        }
 
         private static Context Context(params Enum[] labels) {
             var result = new Context();

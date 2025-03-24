@@ -65,18 +65,23 @@ namespace CommandEngine.Tests.Util
     }
     internal class CountingTask(int count = 0) : CommandTask
     {
+        private int _count = count;
         public List<Enum> NeededLabels => new();
 
         public List<Enum> ChangedLabels => new() { CountingTaskCount };
-        public override string ToString() => $"Task Suspends on first Execution ";
+        public override string ToString() => $"Task increments a counter ";
         public CommandStatus Execute(Context c)
         {
-            count++;
-            c[CountingTaskCount] = count;
+            _count++;
+            c[CountingTaskCount] = _count;
             return Succeeded;
         }
-        public CountingTask Clone() => new CountingTask(count);
+        public CountingTask Clone() => new CountingTask(_count);
 
+        public override bool Equals(object? obj) =>
+            this == obj || obj is CountingTask other && this.Equals(other);
+
+        private bool Equals(CountingTask other) => this._count == other._count;
     }
     internal enum SuspendLabels
     {

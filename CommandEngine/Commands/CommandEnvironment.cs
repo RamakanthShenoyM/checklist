@@ -64,5 +64,7 @@ namespace CommandEngine.Commands
 
         public static CommandEnvironment FromMemento(string memento) =>
             new EnvironmentDeserializer(memento).Result;
+
+        public bool Reset(Enum label) => _context.Reset(label);
     }
 }
