@@ -7,12 +7,12 @@ using static CommandEngine.Commands.CommandReflection;
 namespace CommandEngine.Commands {
     internal class EnvironmentDeserializer : CommandVisitor {
         private readonly CommandEnvironment _environment;
-        private readonly List<CommandState> _states;
+        private readonly List<SimpleCommandDto> _simpleCommandDtos;
 
         public EnvironmentDeserializer(string json) {
             try {
                 var dto = Deserialize<ExtensionDto>(json) ?? throw new InvalidOperationException("Invalid Json");
-                _states = dto.States;
+                _simpleCommandDtos = dto.SimpleCommandDtos;
                 _environment = RestoredEnvironment(
                     Environment(new Guid(dto.EnvironmentId)),
                     new Guid(dto.ClientId),
@@ -55,8 +55,8 @@ namespace CommandEngine.Commands {
         public CommandEnvironment Result => _environment;
 
         public void Visit(SimpleCommand command, CommandState state, CommandTask executeTask, CommandTask revertTask) {
-            command.State(_states[0]);
-            _states.RemoveAt(0);
+            command.State(_simpleCommandDtos[0].State);
+            _simpleCommandDtos.RemoveAt(0);
         }
     }
 }

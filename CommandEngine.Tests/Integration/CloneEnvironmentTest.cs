@@ -118,7 +118,6 @@ namespace CommandEngine.Tests.Integration {
             ));
             var redEnvironment = CommandEnvironment.FreshEnvironment(template);
             Assert.Equal(Succeeded, redEnvironment.Execute());
-            redEnvironment.Reset(CountingTaskCount);
             var memento = redEnvironment.ToMemento();
             var restoredEnvironment = CommandEnvironment.FromMemento(memento);
             Assert.Equal(redEnvironment,restoredEnvironment);

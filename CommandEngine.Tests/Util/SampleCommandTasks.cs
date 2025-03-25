@@ -76,12 +76,15 @@ namespace CommandEngine.Tests.Util
             c[CountingTaskCount] = _count;
             return Succeeded;
         }
-        public CountingTask Clone() => new CountingTask(_count);
 
         public override bool Equals(object? obj) =>
             this == obj || obj is CountingTask other && this.Equals(other);
 
         private bool Equals(CountingTask other) => this._count == other._count;
+
+        public string ToMemento() => $"{{\"value\":{_count}}}";
+
+        public CountingTask Clone() => new CountingTask(_count);
     }
     internal enum SuspendLabels
     {
