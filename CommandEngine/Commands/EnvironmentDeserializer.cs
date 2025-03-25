@@ -56,7 +56,15 @@ namespace CommandEngine.Commands {
 
         public void Visit(SimpleCommand command, CommandState state, CommandTask executeTask, CommandTask revertTask) {
             command.State(_simpleCommandDtos[0].State);
+            if (_simpleCommandDtos[0].ExecuteTask.Memento != null)
+                command.ExecuteTask(Task(_simpleCommandDtos[0].ExecuteTask));
             _simpleCommandDtos.RemoveAt(0);
+        }
+
+        private CommandTask Task(TaskDto dto)
+        {
+            var type = FoundType(dto.TaskType);
+            return (CommandTask)type.StaticFromMemento().Invoke(type, [dto.Memento]);
         }
     }
 }

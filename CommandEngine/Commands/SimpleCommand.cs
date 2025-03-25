@@ -9,8 +9,8 @@ namespace CommandEngine.Commands
     public class SimpleCommand : Command
     {
         private SimpleCommandState _state = new Initial();
-        private readonly CommandTask _executeTask;
-        private readonly CommandTask _revertTask;
+        private CommandTask _executeTask;
+        private CommandTask _revertTask;
 
         internal SimpleCommand(CommandTask executeTask, CommandTask revertTask)
         {
@@ -170,7 +170,10 @@ namespace CommandEngine.Commands
             }
         }
 
-
+        internal void ExecuteTask(CommandTask commandTask)
+        {
+            _executeTask = commandTask;
+        }
 
         private interface SimpleCommandState
         {

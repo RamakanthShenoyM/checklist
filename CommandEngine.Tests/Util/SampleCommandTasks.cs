@@ -83,6 +83,11 @@ namespace CommandEngine.Tests.Util
         private bool Equals(CountingTask other) => this._count == other._count;
 
         public string ToMemento() => $"{{\"value\":{_count}}}";
+        public static CountingTask FromMemento(string memento)
+        {
+            var value = int.Parse(memento.Split(':')[1].TrimEnd('}'));
+            return new CountingTask(value);
+        }
 
         public CountingTask Clone() => new CountingTask(_count);
     }
