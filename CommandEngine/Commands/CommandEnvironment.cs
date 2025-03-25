@@ -2,7 +2,7 @@
 
 namespace CommandEngine.Commands
 {
-    public class CommandEnvironment
+    public class CommandEnvironment:  MementoTask<CommandEnvironment>
     {
         private readonly string _name;
         private readonly Command _command;
@@ -15,7 +15,6 @@ namespace CommandEngine.Commands
 
         public Guid ClientId => _clientId;
 
-
         private CommandEnvironment(string name, Command serialCommand, Guid? environmentId = null, Guid? clientId = null, Context? c = null)
         {
             _name = name;
@@ -27,12 +26,15 @@ namespace CommandEngine.Commands
             if (!_environments.ContainsKey(_environmentId))
                 _environments.Add(_environmentId, this);
         }
+        
         internal static CommandEnvironment Template(string name, Command command) => new CommandEnvironment(name, command);
 
         public static CommandEnvironment FreshEnvironment(CommandEnvironment template, Context? c = null) =>
-            new CommandEnvironment(template._name, template._command.Clone(), template.EnvironmentId, c: c);
+            new(template._name, template._command.Clone(), template.EnvironmentId, c: c);
+        
         public static CommandEnvironment RestoredEnvironment(CommandEnvironment template, Guid clientId, Context c) =>
-            new CommandEnvironment(template._name, template._command.Clone(), template.EnvironmentId, clientId, c);
+            new(template._name, template._command.Clone(), template.EnvironmentId, clientId, c);
+        
         public override bool Equals(object? obj) =>
             this == obj || obj is CommandEnvironment other && this.Equals(other);
 
@@ -44,9 +46,10 @@ namespace CommandEngine.Commands
             && this._command.Equals(other._command)
             && this._context.Equals(other._context);
 
-
         public CommandStatus Execute() => _command.Execute(_context);
+        
         public object this[Enum label] => _context[label];
+        
         internal void Accept(CommandVisitor visitor)
         {
             visitor.PreVisit(this, EnvironmentId, ClientId, _command, _context);
@@ -66,5 +69,9 @@ namespace CommandEngine.Commands
             new EnvironmentDeserializer(memento).Result;
 
         public bool Reset(Enum label) => _context.Reset(label);
+        
+        public string ToMemento()=> new EnvironmentSerializer(this).Result;
+
+        public CommandEnvironment Clone() => this;
     }
 }
