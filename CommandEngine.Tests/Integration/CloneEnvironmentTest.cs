@@ -124,10 +124,5 @@ namespace CommandEngine.Tests.Integration {
 
         }
 
-        private static Context Context(params Enum[] labels) {
-            var result = new Context();
-            foreach (var label in labels) result[label] = label.ToString().ToUpper();
-            return result;
-        }
     }
 }

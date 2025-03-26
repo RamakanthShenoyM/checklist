@@ -8,29 +8,34 @@ using static CommandEngine.Commands.CommandEnvironment;
 
 namespace CommandEngine.Tasks
 {
-	public class CommandTaskWrapper : CommandTask, MementoTask
+	public class CommandTaskWrapper(CommandEnvironment environment, List<Enum> neededLabels, List<Enum> changedLabels) : CommandTask, MementoTask
 	{
-		private readonly CommandEnvironment _environment;
+		private readonly CommandEnvironment _environment = environment;
 
-		public CommandTaskWrapper(CommandEnvironment environment)
-		{
-			_environment = environment;
-		}
+		public List<Enum> NeededLabels => neededLabels;
 
-		public List<Enum> NeededLabels => throw new NotImplementedException();
+		public List<Enum> ChangedLabels => changedLabels;
 
-		public List<Enum> ChangedLabels => throw new NotImplementedException();
-
-		public CommandTask Clone() => new CommandTaskWrapper(FreshEnvironment(_environment));
+		public CommandTask Clone() => new CommandTaskWrapper(FreshEnvironment(_environment), NeededLabels,ChangedLabels);
 
 		public CommandStatus Execute(Context c)
 		{
 			return _environment.Execute(c);
 		}
 
-		string MementoTask.ToMemento()
+		public string ToMemento()
 		{
 			throw new NotImplementedException();
+		}
+
+		public static CommandTask FromMemento(string memento)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override bool Equals(object? obj)
+		{
+			return this == obj || obj is CommandTaskWrapper other && this.Equals(other);
 		}
 	}
 }
