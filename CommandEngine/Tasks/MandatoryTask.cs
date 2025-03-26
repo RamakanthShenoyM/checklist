@@ -4,7 +4,7 @@ using static CommandEngine.Commands.CommandReflection;
 
 namespace CommandEngine.Tasks
 {
-    public class MandatoryTask(CommandTask subTask) : CommandTask
+    public class MandatoryTask(CommandTask subTask) : CommandTask, MementoTask
     {
         private readonly CommandTask _subTask = subTask;
 
@@ -14,7 +14,7 @@ namespace CommandEngine.Tasks
 
         public CommandStatus Execute(Context c) => 
             NeededLabels.All(c.Has) ? _subTask.Execute(c) : Suspended;
-        public MandatoryTask Clone()
+        public CommandTask Clone()
         {
             if(!_subTask.GetType().NeedsMemento()) return this;
             var type = _subTask.GetType();

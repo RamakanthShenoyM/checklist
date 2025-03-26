@@ -7,7 +7,7 @@ using static CommandEngine.Tests.Util.SuspendLabels;
 namespace CommandEngine.Tests.Util
 {
 
-    internal class PermanentStatus(CommandStatus status) : CommandTask
+    internal class PermanentStatus(CommandStatus status) : CommandTask,MementoTask
     {
         internal static readonly PermanentStatus AlwaysSuccessful = new(Succeeded);
         internal static readonly PermanentStatus AlwaysFail = new(Failed);
@@ -18,7 +18,7 @@ namespace CommandEngine.Tests.Util
         public List<Enum> NeededLabels => [];
         public List<Enum> ChangedLabels => [];
         public override string ToString() => $"Task always is {status} ";
-        public PermanentStatus Clone() => this;
+        public CommandTask Clone() => this;
         public override bool Equals(object? obj) => 
             this == obj || obj is PermanentStatus other &&  this.status == other.status;
         public string ToMemento() => status.ToString();
@@ -41,7 +41,7 @@ namespace CommandEngine.Tests.Util
         public CommandStatus Execute(Context c) => throw new InvalidOperationException("unable to execute this task");
     }
 
-    internal class RunOnceTask(bool hasRun = false) : CommandTask
+    internal class RunOnceTask(bool hasRun = false) : CommandTask , MementoTask
     {
         private bool _hasRun = hasRun;
         public List<Enum> NeededLabels => [];
@@ -54,7 +54,7 @@ namespace CommandEngine.Tests.Util
             _hasRun = true;
             return Succeeded;
         }
-        public RunOnceTask Clone() => new RunOnceTask(_hasRun);
+        public CommandTask Clone() => new RunOnceTask(_hasRun);
         public override bool Equals(object? obj) =>
             this == obj || obj is RunOnceTask other && this._hasRun == other._hasRun;
         public string ToMemento() => _hasRun.ToString();
@@ -75,7 +75,7 @@ namespace CommandEngine.Tests.Util
         }
        
     }
-    internal class CountingTask(int count = 0) : CommandTask
+    internal class CountingTask(int count = 0) : CommandTask , MementoTask
     {
         private int _count = count;
         public List<Enum> NeededLabels => new();
@@ -102,10 +102,10 @@ namespace CommandEngine.Tests.Util
         
         public static CountingTask FromMemento(string memento) => new(int.Parse(memento));  // Invoked via reflection
 
-        public CountingTask Clone() => new CountingTask(_count); // Invoked via reflection
+        public CommandTask Clone() => new CountingTask(_count); // Invoked via reflection
     }
     
-    internal class ContextTask(List<Enum> neededLabels, List<Enum> changedLabels, List<Enum> missingLabels) : CommandTask
+    internal class ContextTask(List<Enum> neededLabels, List<Enum> changedLabels, List<Enum> missingLabels) : CommandTask, MementoTask
     {
         public List<Enum> NeededLabels => neededLabels;
 
@@ -120,7 +120,7 @@ namespace CommandEngine.Tests.Util
             return Succeeded;
         }
         
-        public ContextTask Clone() => this; // Invoked via reflection
+        public CommandTask Clone() => this; // Invoked via reflection
 
         public override bool Equals(object? obj) => base.Equals(obj);
         public string? ToMemento() => null;
@@ -128,7 +128,7 @@ namespace CommandEngine.Tests.Util
        
     }
 
-    internal class WriteTask(List<Enum> writtenLabels) : CommandTask
+    internal class WriteTask(List<Enum> writtenLabels) : CommandTask,MementoTask
     {
         private readonly List<Enum> _writtenLabels = writtenLabels;
 
@@ -142,13 +142,13 @@ namespace CommandEngine.Tests.Util
             foreach (var label in _writtenLabels) c[label] = (label.ToString() ?? "null").ToUpper() + "Changed";
             return Succeeded;
         }
-        public WriteTask Clone() => this;
+        public CommandTask Clone() => this;
         public override bool Equals(object? obj) => base.Equals(obj);
         public string? ToMemento() => null;
         public static WriteTask FromMemento(string memento) => throw new NotImplementedException();
     }
     
-    internal class ReadTask(List<Enum> neededLabels) : CommandTask
+    internal class ReadTask(List<Enum> neededLabels) : CommandTask, MementoTask
     {
         public List<Enum> NeededLabels => neededLabels;
 
@@ -161,7 +161,7 @@ namespace CommandEngine.Tests.Util
             foreach (var label in neededLabels) x = c[label];
             return Succeeded;
         }
-        public ReadTask Clone() => this;
+        public CommandTask Clone() => this;
         public override bool Equals(object? obj) => base.Equals(obj);
         public string? ToMemento() => null;
         public static ReadTask FromMemento(string memento) => throw new NotImplementedException();

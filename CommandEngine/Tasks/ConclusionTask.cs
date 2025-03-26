@@ -2,7 +2,7 @@
 
 namespace CommandEngine.Tasks
 {
-    public class ConclusionTask(object conclusion) : CommandTask
+    public class ConclusionTask(object conclusion) : CommandTask, MementoTask
     {
         public List<Enum> NeededLabels => new();
 
@@ -12,7 +12,7 @@ namespace CommandEngine.Tasks
         {
             throw new ConclusionException(conclusion);
         }
-        public ConclusionTask Clone() => this;
+        public CommandTask Clone() => this;
         public override bool Equals(object? obj) => base.Equals(obj);
         public string? ToMemento() => null;
         public static ConclusionTask FromMemento(string memento) => throw new NotImplementedException();
