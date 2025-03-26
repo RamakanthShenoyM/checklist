@@ -21,6 +21,8 @@ namespace CommandEngine.Commands {
                 $"Class <{type.Name}> is missing required ToMemento() method");
             if(type.StaticFromMemento() == null) throw new InvalidOperationException(
                 $"Class <{type.Name}> is missing required static FromMemento() method");
+            if(!type.HasEquals()) throw new InvalidOperationException(
+                $"Class <{type.Name}> is missing required override of Equals() method");
         }
         
         internal static Type ToType(this string fullTypeName) => FoundType(fullTypeName);
