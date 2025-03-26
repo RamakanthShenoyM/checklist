@@ -2,7 +2,7 @@
 
 namespace CommandEngine.Commands {
     
-    internal static class CommandReflection {
+    public static class CommandReflection {
         internal static Type FoundType(string fullTypeName) {
             // Check all currently loaded assemblies in the AppDomain
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
@@ -11,6 +11,16 @@ namespace CommandEngine.Commands {
             }
 
             throw new InvalidOperationException($"Type {fullTypeName} not found");
+        }
+
+        public static void ValidateMementoStatus(Type type) { 
+            if (!type.NeedsMemento()) return; // No need for Mememento
+            if (type.InstanceMethod("Clone") == null) throw new InvalidOperationException(
+                $"Class <{type.Name}> is missing required Clone() method");
+            if (type.InstanceMethod("ToMemento") == null) throw new InvalidOperationException(
+                $"Class <{type.Name}> is missing required ToMemento() method");
+            if(type.StaticFromMemento() == null) throw new InvalidOperationException(
+                $"Class <{type.Name}> is missing required static FromMemento() method");
         }
         
         internal static Type ToType(this string fullTypeName) => FoundType(fullTypeName);

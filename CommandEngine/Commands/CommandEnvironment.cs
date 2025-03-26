@@ -2,7 +2,7 @@
 
 namespace CommandEngine.Commands
 {
-    public class CommandEnvironment:  MementoTask<CommandEnvironment>
+    public class CommandEnvironment
     {
         private readonly string _name;
         private readonly Command _command;
