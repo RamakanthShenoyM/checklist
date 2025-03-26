@@ -12,11 +12,23 @@ namespace CommandEngine.Tests.Util
         internal static readonly PermanentStatus AlwaysSuccessful = new(Succeeded);
         internal static readonly PermanentStatus AlwaysFail = new(Failed);
         internal static readonly PermanentStatus AlwaysSuspended = new(Suspended);
+        private readonly CommandStatus status = status;
+
         public CommandStatus Execute(Context c) => status;
         public List<Enum> NeededLabels => [];
         public List<Enum> ChangedLabels => [];
         public override string ToString() => $"Task always is {status} ";
         public PermanentStatus Clone() => this;
+        public override bool Equals(object? obj) => 
+            this == obj || obj is PermanentStatus other &&  this.status == other.status;
+        public string ToMemento() => status.ToString();
+        public static PermanentStatus FromMemento(string memento) => memento switch
+        {
+            "Succeeded" => AlwaysSuccessful,
+            "Failed" => AlwaysFail,
+            "Suspended" => AlwaysSuspended,
+            _ => throw new InvalidOperationException()
+        };
     }
 
     internal class CrashingTask : CommandTask
@@ -29,9 +41,9 @@ namespace CommandEngine.Tests.Util
         public CommandStatus Execute(Context c) => throw new InvalidOperationException("unable to execute this task");
     }
 
-    internal class RunOnceTask : CommandTask
+    internal class RunOnceTask(bool hasRun = false) : CommandTask
     {
-        private bool _hasRun;
+        private bool _hasRun = hasRun;
         public List<Enum> NeededLabels => [];
 
         public List<Enum> ChangedLabels => [];
@@ -42,12 +54,12 @@ namespace CommandEngine.Tests.Util
             _hasRun = true;
             return Succeeded;
         }
-        public RunOnceTask Clone()
-        {
-            var result = new RunOnceTask();
-            result._hasRun = _hasRun;
-            return result;
-        }
+        public RunOnceTask Clone() => new RunOnceTask(_hasRun);
+        public override bool Equals(object? obj) =>
+            this == obj || obj is RunOnceTask other && this._hasRun == other._hasRun;
+        public string ToMemento() => _hasRun.ToString();
+        public static RunOnceTask FromMemento(string memento) =>
+            new (memento == "true");
     }
     internal class SuspendFirstOnly : CommandTask
     {
@@ -109,20 +121,31 @@ namespace CommandEngine.Tests.Util
         }
         
         public ContextTask Clone() => this; // Invoked via reflection
+
+        public override bool Equals(object? obj) => base.Equals(obj);
+        public string? ToMemento() => null;
+        public static ContextTask FromMemento(string memento) => throw new NotImplementedException();
+       
     }
-    
+
     internal class WriteTask(List<Enum> writtenLabels) : CommandTask
     {
+        private readonly List<Enum> _writtenLabels = writtenLabels;
+
         public List<Enum> NeededLabels => [];
 
         public List<Enum> ChangedLabels => [];
-        public override string ToString() => $"Task Writes labels {string.Join(", ", writtenLabels)}" ;
+        public override string ToString() => $"Task Writes labels {string.Join(", ", _writtenLabels)}" ;
 
         public CommandStatus Execute(Context c)
         {
-            foreach (var label in writtenLabels) c[label] = (label.ToString() ?? "null").ToUpper() + "Changed";
+            foreach (var label in _writtenLabels) c[label] = (label.ToString() ?? "null").ToUpper() + "Changed";
             return Succeeded;
         }
+        public WriteTask Clone() => this;
+        public override bool Equals(object? obj) => base.Equals(obj);
+        public string? ToMemento() => null;
+        public static WriteTask FromMemento(string memento) => throw new NotImplementedException();
     }
     
     internal class ReadTask(List<Enum> neededLabels) : CommandTask
@@ -138,8 +161,12 @@ namespace CommandEngine.Tests.Util
             foreach (var label in neededLabels) x = c[label];
             return Succeeded;
         }
+        public ReadTask Clone() => this;
+        public override bool Equals(object? obj) => base.Equals(obj);
+        public string? ToMemento() => null;
+        public static ReadTask FromMemento(string memento) => throw new NotImplementedException();
     }
-    
+
     internal enum SuspendLabels
     {
         HasRun,

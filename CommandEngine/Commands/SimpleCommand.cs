@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Windows.Input;
 using static CommandEngine.Commands.CommandStatus;
+using static CommandEngine.Commands.CommandReflection;
 
 namespace CommandEngine.Commands
 {
@@ -16,6 +17,8 @@ namespace CommandEngine.Commands
         {
             _executeTask = executeTask;
             _revertTask = revertTask;
+            ValidateMementoStatus(executeTask.GetType());
+            ValidateMementoStatus(revertTask.GetType());
         }
 
         public void Accept(CommandVisitor visitor) =>
