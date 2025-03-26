@@ -1,6 +1,8 @@
 using CommandEngine.Commands;
 using CommandEngine.Tasks;
 using static CommandEngine.Commands.CommandReflection;
+// ReSharper disable UnusedMember.Local
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 
 namespace CommandEngine.Tests.Unit {
     // Ensures Task reflection accurately assesses the Memento capabilities
@@ -52,8 +54,7 @@ namespace CommandEngine.Tests.Unit {
         private class NoClone : BaseTask {
             private readonly int _x = 4;
             public string ToMemento() => _x.ToString();
-            public static NoClone FromMemento(string memento) => new NoClone();
-
+            public static NoClone FromMemento(string _) => new();
             public override bool Equals(object? obj) =>
                 this == obj || obj is NoClone other && this._x == other._x;
         }
@@ -61,8 +62,7 @@ namespace CommandEngine.Tests.Unit {
         private class NoToMemento : BaseTask {
             private readonly int _x = 4;
             public CommandTask Clone() => this;
-            public static NoClone FromMemento(string memento) => new NoClone();
-
+            public static NoToMemento FromMemento(string _) => new();
             public override bool Equals(object? obj) =>
                 this == obj || obj is NoToMemento other && this._x == other._x;
         }
@@ -71,7 +71,6 @@ namespace CommandEngine.Tests.Unit {
             private readonly int _x = 4;
             public CommandTask Clone() => this;
             public string ToMemento() => _x.ToString();
-
             public override bool Equals(object? obj) =>
                 this == obj || obj is NoFromMemento other && this._x == other._x;
         }
@@ -80,15 +79,14 @@ namespace CommandEngine.Tests.Unit {
             private readonly int _x = 4;
             public CommandTask Clone() => this;
             public string ToMemento() => _x.ToString();
-            public static NoClone FromMemento(string memento) => new NoClone();
+            public static NoEquals FromMemento(string _) => new();
         }
 
         private class PerfectMementoTask : BaseTask, MementoTask {
             private readonly int _x = 4;
             public CommandTask Clone() => this;
             public string ToMemento() => _x.ToString();
-            public static NoClone FromMemento(string memento) => new NoClone();
-
+            public static PerfectMementoTask FromMemento(string _) => new();
             public override bool Equals(object? obj) =>
                 this == obj || obj is PerfectMementoTask other && this._x == other._x;
         }
