@@ -8,7 +8,7 @@ namespace CommandEngine.Commands
         private readonly Command _command;
         private readonly Guid _environmentId;
         private readonly Guid _clientId;
-        private readonly Context _context;
+        private Context _context;
         private static readonly Dictionary<Guid, CommandEnvironment> _environments = new();
 
         public Guid EnvironmentId => _environmentId;
@@ -47,8 +47,13 @@ namespace CommandEngine.Commands
             && this._context.Equals(other._context);
 
         public CommandStatus Execute() => _command.Execute(_context);
-        
-        public object this[Enum label] => _context[label];
+		internal CommandStatus Execute(Context c)
+		{
+            _context = c;
+			return Execute();
+		}
+
+		public object this[Enum label] => _context[label];
         
         internal void Accept(CommandVisitor visitor)
         {
@@ -73,5 +78,6 @@ namespace CommandEngine.Commands
         public string ToMemento()=> new EnvironmentSerializer(this).Result;
 
         public CommandEnvironment Clone() => this;
-    }
+
+	}
 }
