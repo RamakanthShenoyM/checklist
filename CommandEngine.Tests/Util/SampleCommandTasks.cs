@@ -13,17 +13,17 @@ namespace CommandEngine.Tests.Util
         internal static readonly PermanentStatus AlwaysFail = new(Failed);
         internal static readonly PermanentStatus AlwaysSuspended = new(Suspended);
         public CommandStatus Execute(Context c) => status;
-        public List<Enum> NeededLabels => new();
-        public List<Enum> ChangedLabels => new();
+        public List<Enum> NeededLabels => [];
+        public List<Enum> ChangedLabels => [];
         public override string ToString() => $"Task always is {status} ";
         public PermanentStatus Clone() => this;
     }
 
     internal class CrashingTask : CommandTask
     {
-        public List<Enum> NeededLabels => new();
+        public List<Enum> NeededLabels => [];
 
-        public List<Enum> ChangedLabels => new();
+        public List<Enum> ChangedLabels => [];
         public override string ToString() => $"Task always Crashes ";
 
         public CommandStatus Execute(Context c) => throw new InvalidOperationException("unable to execute this task");
@@ -32,9 +32,9 @@ namespace CommandEngine.Tests.Util
     internal class RunOnceTask : CommandTask
     {
         private bool _hasRun;
-        public List<Enum> NeededLabels => new();
+        public List<Enum> NeededLabels => [];
 
-        public List<Enum> ChangedLabels => new();
+        public List<Enum> ChangedLabels => [];
         public override string ToString() => $"Task only run once";
         public CommandStatus Execute(Context c)
         {
@@ -51,9 +51,9 @@ namespace CommandEngine.Tests.Util
     }
     internal class SuspendFirstOnly : CommandTask
     {
-        public List<Enum> NeededLabels => new() { HasRun };
+        public List<Enum> NeededLabels => [HasRun];
 
-        public List<Enum> ChangedLabels => new() {HasRun};
+        public List<Enum> ChangedLabels => [HasRun];
         public override string ToString() => $"Task Suspends on first Execution ";
         public CommandStatus Execute(Context c)
         {
@@ -67,9 +67,10 @@ namespace CommandEngine.Tests.Util
     {
         private int _count = count;
         public List<Enum> NeededLabels => new();
-
         public List<Enum> ChangedLabels => new() { CountingTaskCount };
+        
         public override string ToString() => $"Task increments a counter ";
+        
         public CommandStatus Execute(Context c)
         {
             _count++;
@@ -80,27 +81,24 @@ namespace CommandEngine.Tests.Util
         public override bool Equals(object? obj) =>
             this == obj || obj is CountingTask other && this.Equals(other);
 
+        // ReSharper disable once NonReadonlyMemberInGetHashCode
+        public override int GetHashCode() => _count.GetHashCode();
+
         private bool Equals(CountingTask other) => this._count == other._count;
 
-        public string ToMemento() => $"{{\"value\":{_count}}}";
-        public static CountingTask FromMemento(string memento)
-        {
-            var value = int.Parse(memento.Split(':')[1].TrimEnd('}'));
-            return new CountingTask(value);
-        }
+        public string ToMemento() => _count.ToString(); // Invoked via reflection
+        
+        public static CountingTask FromMemento(string memento) => new(int.Parse(memento));  // Invoked via reflection
 
-        public CountingTask Clone() => new CountingTask(_count);
+        public CountingTask Clone() => new CountingTask(_count); // Invoked via reflection
     }
-    internal enum SuspendLabels
-    {
-        HasRun,
-        CountingTaskCount
-    }
+    
     internal class ContextTask(List<Enum> neededLabels, List<Enum> changedLabels, List<Enum> missingLabels) : CommandTask
     {
         public List<Enum> NeededLabels => neededLabels;
 
         public List<Enum> ChangedLabels => changedLabels;
+        
         public override string ToString() => $"Task needs labels {string.Join(", ", neededLabels)} and sets {string.Join(", ",changedLabels)} ";
 
         public CommandStatus Execute(Context c)
@@ -109,8 +107,10 @@ namespace CommandEngine.Tests.Util
             foreach (var label in changedLabels) c[label] = (label.ToString() ?? "null").ToUpper() + "Changed";
             return Succeeded;
         }
-        public ContextTask Clone() => this;
+        
+        public ContextTask Clone() => this; // Invoked via reflection
     }
+    
     internal class WriteTask(List<Enum> writtenLabels) : CommandTask
     {
         public List<Enum> NeededLabels => [];
@@ -124,6 +124,7 @@ namespace CommandEngine.Tests.Util
             return Succeeded;
         }
     }
+    
     internal class ReadTask(List<Enum> neededLabels) : CommandTask
     {
         public List<Enum> NeededLabels => neededLabels;
@@ -138,6 +139,10 @@ namespace CommandEngine.Tests.Util
             return Succeeded;
         }
     }
-
-
+    
+    internal enum SuspendLabels
+    {
+        HasRun,
+        CountingTaskCount
+    }
 }
