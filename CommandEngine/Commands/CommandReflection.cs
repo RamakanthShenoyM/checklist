@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using CommandEngine.Tasks;
 
 namespace CommandEngine.Commands {
     
@@ -15,11 +16,9 @@ namespace CommandEngine.Commands {
 
         public static void ValidateMementoStatus(Type type) { 
             if (!type.NeedsMemento()) return; // No need for Mememento
-            if (type.InstanceMethod("Clone") == null) throw new InvalidOperationException(
-                $"Class <{type.Name}> is missing required Clone() method");
-            if (type.InstanceMethod("ToMemento") == null) throw new InvalidOperationException(
-                $"Class <{type.Name}> is missing required ToMemento() method");
-            if(type.StaticFromMemento() == null) throw new InvalidOperationException(
+            if (!typeof(MementoTask).IsAssignableFrom(type)) throw new InvalidOperationException(
+                $"Class <{type.Name}> does not implement required MementoTask interface");
+            if (type.StaticFromMemento() == null) throw new InvalidOperationException(
                 $"Class <{type.Name}> is missing required static FromMemento() method");
             if(!type.HasEquals()) throw new InvalidOperationException(
                 $"Class <{type.Name}> is missing required override of Equals() method");

@@ -32,9 +32,6 @@ namespace CommandEngine.Tasks
             return (string?)method?.Invoke(type, null);
         }
 
-        public static MandatoryTask FromMemento(string memento)
-        {
-            throw new NotImplementedException();
-        }
+        public static MandatoryTask FromMemento(string memento) => throw new NotImplementedException();
     }
 }

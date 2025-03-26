@@ -19,13 +19,13 @@ namespace CommandEngine.Tests.Unit {
         [Fact]
         public void MissingClone() {
             var e = Assert.Throws<InvalidOperationException>(() => ValidateMementoStatus(new NoClone().GetType()));
-            Assert.Contains("required Clone()", e.Message);
+            Assert.Contains("required MementoTask interface", e.Message);
         }
 
         [Fact]
         public void MissingToMemento() {
             var e = Assert.Throws<InvalidOperationException>(() => ValidateMementoStatus(new NoToMemento().GetType()));
-            Assert.Contains("required ToMemento()", e.Message);
+            Assert.Contains("required MementoTask interface", e.Message);
         }
 
         [Fact]
@@ -44,44 +44,47 @@ namespace CommandEngine.Tests.Unit {
             public CommandStatus Execute(Context c) => throw new NotImplementedException();
             public List<Enum> NeededLabels => [];
             public List<Enum> ChangedLabels => [];
+           
         }
         
         private class NoMementoNeeded: BaseTask {}
 
-        private class NoClone : BaseTask {
+        private class NoClone : BaseTask
+        {
             private int _x = 4;
             public string ToMemento() => _x.ToString();
             public static NoClone FromMemento(string memento) => new NoClone();
             public override bool Equals(object? obj) =>
                 this == obj || obj is NoClone other && this._x == other._x;
+
         }
 
         private class NoToMemento : BaseTask {
             private int _x = 4;
-            public NoToMemento Clone() => this;
+            public CommandTask Clone() => this;
             public static NoClone FromMemento(string memento) => new NoClone();
             public override bool Equals(object? obj) =>
                 this == obj || obj is NoToMemento other && this._x == other._x;
         }
 
-        private class NoFromMemento : BaseTask {
+        private class NoFromMemento : BaseTask,MementoTask {
             private int _x = 4;
-            public NoFromMemento Clone() => this;
+            public CommandTask Clone() => this;
             public string ToMemento() => _x.ToString();
             public override bool Equals(object? obj) =>
                 this == obj || obj is NoFromMemento other && this._x == other._x;
         }
 
-        private class NoEquals : BaseTask {
+        private class NoEquals : BaseTask , MementoTask {
             private int _x = 4;
-            public NoEquals Clone() => this;
+            public CommandTask Clone() => this;
             public string ToMemento() => _x.ToString();
             public static NoClone FromMemento(string memento) => new NoClone();
         }
 
-        private class PerfectMementoTask : BaseTask {
+        private class PerfectMementoTask : BaseTask, MementoTask {
             private int _x = 4;
-            public PerfectMementoTask Clone() => this;
+            public CommandTask Clone() => this;
             public string ToMemento() => _x.ToString();
             public static NoClone FromMemento(string memento) => new NoClone();
             public override bool Equals(object? obj) =>
