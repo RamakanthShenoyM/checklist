@@ -57,7 +57,7 @@ namespace CommandEngine.Tests.Util
         public CommandTask Clone() => new RunOnceTask(_hasRun);
         public override bool Equals(object? obj) =>
             this == obj || obj is RunOnceTask other && this._hasRun == other._hasRun;
-        public string ToMemento() => _hasRun.ToString();
+        public string? ToMemento() => _hasRun.ToString();
         public static RunOnceTask FromMemento(string memento) =>
             new (memento == "true");
     }
