@@ -5,8 +5,8 @@ namespace Engine.Items
 {
     internal class ChecklistSerializer: ChecklistVisitor
     {
-        private List<ItemDto> _dtos = [];
-
+        private readonly List<ItemDto> _dtos = [];
+        private readonly Position _position = new();
         internal ChecklistSerializer(Checklist checklist)
         {
             checklist.Accept(this);
@@ -23,11 +23,48 @@ namespace Engine.Items
 
         public void Visit(BooleanItem item, string question, bool? value, Dictionary<Person, List<Operation>> operations)
         {
-            _dtos.Add(new ItemDto(typeof(BooleanItem).ToString(), "0"));
+            _dtos.Add(new ItemDto(typeof(BooleanItem).ToString(), _position.ToString(), question));
+            _position.Increment();
+        }
+        public void PreVisit(GroupItem item, List<Item> childItems) => _position.Deeper();
+        public void PostVisit(GroupItem item, List<Item> childItems) => CreateComposite(item);
+        public void PreVisit(OrItem item, Item item1, Item item2) => _position.Deeper();
+        public void PostVisit(OrItem item, Item item1, Item item2) => CreateComposite(item);
+        public void PreVisit(NotItem item, Item negatedItem) => _position.Deeper();
+        public void PostVisit(NotItem item, Item negatedItem) => CreateComposite(item);
+        public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) => _position.Deeper();
+        public void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) => CreateComposite(item);
+        private void CreateComposite(Item item)
+        {
+            _position.Truncate();
+            _dtos.Add(new ItemDto(item.GetType().ToString(), _position.ToString()));
+            _position.Increment();
+        }
+
+        public void Visit(MultipleChoiceItem item, string question, object? value,
+            Dictionary<Person, List<Operation>> operations)
+        {
+            _dtos.Add(new ItemDto(typeof(MultipleChoiceItem).ToString(), _position.ToString(), question));
+            _position.Increment();
         }
     }
-    public class ItemDto(string itemClassName, string position)
+
+
+    internal class Position
     {
+        private readonly List<int> _indexes = [0];
+        public override string ToString() => string.Join(".", _indexes);
+
+        public void Deeper() => _indexes.Add(0);
+
+        public void Truncate() => _indexes.RemoveAt(_indexes.Count - 1);
+
+        public void Increment() => _indexes[_indexes.Count - 1]++;
+    }
+
+    public class ItemDto(string itemClassName, string position, string? question = null)
+    {
+        public string? Question => question;
         public string ItemClassName => itemClassName;
         public string Position => position;
     }
