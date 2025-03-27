@@ -28,11 +28,20 @@ namespace CommandEngine.Commands
                 _templates[_environmentId] = this;
         }
         
-        internal static CommandEnvironment Template(string name, Command command) => new CommandEnvironment(name, command);
+        internal static CommandEnvironment Template(string name, Command command)
+        {
+            var result= new CommandEnvironment(name, command);
+            new StaticAnalyzer(result);
+            return result;
 
-        public static CommandEnvironment FreshEnvironment(CommandEnvironment template, Context? c = null) =>
-            new(template._name, template._command.Clone(), template.EnvironmentId, c: c);
-        
+        }
+
+        public static CommandEnvironment FreshEnvironment(CommandEnvironment template, Context? c = null)
+        {
+            var context = c ?? new Context();
+            return new CommandEnvironment(template._name, template._command.Clone(), template.EnvironmentId, c: context.Merge(template._context));
+        }
+
         public static CommandEnvironment RestoredEnvironment(CommandEnvironment template, Guid clientId, Context c) =>
             new(template._name, template._command.Clone(), template.EnvironmentId, clientId, c);
         

@@ -2,6 +2,7 @@
 using CommandEngine.Tasks;
 using CommandEngine.Tests.Util;
 using Xunit.Abstractions;
+using static CommandEngine.Commands.CommandEventType;
 using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandStatus;
 using static CommandEngine.Tests.Unit.TestLabels;
@@ -122,6 +123,23 @@ namespace CommandEngine.Tests.Integration {
             var restoredEnvironment = CommandEnvironment.FromMemento(memento);
             Assert.Equal(redEnvironment,restoredEnvironment);
 
+        }
+
+        [Fact]
+        public void StaticAnalysis()
+        {
+            var c = Context(A, B, D);
+            var command = "Primary Group".Sequence(
+                new ContextTask(Labels(A, B), Labels(D), Labels()).NoReverting(),
+                new ContextTask(Labels(A), Labels(E), Labels()).NoReverting(),
+                new ContextTask(Labels(A, E), Labels(D), Labels()).NoReverting(),
+                new ContextTask(Labels(G), Labels(), Labels()).NoReverting()
+            );
+            var template = "Incident process one".Template(command);
+            CommandEnvironment.FreshEnvironment(template, c);
+            testOutput.WriteLine(c.History.ToString());
+            Assert.Single(c.History.Events(OutSideLabels));
+            Assert.Single(c.History.Events(WrittenLabels));
         }
 
     }

@@ -84,5 +84,11 @@ namespace CommandEngine.Tasks
         }
 
         public bool Reset(Enum label) => _values.Remove(label);
+
+        internal Context Merge(Context other)
+        {
+            this.History.Merge(other.History);
+            return this;
+        }
     }
 }

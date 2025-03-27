@@ -1,5 +1,6 @@
 ﻿using CommandEngine.Tasks;
 using System.Threading.Tasks;
+using static System.String;
 using static CommandEngine.Commands.CommandEventType;
 namespace CommandEngine.Commands
 {
@@ -26,7 +27,7 @@ namespace CommandEngine.Commands
         }
         public override int GetHashCode() => string.Join("", this._events).GetHashCode();
 
-        public override string ToString() => string.Join("\n", _events);
+        public override string ToString() => Join("\n", _events);
         
         internal void Accept(CommandVisitor visitor) => visitor.Visit(this,_events);
 
@@ -67,9 +68,20 @@ namespace CommandEngine.Commands
         internal void Event(SimpleCommand simpleCommand, CommandTask task, object changedLabel, UpdateNotCapturedException e) => 
             _events.Add(Header(UpdateNotCaptured) + $"Attempt to set <{changedLabel}> in the context, but not marked as a change field");
 
+        internal void Event(List<Enum> labels, CommandEventType eventType)
+        {
+            _events.Add(eventType switch
+            {
+                OutSideLabels => Header(OutSideLabels) + $"<{Join(", ", labels)}> are provided from outside",
+                WrittenLabels => Header(WrittenLabels) + $"<{Join(", ", labels)}> are being changed internally",
+                _ => throw new InvalidOperationException()
+            });
+        }
+
+
         private static string Header(CommandEventType type) => $"{DateTime.Now} >> {type} << Status: ";
 
-       
+        public void Merge(CommandHistory other) => _events.InsertRange(0,other._events);
     }
 
     public enum CommandEventType
@@ -85,6 +97,8 @@ namespace CommandEngine.Commands
         TaskStatus,
         ConclusionReached,
         InvalidAccessAttempt,
-        UpdateNotCaptured
+        UpdateNotCaptured,
+        OutSideLabels,
+        WrittenLabels
     }
 }
