@@ -59,5 +59,10 @@ namespace Engine.Items {
             indexes.Insert(0, firstIndex);
             return _item.I(indexes);
         }
+
+        public string ToMemento()
+        {
+            return new ChecklistSerializer(this).Result;
+        }
     }
 }
