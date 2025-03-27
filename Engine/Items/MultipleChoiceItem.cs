@@ -14,7 +14,7 @@
 		}
         
         internal override void Accept(ChecklistVisitor visitor) {
-            visitor.Visit(this, _question, _value, Operations);
+            visitor.Visit(this, _question, _value, _choices, Operations);
         }
 
         internal override void Be(object value) => _value = value;

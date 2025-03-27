@@ -23,7 +23,14 @@ namespace Engine.Items
 
         public void Visit(BooleanItem item, string question, bool? value, Dictionary<Person, List<Operation>> operations)
         {
-            _dtos.Add(new ItemDto(typeof(BooleanItem).ToString(), _position.ToString(), question));
+            _dtos.Add(new ItemDto(typeof(BooleanItem).ToString(), _position.ToString(), question, typeof(Boolean).ToString(), value.ToString()));
+            _position.Increment();
+        }
+        public void Visit(MultipleChoiceItem item, string question, object? value,List<object> choices, 
+            Dictionary<Person, List<Operation>> operations)
+        {
+            _dtos.Add(new ItemDto(typeof(MultipleChoiceItem).ToString(), 
+                _position.ToString(), question, value?.GetType()?.ToString() ?? choices[0].GetType().ToString(), value?.ToString()));
             _position.Increment();
         }
         public void PreVisit(GroupItem item, List<Item> childItems) => _position.Deeper();
@@ -38,13 +45,6 @@ namespace Engine.Items
         {
             _position.Truncate();
             _dtos.Add(new ItemDto(item.GetType().ToString(), _position.ToString()));
-            _position.Increment();
-        }
-
-        public void Visit(MultipleChoiceItem item, string question, object? value,
-            Dictionary<Person, List<Operation>> operations)
-        {
-            _dtos.Add(new ItemDto(typeof(MultipleChoiceItem).ToString(), _position.ToString(), question));
             _position.Increment();
         }
     }
@@ -62,10 +62,12 @@ namespace Engine.Items
         public void Increment() => _indexes[_indexes.Count - 1]++;
     }
 
-    public class ItemDto(string itemClassName, string position, string? question = null)
+    public class ItemDto(string itemClassName, string position, string? question = null, string? valueClass = null, string? valueValue = null)
     {
         public string? Question => question;
         public string ItemClassName => itemClassName;
         public string Position => position;
+        public string? ValueClass => valueClass;
+        public string? ValueValue => valueValue;
     }
 }
