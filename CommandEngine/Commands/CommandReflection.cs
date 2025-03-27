@@ -26,14 +26,14 @@ namespace CommandEngine.Commands {
         
         internal static Type ToType(this string fullTypeName) => FoundType(fullTypeName);
 
-        internal static bool HasExplicitEquals(Type type) {
+        private static bool HasExplicitEquals(Type type) {
             var equalsMethod = type.GetMethod("Equals", [typeof(object)]);
             return equalsMethod != null && equalsMethod.DeclaringType != typeof(object);
         }
-        
-        internal static bool HasEquals(this Type type) => HasExplicitEquals(type);
 
-        internal static MethodInfo? Method(Type type, string methodName, BindingFlags flag) => 
+        private static bool HasEquals(this Type type) => HasExplicitEquals(type);
+
+        private static MethodInfo? Method(Type type, string methodName, BindingFlags flag) => 
             type.GetMethod(methodName, flag | BindingFlags.Public);
         
         internal static MethodInfo? InstanceMethod(this Type type, string methodName) =>  
