@@ -91,6 +91,7 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
         public void Visit(MultipleChoiceItem item,
             string question,
             object? value,
+            List<object> choices, 
             Dictionary<Person, List<Operation>> operations) =>
             Count[MultipleChoiceQuestion] += 1;
 

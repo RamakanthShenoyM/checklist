@@ -65,7 +65,7 @@ namespace Engine.Tests.Unit
             public void Visit(BooleanItem item, string question, bool? value, Dictionary<Person, List<Operation>> operations) =>
                 Count++;
 
-            public void Visit(MultipleChoiceItem item, string question, object? value, Dictionary<Person, List<Operation>> operations) =>
+            public void Visit(MultipleChoiceItem item, string question, object? value, List<object> choices, Dictionary<Person, List<Operation>> operations) =>
                 Count++;
         }
 

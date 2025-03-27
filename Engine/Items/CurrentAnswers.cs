@@ -30,7 +30,7 @@ namespace Engine.Items
 			_answers[question]= value;
 		}
 
-		public void Visit(MultipleChoiceItem item, string question, object? value, Dictionary<Person, List<Operation>> operations)
+		public void Visit(MultipleChoiceItem item, string question, object? value, List<object> choices,Dictionary<Person, List<Operation>> operations)
 		{
 			_answers[question] = value;
 		}

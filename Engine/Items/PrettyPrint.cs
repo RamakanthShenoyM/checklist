@@ -40,6 +40,7 @@ public class PrettyPrint : ChecklistVisitor {
         MultipleChoiceItem item,
         string question,
         object? value,
+        List<object> choices,
         Dictionary<Person, List<Operation>> operations
     ) {
         LabelIndention(item);
