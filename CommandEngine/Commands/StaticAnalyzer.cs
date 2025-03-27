@@ -1,11 +1,12 @@
 ﻿using CommandEngine.Tasks;
+using static CommandEngine.Commands.CommandEventType;
 
 namespace CommandEngine.Commands
 {
     internal class StaticAnalyzer : CommandVisitor
     {
-        private readonly SortedSet<Enum> _outSideLabels = [];
-        private readonly SortedSet<Enum> _writtenLabels = [];
+        private readonly HashSet<Enum> _outSideLabels = [];
+        private readonly HashSet<Enum> _writtenLabels = [];
         public StaticAnalyzer(CommandEnvironment environment)
         {
             environment.Accept(this);
@@ -26,8 +27,11 @@ namespace CommandEngine.Commands
 
         public void Visit(CommandHistory history, List<string> events)
         {
-            history.Event(_outSideLabels.ToList(), CommandEventType.OutSideLabels);
-            history.Event(_writtenLabels.ToList(), CommandEventType.WrittenLabels);
+            history.Event(SortedList(_outSideLabels), OutSideLabels);
+            history.Event(SortedList(_writtenLabels), WrittenLabels);
         }
+
+        private List<string> SortedList(HashSet<Enum> labels) => 
+            labels.Select(x => x.ToString()).OrderByDescending(x => x).ToList();
     }
 }

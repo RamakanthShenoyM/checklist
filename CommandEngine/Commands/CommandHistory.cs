@@ -68,7 +68,7 @@ namespace CommandEngine.Commands
         internal void Event(SimpleCommand simpleCommand, CommandTask task, object changedLabel, UpdateNotCapturedException e) => 
             _events.Add(Header(UpdateNotCaptured) + $"Attempt to set <{changedLabel}> in the context, but not marked as a change field");
 
-        internal void Event(List<Enum> labels, CommandEventType eventType)
+        internal void Event(List<string> labels, CommandEventType eventType)
         {
             _events.Add(eventType switch
             {
