@@ -1,4 +1,5 @@
 ﻿using CommandEngine.Tasks;
+using System.Collections.Concurrent;
 
 namespace CommandEngine.Commands
 {
@@ -9,7 +10,7 @@ namespace CommandEngine.Commands
         private readonly Guid _environmentId;
         private readonly Guid _clientId;
         private Context _context;
-        private static readonly Dictionary<Guid, CommandEnvironment> _environments = new();
+        private static readonly ConcurrentDictionary<Guid, CommandEnvironment> _templates = new();
 
         public Guid EnvironmentId => _environmentId;
 
@@ -23,8 +24,8 @@ namespace CommandEngine.Commands
             _clientId = clientId ?? Guid.NewGuid();
             _context = c ?? new Context([]);
 
-            if (!_environments.ContainsKey(_environmentId))
-                _environments.Add(_environmentId, this);
+            if (!_templates.ContainsKey(_environmentId))
+                _templates[_environmentId] = this;
         }
         
         internal static CommandEnvironment Template(string name, Command command) => new CommandEnvironment(name, command);
@@ -65,8 +66,8 @@ namespace CommandEngine.Commands
 
         internal static CommandEnvironment Environment(Guid guid)
         {
-            if (_environments.ContainsKey(guid))
-                return _environments[guid];
+            if (_templates.ContainsKey(guid))
+                return _templates[guid];
             throw new InvalidOperationException($"Environment with id {guid} not found");
         }
 

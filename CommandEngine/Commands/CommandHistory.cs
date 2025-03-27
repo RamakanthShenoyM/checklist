@@ -1,4 +1,5 @@
 ﻿using CommandEngine.Tasks;
+using System.Threading.Tasks;
 using static CommandEngine.Commands.CommandEventType;
 namespace CommandEngine.Commands
 {
@@ -16,7 +17,13 @@ namespace CommandEngine.Commands
         
         private bool Equals(CommandHistory other) =>
             this._events.SequenceEqual(other._events);
-
+        internal void Update(CommandHistory other)
+        {
+            if (other._events.Count == 0) return;
+            _events.Add(Header(StartSubTaskHistory) + "========================");
+            _events.AddRange(other._events);
+            _events.Add(Header(EndSubTaskHistory) + "========================");
+        }
         public override int GetHashCode() => string.Join("", this._events).GetHashCode();
 
         public override string ToString() => string.Join("\n", _events);
@@ -25,7 +32,6 @@ namespace CommandEngine.Commands
 
         public List<string> Events(CommandEventType type) => 
             _events.FindAll(e => e.Contains($">> {type} <<"));
-		
         internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
             _events.Add(Header(CommandStateChange) + $"Command <{command}> Changed State from <{originalState}> To <{newState}>");
 
@@ -62,10 +68,14 @@ namespace CommandEngine.Commands
             _events.Add(Header(UpdateNotCaptured) + $"Attempt to set <{changedLabel}> in the context, but not marked as a change field");
 
         private static string Header(CommandEventType type) => $"{DateTime.Now} >> {type} << Status: ";
+
+       
     }
 
     public enum CommandEventType
     {
+        StartSubTaskHistory,
+        EndSubTaskHistory,
         CommandStateChange,
         TaskExecuted,
         ValueChanged,

@@ -13,6 +13,7 @@ using CommandEngine.Tests.Util;
 using Xunit.Sdk;
 using Xunit.Abstractions;
 using static CommandEngine.Tests.Util.SuspendLabels;
+using static CommandEngine.Commands.CommandEventType;
 
 namespace CommandEngine.Tests.Unit
 {
@@ -52,6 +53,8 @@ namespace CommandEngine.Tests.Unit
 			var originalEnvironment = CommandEnvironment.FreshEnvironment(master,c);
 			Assert.Equal(Succeeded, originalEnvironment.Execute());
 			Assert.Equal("DChanged", c[D]);
+			testOutput.WriteLine(c.History.ToString());
+			Assert.Equal(4, c.History.Events(ValueChanged).Count);
 		}
 
 		[Fact]

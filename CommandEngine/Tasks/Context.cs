@@ -44,6 +44,8 @@ namespace CommandEngine.Tasks
         {
             foreach (var label in changedLabels)
                 if (subContext.Has(label)) this[label] = subContext[label];
+            this.History.Update(subContext.History);
+            
         }
 
         public override bool Equals(object? obj) =>

@@ -23,8 +23,8 @@ namespace CommandEngine.Tasks
 		public string? ToMemento() => throw new NotImplementedException();
 
 		public static CommandTask FromMemento(string memento) => throw new NotImplementedException();
-
-		public override bool Equals(object? obj) => 
+        public override string ToString() => this.GetType().Name;
+        public override bool Equals(object? obj) => 
 			this == obj || obj is CommandTaskWrapper other && this.Equals(other);
 		
 		private bool Equals(CommandTaskWrapper other) => 
