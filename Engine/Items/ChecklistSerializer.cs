@@ -23,14 +23,21 @@ namespace Engine.Items
 
         public void Visit(BooleanItem item, string question, bool? value, Dictionary<Person, List<Operation>> operations)
         {
-            _dtos.Add(new ItemDto(typeof(BooleanItem).ToString(), _position.ToString(), question, typeof(Boolean).ToString(), value.ToString()));
+            _dtos.Add(new ItemDto(
+                typeof(BooleanItem).ToString(),
+                _position.ToString(), question, 
+                new ValueDto(typeof(Boolean).ToString(), value.ToString())));
             _position.Increment();
         }
         public void Visit(MultipleChoiceItem item, string question, object? value,List<object> choices, 
             Dictionary<Person, List<Operation>> operations)
         {
-            _dtos.Add(new ItemDto(typeof(MultipleChoiceItem).ToString(), 
-                _position.ToString(), question, value?.GetType()?.ToString() ?? choices[0].GetType().ToString(), value?.ToString()));
+            _dtos.Add(new ItemDto(
+                typeof(MultipleChoiceItem).ToString(), 
+                _position.ToString(), 
+                question, 
+                new ValueDto(value?.GetType().ToString(), value?.ToString()),
+                choices.Select(c => new ValueDto(c.GetType().ToString(), c.ToString())).ToList()));
             _position.Increment();
         }
         public void PreVisit(GroupItem item, List<Item> childItems) => _position.Deeper();
@@ -62,12 +69,13 @@ namespace Engine.Items
         public void Increment() => _indexes[_indexes.Count - 1]++;
     }
 
-    public class ItemDto(string itemClassName, string position, string? question = null, string? valueClass = null, string? valueValue = null)
-    {
-        public string? Question => question;
-        public string ItemClassName => itemClassName;
-        public string Position => position;
-        public string? ValueClass => valueClass;
-        public string? ValueValue => valueValue;
-    }
+    public record ItemDto(
+        string ItemClassName,
+        string Position, 
+        string? Question = null, 
+        ValueDto? Value=null,
+        List<ValueDto>? Choices = null);
+
+    public record ValueDto(string? ValueClass, string? ValueValue);
+
 }

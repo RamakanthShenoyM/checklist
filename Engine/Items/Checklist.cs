@@ -60,9 +60,9 @@ namespace Engine.Items {
             return _item.I(indexes);
         }
 
-        public string ToMemento()
-        {
-            return new ChecklistSerializer(this).Result;
-        }
+        public string ToMemento() => new ChecklistSerializer(this).Result;
+
+        public static Checklist FromMemento(string memento) => 
+            new ChecklistDeserializer(memento).Result;
     }
 }

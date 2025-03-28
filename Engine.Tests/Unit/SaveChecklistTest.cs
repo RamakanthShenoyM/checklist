@@ -82,5 +82,31 @@ namespace Engine.Tests.Unit
             var memento = checklist.ToMemento();
             testOutput.WriteLine(memento);
         }
+
+        [Fact]
+        public void SaveComplexChecklist()
+        {
+            var checklist = Creator.Checklist(
+                "First simple item".TrueFalse(),
+                Conditional(
+                    condition: "First condition".TrueFalse(),
+                    onSuccess: Conditional(
+                        condition: "Second condition".TrueFalse(),
+                        onSuccess: "Second success leg".Choices("A",'B',42),
+                        onFailure: "Second failure leg".TrueFalse()
+                    ),
+                    onFailure: Not(
+                        Or(
+                            "First Or of first failure leg".TrueFalse(),
+                            "Second Or of first failure leg".TrueFalse()
+                        )
+                    )
+                ),
+                "Last simple item".TrueFalse()
+            );
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            testOutput.WriteLine(memento);
+        }
     }
 }
