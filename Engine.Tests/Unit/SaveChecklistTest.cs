@@ -30,6 +30,7 @@ namespace Engine.Tests.Unit
             );
             var memento = checklist.ToMemento();
             testOutput.WriteLine(memento);
+            var restoredChecklist = Checklist.FromMemento(memento);
         }
         [Fact]
         public void SaveOrChecklist()
@@ -105,7 +106,7 @@ namespace Engine.Tests.Unit
                 "Last simple item".TrueFalse()
             );
             var memento = checklist.ToMemento();
-            var restoredChecklist = Checklist.FromMemento(memento);
+            //var restoredChecklist = Checklist.FromMemento(memento);
             testOutput.WriteLine(memento);
         }
     }

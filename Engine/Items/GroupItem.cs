@@ -16,6 +16,9 @@ namespace Engine.Items
             _childItems= items.ToList();
             _childItems.Insert(0, firstItem);
         }
+
+        internal GroupItem(List<Item> items) => _childItems = items;
+
         internal override ItemStatus Status()
         {
             if (_childItems.Count == 0) return ItemStatus.Unknown;
