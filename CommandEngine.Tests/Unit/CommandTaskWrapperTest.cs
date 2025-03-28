@@ -79,6 +79,7 @@ namespace CommandEngine.Tests.Unit
 			Assert.Throws<TaskSuspendedException>(() => originalEnvironment.Execute());
 			testOutput.WriteLine(c.History.ToString());
 			Assert.Equal("DChanged", c[D]);
+			//ToDo: Save resume command
 		}
 	}
 }
