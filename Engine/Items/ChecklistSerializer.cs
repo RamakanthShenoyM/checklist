@@ -69,23 +69,13 @@ namespace Engine.Items
         public void Increment() => _indexes[_indexes.Count - 1]++;
     }
 
-    public class ItemDto(
-        string itemClassName,
-        string position, 
-        string? question = null, 
-        ValueDto? value=null,
-        List<ValueDto>? choices = null)
-    {
-        public string? Question => question;
-        public string ItemClassName => itemClassName;
-        public string Position => position;
-        public ValueDto? Value => value;
-        public List<ValueDto>? Choices => choices;
-    }
+    public record ItemDto(
+        string ItemClassName,
+        string Position, 
+        string? Question = null, 
+        ValueDto? Value=null,
+        List<ValueDto>? Choices = null);
 
-    public class ValueDto(string? valueClass, string? valueValue)
-    {
-        public string? ValueClass => valueClass;
-        public string? ValueValue => valueValue;
-    }
+    public record ValueDto(string? ValueClass, string? ValueValue);
+
 }
