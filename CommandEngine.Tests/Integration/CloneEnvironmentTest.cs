@@ -140,6 +140,25 @@ namespace CommandEngine.Tests.Integration {
             testOutput.WriteLine(c.History.ToString());
             Assert.Single(c.History.Events(OutSideLabels));
             Assert.Single(c.History.Events(WrittenLabels));
+            Assert.Single(c.History.Events(SetAndUsedLabels));
+
+        }
+
+        [Fact]
+        public void LabelSetAndUsed()
+        {
+            var c = Context(A, B);
+            var command = "Primary Group".Sequence(
+                new ContextTask(Labels(A, B), Labels(F), Labels()).NoReverting(),
+                new ContextTask(Labels(F,G), Labels(E), Labels()).NoReverting(),
+                new ContextTask(Labels(A, E), Labels(D), Labels()).NoReverting()
+            );
+            var template = "Incident process one".Template(command);
+            CommandEnvironment.FreshEnvironment(template, c);
+            testOutput.WriteLine(c.History.ToString());
+            Assert.Single(c.History.Events(OutSideLabels));
+            Assert.Single(c.History.Events(WrittenLabels));
+            Assert.Single(c.History.Events(SetAndUsedLabels));
         }
 
     }

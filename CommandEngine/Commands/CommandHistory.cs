@@ -72,8 +72,9 @@ namespace CommandEngine.Commands
         {
             _events.Add(eventType switch
             {
-                OutSideLabels => Header(OutSideLabels) + $"<{Join(", ", labels)}> are provided from outside",
-                WrittenLabels => Header(WrittenLabels) + $"<{Join(", ", labels)}> are being changed internally",
+                OutSideLabels => Header(OutSideLabels) + $"<{Join(", ", labels)}> are needed from the outside",
+                WrittenLabels => Header(WrittenLabels) + $"<{Join(", ", labels)}> are set for the outside",
+                SetAndUsedLabels => Header(SetAndUsedLabels) + $"<{Join(", ", labels)}> are being set and used in the same command environment",
                 _ => throw new InvalidOperationException()
             });
         }
@@ -99,6 +100,8 @@ namespace CommandEngine.Commands
         InvalidAccessAttempt,
         UpdateNotCaptured,
         OutSideLabels,
-        WrittenLabels
+        WrittenLabels,
+        SetAndUsedLabels,
+        SetAndNotUsed
     }
 }

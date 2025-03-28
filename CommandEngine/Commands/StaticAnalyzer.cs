@@ -7,6 +7,7 @@ namespace CommandEngine.Commands
     {
         private readonly HashSet<Enum> _outSideLabels = [];
         private readonly HashSet<Enum> _writtenLabels = [];
+        private readonly HashSet<Enum> _setAndUsedLabels = [];
         public StaticAnalyzer(CommandEnvironment environment)
         {
             environment.Accept(this);
@@ -18,20 +19,24 @@ namespace CommandEngine.Commands
             CommandTask executeTask,
             CommandTask revertTask)
         {
-            if (!executeTask.NeededLabels.Any(label => _writtenLabels.Contains(label)))
-            {
-                _outSideLabels.UnionWith(executeTask.NeededLabels);
-            }
-            _writtenLabels.UnionWith(executeTask.ChangedLabels);
+            var usedLabels = executeTask.NeededLabels
+                .FindAll(label => _writtenLabels.Contains(label));
+            _setAndUsedLabels.UnionWith(usedLabels);
+            var newNeededLabels = new List<Enum>(executeTask.NeededLabels).Except(usedLabels);
+            _outSideLabels.UnionWith(newNeededLabels);
+            var newWrittenLabels = executeTask.ChangedLabels.FindAll(label => !_setAndUsedLabels.Contains(label));
+            _writtenLabels.UnionWith(newWrittenLabels);
         }
 
         public void Visit(CommandHistory history, List<string> events)
         {
+           
             history.Event(SortedList(_outSideLabels), OutSideLabels);
-            history.Event(SortedList(_writtenLabels), WrittenLabels);
+            history.Event(SortedList(_writtenLabels.Except(_setAndUsedLabels).ToHashSet()), WrittenLabels);
+            history.Event(SortedList(_setAndUsedLabels), SetAndUsedLabels);
         }
 
         private List<string> SortedList(HashSet<Enum> labels) => 
-            labels.Select(x => x.ToString()).OrderByDescending(x => x).ToList();
+            labels.Select(x => x.ToString()).OrderBy(x => x).ToList();
     }
 }
