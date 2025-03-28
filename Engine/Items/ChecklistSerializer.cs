@@ -24,7 +24,7 @@ namespace Engine.Items
         public void Visit(BooleanItem item, string question, bool? value, Dictionary<Person, List<Operation>> operations)
         {
             _dtos.Add(new ItemDto(
-                typeof(BooleanItem).ToString(),
+                typeof(BooleanItem).Name,
                 _position.ToString(), question, 
                 new ValueDto(typeof(Boolean).ToString(), value.ToString())));
             _position.Increment();
@@ -33,7 +33,7 @@ namespace Engine.Items
             Dictionary<Person, List<Operation>> operations)
         {
             _dtos.Add(new ItemDto(
-                typeof(MultipleChoiceItem).ToString(), 
+                typeof(MultipleChoiceItem).Name, 
                 _position.ToString(), 
                 question, 
                 new ValueDto(value?.GetType().ToString(), value?.ToString()),
@@ -51,7 +51,7 @@ namespace Engine.Items
         private void CreateComposite(Item item)
         {
             _position.Truncate();
-            _dtos.Add(new ItemDto(item.GetType().ToString(), _position.ToString()));
+            _dtos.Add(new ItemDto(item.GetType().Name, _position.ToString()));
             _position.Increment();
         }
     }

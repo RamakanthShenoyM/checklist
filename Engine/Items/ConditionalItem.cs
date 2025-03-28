@@ -3,11 +3,17 @@ using static Engine.Items.ItemStatus;
 
 namespace Engine.Items
 {
-    public class ConditionalItem(Item condition, Item? onSuccess = null, Item? onFail = null) : Item
+    public class ConditionalItem : Item
     {
-        private Item _baseItem = condition;
-        private Item? _successItem = onSuccess;
-        private Item? _failItem = onFail;
+        private Item _baseItem;
+        private Item? _successItem;
+        private Item? _failItem;
+        
+        public ConditionalItem(Item condition, Item? onSuccess = null, Item? onFail = null) {
+            _baseItem = condition;
+            _successItem = onSuccess;
+            _failItem = onFail;
+        }
 
         internal override void Accept(ChecklistVisitor visitor)
         {
