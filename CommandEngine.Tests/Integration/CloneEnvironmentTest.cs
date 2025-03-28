@@ -160,6 +160,18 @@ namespace CommandEngine.Tests.Integration {
             Assert.Single(c.History.Events(WrittenLabels));
             Assert.Single(c.History.Events(SetAndUsedLabels));
         }
-
+        [Fact]
+        public void NeededButSetLater()
+        {
+            var c = Context(A, B);
+            var command = "Primary Group".Sequence(
+                new ContextTask(Labels(A,E), Labels(), Labels()).NoReverting(),
+                new ContextTask(Labels(F), Labels(E,B), Labels()).NoReverting(),
+                new ContextTask(Labels(), Labels(F), Labels()).NoReverting());
+            var template = "Incident process one".Template(command);
+            CommandEnvironment.FreshEnvironment(template, c);
+            testOutput.WriteLine(c.History.ToString());
+           Assert.Single(c.History.Events(NeededLabelBeforeSet));
+        }
     }
 }
