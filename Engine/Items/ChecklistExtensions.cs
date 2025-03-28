@@ -13,6 +13,6 @@ public static class ChecklistExtensions {
         new (item1, item2);
     public static NotItem Not(Item item) =>
         new (item);
-    public static ConditionalItem Conditional(Item baseItem, Item? successItem = null, Item? failItem = null) =>
-        new (baseItem, successItem, failItem);
+    public static ConditionalItem Conditional(Item condition, Item? onSuccess = null, Item? onFailure = null) =>
+        new (condition, onSuccess, onFailure);
 }
