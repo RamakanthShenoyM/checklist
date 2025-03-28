@@ -8,7 +8,7 @@ using static Engine.Items.ChecklistExtensions;
 namespace Engine.Tests.Unit;
 
 public class RemoveTest {
-    private static readonly Person Creator = new Person(0, 0);
+    private static readonly Person Creator = new(0, 0);
     private readonly ITestOutputHelper testOutput;
 
     private Item firstItem;
@@ -33,28 +33,28 @@ public class RemoveTest {
         this.testOutput = testOutput;
 
         checklist = Creator.Checklist(
-            "First simple item".TrueFalse(),  // 0.0
-            Conditional(                      // 0.1
-                condition: "First condition".TrueFalse(),  // 0.1.0
-                onSuccess: Conditional(                    // 0.1.1
-                    condition: "Second condition".TrueFalse(),  // 0.1.1.0
+            "First simple item".TrueFalse(), // 0.0
+            Conditional( // 0.1
+                condition: "First condition".TrueFalse(), // 0.1.0
+                onSuccess: Conditional( // 0.1.1
+                    condition: "Second condition".TrueFalse(), // 0.1.1.0
                     onSuccess: "Second success leg".TrueFalse(), // 0.1.1.1
-                    onFailure: "Second failure leg".TrueFalse()  // 0.1.1.2
+                    onFailure: "Second failure leg".TrueFalse() // 0.1.1.2
                 ),
-        onFailure: Or(                                      // 0.1.2
-                    Not(                                    // 0.1.2.0
-                        Group(                                  // 0.1.2.0.0
+                onFailure: Or( // 0.1.2
+                    Not( // 0.1.2.0
+                        Group( // 0.1.2.0.0
                             "First Or of first failure leg".TrueFalse(), // 0.1.2.0.0.0
-                            "First Or of first failure leg".TrueFalse()  // 0.1.2.0.0.1
+                            "First Or of first failure leg".TrueFalse() // 0.1.2.0.0.1
                         )
                     ),
-                    Group(                                  // 0.1.2.1
-                        "Second Or of first failure leg".TrueFalse(),  // 0.1.2.1.0
-                        "Second Or of first failure leg".TrueFalse()   // 0.1.2.1.1
+                    Group( // 0.1.2.1
+                        "Second Or of first failure leg".TrueFalse(), // 0.1.2.1.0
+                        "Second Or of first failure leg".TrueFalse() // 0.1.2.1.1
                     )
                 )
             ),
-            "Last simple item".TrueFalse()  // 0.2
+            "Last simple item".TrueFalse() // 0.2
         );
         firstItem = checklist.I(0, 0);
         condition1 = checklist.I(0, 1);
@@ -63,10 +63,11 @@ public class RemoveTest {
         conditionItem2 = checklist.I(0, 1, 1, 0);
         successItem2 = checklist.I(0, 1, 1, 1);
         failItem2 = checklist.I(0, 1, 1, 2);
-        failItem1 = checklist.I(0, 1, 2);  // the Or
+        failItem1 = checklist.I(0, 1, 2); // the Or
         failItem1ANot = checklist.I(0, 1, 2, 0);
         failItem1A = checklist.I(0, 1, 2, 0, 0);
-        failItem1A1 = checklist.I(0, 1, 2, 0, 0, 0);;
+        failItem1A1 = checklist.I(0, 1, 2, 0, 0, 0);
+        ;
         failItem1A2 = checklist.I(0, 1, 2, 0, 0, 1);
         failItem1B = checklist.I(0, 1, 2, 1);
         failItem1B1 = checklist.I(0, 1, 2, 1, 0);
@@ -113,13 +114,15 @@ public class RemoveTest {
     [Fact]
     public void RemoveMultipleInstances() {
         var target = "Item to remove".TrueFalse();
-        var item2 = "Second item".TrueFalse();
-        var item3 = "Third item".TrueFalse();
-        var baseItem = "Base condition".TrueFalse();
-        var successItem = "Success condition".TrueFalse();
-        var conditional = new ConditionalItem(baseItem, successItem, target);
-        var checklist = new Checklist(Creator, target, item2, item3, conditional);
-        var replacement = "Replacement".TrueFalse();
+        var checklist = Creator.Checklist(
+            target,                            // Remove this one...
+            "Second item".TrueFalse(),
+            "Third item".TrueFalse(),
+            Conditional(
+                condition: "Base condition".TrueFalse(),
+                onSuccess: "Success condition".TrueFalse(),
+                target)                        // ...and remove this one
+        );
         Creator.Remove(target).From(checklist);
         testOutput.WriteLine(checklist.ToString(false));
         Assert.Throws<ArgumentException>(() => new CurrentAnswers(checklist).Value("Item to remove"));
