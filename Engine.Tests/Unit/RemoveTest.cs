@@ -12,8 +12,8 @@ public class RemoveTest {
     private readonly ITestOutputHelper testOutput;
 
     private Item firstItem;
-    private Item baseItem1;
-    private Item baseItem2;
+    private Item conditionItem1;
+    private Item conditionItem2;
     private Item successItem2;
     private Item failItem2;
     private Item successItem1;
@@ -24,7 +24,7 @@ public class RemoveTest {
     private Item failItem1A1;
     private Item failItem1A2;
     private Item failItem1;
-    private Item compositeItem;
+    private Item condition1;
     private Item lastItem;
     private Checklist checklist;
     private Item failItem1ANot;
@@ -57,20 +57,20 @@ public class RemoveTest {
             "Last simple item".TrueFalse()  // 0.2
         );
         firstItem = checklist.I(0, 0);
-        baseItem1 = checklist.I(0, 1, 0);
-        baseItem2 = checklist.I(0, 1, 1, 0);
+        condition1 = checklist.I(0, 1);
+        conditionItem1 = checklist.I(0, 1, 0);
+        successItem1 = checklist.I(0, 1, 1); // aka condition2
+        conditionItem2 = checklist.I(0, 1, 1, 0);
         successItem2 = checklist.I(0, 1, 1, 1);
         failItem2 = checklist.I(0, 1, 1, 2);
-        successItem1 = checklist.I(0, 1, 1);;
+        failItem1 = checklist.I(0, 1, 2);  // the Or
+        failItem1ANot = checklist.I(0, 1, 2, 0);
+        failItem1A = checklist.I(0, 1, 2, 0, 0);
         failItem1A1 = checklist.I(0, 1, 2, 0, 0, 0);;
         failItem1A2 = checklist.I(0, 1, 2, 0, 0, 1);
-        failItem1A = checklist.I(0, 1, 2, 0, 0);
+        failItem1B = checklist.I(0, 1, 2, 1);
         failItem1B1 = checklist.I(0, 1, 2, 1, 0);
         failItem1B2 = checklist.I(0, 1, 2, 1, 1);
-        failItem1B = checklist.I(0, 1, 2, 1);
-        failItem1ANot = checklist.I(0, 1, 2, 0);
-        failItem1 = checklist.I(0, 1, 2);
-        compositeItem = checklist.I(0, 1);
         lastItem = checklist.I(0, 2);
     }
 
@@ -83,13 +83,13 @@ public class RemoveTest {
     [Fact]
     public void RemoveLastInGroup() {
         Creator.Remove(firstItem).From(checklist);
-        Creator.Remove(compositeItem).From(checklist);
+        Creator.Remove(condition1).From(checklist);
         Assert.Throws<InvalidOperationException>(() => Creator.Remove(lastItem).From(checklist));
     }
 
     [Fact]
     public void RemoveBaseInConditional() {
-        Assert.Throws<InvalidOperationException>(() => Creator.Remove(baseItem2).From(checklist));
+        Assert.Throws<InvalidOperationException>(() => Creator.Remove(conditionItem2).From(checklist));
     }
 
     [Fact]
