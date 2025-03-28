@@ -105,6 +105,7 @@ namespace Engine.Tests.Unit
                 "Last simple item".TrueFalse()
             );
             var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
             testOutput.WriteLine(memento);
         }
     }

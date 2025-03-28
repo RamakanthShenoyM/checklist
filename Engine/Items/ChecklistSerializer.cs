@@ -23,7 +23,10 @@ namespace Engine.Items
 
         public void Visit(BooleanItem item, string question, bool? value, Dictionary<Person, List<Operation>> operations)
         {
-            _dtos.Add(new ItemDto(typeof(BooleanItem).ToString(), _position.ToString(), question, typeof(Boolean).ToString(), value.ToString()));
+            _dtos.Add(new ItemDto(
+                typeof(BooleanItem).ToString(),
+                _position.ToString(), question, 
+                new ValueDto(typeof(Boolean).ToString(), value.ToString())));
             _position.Increment();
         }
         public void Visit(MultipleChoiceItem item, string question, object? value,List<object> choices, 
@@ -33,9 +36,8 @@ namespace Engine.Items
                 typeof(MultipleChoiceItem).ToString(), 
                 _position.ToString(), 
                 question, 
-                value?.GetType().ToString(), 
-                value?.ToString(),
-                choices));
+                new ValueDto(value?.GetType().ToString(), value?.ToString()),
+                choices.Select(c => new ValueDto(c.GetType().ToString(), c.ToString())).ToList()));
             _position.Increment();
         }
         public void PreVisit(GroupItem item, List<Item> childItems) => _position.Deeper();
@@ -67,15 +69,18 @@ namespace Engine.Items
         public void Increment() => _indexes[_indexes.Count - 1]++;
     }
 
-    public class ItemDto(string itemClassName, string position, string? question = null, string? valueClass = null, string? valueValue = null,List<object>? choices = null)
+    public class ItemDto(
+        string itemClassName,
+        string position, 
+        string? question = null, 
+        ValueDto? value=null,
+        List<ValueDto>? choices = null)
     {
         public string? Question => question;
         public string ItemClassName => itemClassName;
         public string Position => position;
-        public ValueDto Value => new(
-            valueClass,
-            valueValue);
-        public List<ValueDto>? Choices => choices?.Select(c => new ValueDto(c.GetType().ToString(), c.ToString())).ToList();
+        public ValueDto? Value => value;
+        public List<ValueDto>? Choices => choices;
     }
 
     public class ValueDto(string? valueClass, string? valueValue)
