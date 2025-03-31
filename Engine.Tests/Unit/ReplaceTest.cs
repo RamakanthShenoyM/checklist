@@ -8,7 +8,6 @@ using static Engine.Tests.Unit.MultipleChoiceItemTest;
 using static Engine.Items.ChecklistExtensions;
 using static Engine.Items.PrettyPrint.PrettyPrintOptions;
 
-
 namespace Engine.Tests.Unit {
     public class ReplaceTest(ITestOutputHelper testOutput) {
         private static readonly Person Creator = new Person(0, 0);
@@ -105,8 +104,8 @@ namespace Engine.Tests.Unit {
                 Conditional(
                     condition: "First condition".TrueFalse(),
                     onSuccess: Conditional(
-                        condition: "Second condition".TrueFalse(),
-                        onSuccess:"Second success leg".TrueFalse(),  // successItem2 to be replaced
+                        condition: "Second condition".TrueFalse(),  // replace this condition
+                        onSuccess:"Second success leg".TrueFalse(),  
                         onFailure:"Second failure leg".TrueFalse()
                     ),
                     onFailure: Or(
@@ -137,11 +136,11 @@ namespace Engine.Tests.Unit {
                     condition: "First condition".TrueFalse(),
                     onSuccess: Conditional(
                         condition: "Second condition".TrueFalse(),
-                        onSuccess:"Second success leg".TrueFalse(),  // successItem2 to be replaced
+                        onSuccess:"Second success leg".TrueFalse(),  
                         onFailure:"Second failure leg".TrueFalse()
                     ),
                     onFailure: Or(
-                        Not( new BooleanItem("First Or of first failure leg") ),
+                        Not( new BooleanItem("First Or of first failure leg") ), // inner question to be replaced
                         new BooleanItem("Second Or of first failure leg")
                     )
                 ),
@@ -161,118 +160,160 @@ namespace Engine.Tests.Unit {
         }
 
         [Fact]
-        public void ReplacingCompleteConditional() {
-            var firstItem = "First simple item".TrueFalse();
-            var baseItem1 = new BooleanItem("First condition");
-            var baseItem2 = new BooleanItem("Second condition");
-            var successItem2 = new BooleanItem("Second success leg");
-            var failItem2 = new BooleanItem("Second failure leg");
-            var successItem1 = new ConditionalItem(baseItem2, successItem2, failItem2);
-            var failItem1A = new BooleanItem("First Or of first failure leg");
-            var failItem1B = new BooleanItem("Second Or of first failure leg");
-            var failItem1 = failItem1A.Not().Or(failItem1B);
-            var lastItem = "Last simple item".TrueFalse();
-
-            var compositeItem = new ConditionalItem(baseItem1, successItem1, failItem1);
-            var checklist = new Checklist(Creator, firstItem, compositeItem, lastItem);
+        public void ReplacingInnerConditional() {
+            var checklist = Creator.Checklist(
+                "First simple item".TrueFalse(),
+                Conditional(
+                    condition: "First condition".TrueFalse(),
+                    onSuccess: Conditional(                  // Replace entire Conditional
+                        condition: "Second condition".TrueFalse(),
+                        onSuccess:"Second success leg".TrueFalse(),  
+                        onFailure:"Second failure leg".TrueFalse()
+                    ),
+                    onFailure: Or(
+                        Not( new BooleanItem("First Or of first failure leg") ), // inner question to be replaced
+                        new BooleanItem("Second Or of first failure leg")
+                    )
+                ),
+                "Last simple item".TrueFalse()
+            );
             Assert.Equal(8, new QuestionCount(checklist).Count);
-            var replace1 = "Replace1".TrueFalse();
-            var replace2 = "Replace2".TrueFalse();
-            Creator.Replace(successItem1).With(replace1, replace2).In(checklist);
+            
+            var secondConditional = checklist.I(0,1,1);
+            Creator.Replace(secondConditional)
+                .With(
+                    "Replace1".TrueFalse(),
+                    "Replace2".TrueFalse()
+                )
+                .In(checklist);
             Assert.Equal(7, new QuestionCount(checklist).Count);
-            testOutput.WriteLine(checklist.ToString());
+            testOutput.WriteLine(checklist.ToString(NoOperations));
         }
 
         [Fact]
-        public void ReplacingTopConditional() {
-            var firstItem = "First simple item".TrueFalse();
-            var baseItem1 = new BooleanItem("First condition");
-            var baseItem2 = new BooleanItem("Second condition");
-            var successItem2 = new BooleanItem("Second success leg");
-            var failItem2 = new BooleanItem("Second failure leg");
-            var successItem1 = new ConditionalItem(baseItem2, successItem2, failItem2);
-            var failItem1A = new BooleanItem("First Or of first failure leg");
-            var failItem1B = new BooleanItem("Second Or of first failure leg");
-            var failItem1 = failItem1A.Not().Or(failItem1B);
-            var lastItem = "Last simple item".TrueFalse();
-
-            var compositeItem = new ConditionalItem(baseItem1, successItem1, failItem1);
-            var checklist = new Checklist(Creator, firstItem, compositeItem, lastItem);
+        public void ReplacingOuterConditional() {
+            var checklist = Creator.Checklist(
+                "First simple item".TrueFalse(),
+                Conditional(
+                    condition: "First condition".TrueFalse(),
+                    onSuccess: Conditional(                  // Replace entire Conditional
+                        condition: "Second condition".TrueFalse(),
+                        onSuccess:"Second success leg".TrueFalse(),  
+                        onFailure:"Second failure leg".TrueFalse()
+                    ),
+                    onFailure: Or(
+                        Not( new BooleanItem("First Or of first failure leg") ), // inner question to be replaced
+                        new BooleanItem("Second Or of first failure leg")
+                    )
+                ),
+                "Last simple item".TrueFalse()
+            );
             Assert.Equal(8, new QuestionCount(checklist).Count);
-            var replace1 = "Replace1".TrueFalse();
-            var replace2 = "Replace2".TrueFalse();
-            var group1 = new GroupItem(replace1, replace2);
-            Creator.Replace(compositeItem).With(group1).In(checklist);
+            
+            var firstConditional = checklist.I(0,1);
+            Creator.Replace(firstConditional)
+                .With(
+                    "Replace1".TrueFalse(),
+                    "Replace2".TrueFalse()
+                )
+                .In(checklist);
             Assert.Equal(4, new QuestionCount(checklist).Count);
-            testOutput.WriteLine(checklist.ToString());
-            var replace3 = "Replace3".TrueFalse();
-            var replace4 = "Replace4".TrueFalse();
-            var replace5 = "Replace5".TrueFalse();
-            Creator.Replace(group1).With(replace3, replace4, replace5).In(checklist);
+            testOutput.WriteLine(checklist.ToString(NoOperations));
+            
+            var newGroup = checklist.I(0,1);
+            Creator.Replace(newGroup)  // Replace what we just replaced!
+                .With(
+                    "Replace3".TrueFalse(),
+                    "Replace4".TrueFalse(),
+                    "Replace5".TrueFalse()
+                )
+                .In(checklist);
             Assert.Equal(5, new QuestionCount(checklist).Count);
-            testOutput.WriteLine(checklist.ToString());
+            testOutput.WriteLine(checklist.ToString(NoOperations));
         }
 
         [Fact]
         public void InsertAfterToConditional() {
-            var firstItem = "First simple item".TrueFalse();
-            var baseItem1 = new BooleanItem("First condition");
-            var baseItem2 = new BooleanItem("Second condition");
-            var successItem2 = new BooleanItem("Second success leg");
-            var failItem2 = new BooleanItem("Second failure leg");
-            var successItem1 = new ConditionalItem(baseItem2, successItem2, failItem2);
-            var failItem1A = new BooleanItem("First Or of first failure leg");
-            var failItem1B = new BooleanItem("Second Or of first failure leg");
-            var failItem1 = failItem1A.Not().Or(failItem1B);
-            var lastItem = "Last simple item".TrueFalse();
-
-            var compositeItem = new ConditionalItem(baseItem1, successItem1, failItem1);
-            var checklist = new Checklist(Creator, firstItem, compositeItem, lastItem);
+            var checklist = Creator.Checklist(
+                "First simple item".TrueFalse(),
+                Conditional(
+                    condition: "First condition".TrueFalse(),
+                    onSuccess: Conditional(                  // Insert two more here
+                        condition: "Second condition".TrueFalse(),
+                        onSuccess:"Second success leg".TrueFalse(),  
+                        onFailure:"Second failure leg".TrueFalse()
+                    ),
+                    onFailure: Or(
+                        Not( new BooleanItem("First Or of first failure leg") ), 
+                        new BooleanItem("Second Or of first failure leg")
+                    )
+                ),
+                "Last simple item".TrueFalse()
+            );
             Assert.Equal(8, new QuestionCount(checklist).Count);
-            var addition1 = "Addition1".TrueFalse();
-            var addition2 = "Addition2".TrueFalse();
-            var group1 = new GroupItem(addition1, addition2);
-            Creator.Insert(addition1, addition2).After(successItem1).In(checklist);
-            testOutput.WriteLine(checklist.ToString());
+
+            var innerConditional = checklist.I(0, 1, 1);
+            Creator
+                .Insert(
+                    "Addition1".TrueFalse(),
+                    "Addition2".TrueFalse()
+                    )
+                .After(innerConditional)
+                .In(checklist);
+            testOutput.WriteLine(checklist.ToString(NoOperations));
             Assert.Equal(10, new QuestionCount(checklist).Count);
         }
 
         [Fact]
         public void InsertBeforeToConditional() {
-            var firstItem = "First simple item".TrueFalse();
-            var baseItem1 = new BooleanItem("First condition");
-            var baseItem2 = new BooleanItem("Second condition");
-            var successItem2 = new BooleanItem("Second success leg");
-            var failItem2 = new BooleanItem("Second failure leg");
-            var successItem1 = new ConditionalItem(baseItem2, successItem2, failItem2);
-            var failItem1A = new BooleanItem("First Or of first failure leg");
-            var failItem1B = new BooleanItem("Second Or of first failure leg");
-            var failItem1 = failItem1A.Not().Or(failItem1B);
-            var lastItem = "Last simple item".TrueFalse();
-
-            var compositeItem = new ConditionalItem(baseItem1, successItem1, failItem1);
-            var checklist = new Checklist(Creator, firstItem, compositeItem, lastItem);
+            var checklist = Creator.Checklist(
+                "First simple item".TrueFalse(),
+                Conditional(
+                    condition: "First condition".TrueFalse(),
+                    onSuccess: Conditional(                  
+                        condition: "Second condition".TrueFalse(),
+                        onSuccess:"Second success leg".TrueFalse(),  
+                        onFailure:"Second failure leg".TrueFalse()
+                    ),
+                    onFailure: Or(
+                        Not( new BooleanItem("First Or of first failure leg") ), 
+                        new BooleanItem("Second Or of first failure leg")
+                    )
+                ),
+                "Last simple item".TrueFalse()
+            );
             Assert.Equal(8, new QuestionCount(checklist).Count);
-            var addition1 = "Addition1".TrueFalse();
-            var addition2 = "Addition2".TrueFalse();
-            Creator.Insert(addition1, addition2).Before(successItem1).In(checklist);
-            testOutput.WriteLine(checklist.ToString());
+            // Insert two more on success leg of inner conditional
+            var innerConditional = checklist.I(0, 1, 1);
+            Creator
+                .Insert(
+                    "Addition1".TrueFalse(),
+                    "Addition2".TrueFalse()
+                )
+                .Before(innerConditional)
+                .In(checklist);
+            testOutput.WriteLine(checklist.ToString(NoOperations));
             Assert.Equal(10, new QuestionCount(checklist).Count);
         }
 
         [Fact]
         public void ReplaceMultipleInstances() {
-            var target = "Item to remove".TrueFalse();
-            var item2 = "Second item".TrueFalse();
-            var item3 = "Third item".TrueFalse();
-            var baseItem = "Base condition".TrueFalse();
-            var successItem = "Success condition".TrueFalse();
-            var conditional = new ConditionalItem(baseItem, successItem, target);
-            var checklist = new Checklist(Creator, target, item2, item3, conditional);
-            var replacement = "Replacement".TrueFalse();
-            Creator.Replace(target).With(replacement).In(checklist);
+            var target = "Item to remove".TrueFalse(); // To use a Question in multiple places, define it once
+            var checklist = Creator.Checklist(
+                target,
+                "Second item".TrueFalse(),
+                "Third item".TrueFalse(),
+                Conditional(
+                    condition: "Base condition".TrueFalse(),
+                    onSuccess: "Success condition".TrueFalse(),
+                    onFailure: target)
+            );
+            Creator
+                .Replace(target)
+                .With("Replacement".TrueFalse())
+                .In(checklist);
             testOutput.WriteLine(checklist.ToString(NoOperations));
-            Assert.Throws<ArgumentException>(() => new CurrentAnswers(checklist).Value("Item to remove"));
+            Assert.Throws<ArgumentException>(() => new CurrentAnswers(checklist).Value("Item to remove")); // It's gone!
         }
     }
 }
