@@ -1,23 +1,20 @@
 ﻿using Engine.Persons;
 using static Engine.Items.ItemStatus;
 
-namespace Engine.Items
-{
-    public class ConditionalItem : Item
-    {
+namespace Engine.Items {
+    public class ConditionalItem : Item {
         private Item _baseItem;
         private Item? _successItem;
         private Item? _failItem;
-        
+
         // Use extension method to create a ConditionalItem
-        internal  ConditionalItem(Item condition, Item? onSuccess = null, Item? onFail = null) {
+        internal ConditionalItem(Item condition, Item? onSuccess = null, Item? onFail = null) {
             _baseItem = condition;
             _successItem = onSuccess;
             _failItem = onFail;
         }
 
-        internal override void Accept(ChecklistVisitor visitor)
-        {
+        internal override void Accept(ChecklistVisitor visitor) {
             visitor.PreVisit(this, _baseItem, _successItem, _failItem);
             _baseItem.Accept(visitor);
             _successItem?.Accept(visitor);
@@ -25,36 +22,34 @@ namespace Engine.Items
             visitor.PostVisit(this, _baseItem, _successItem, _failItem);
         }
 
-        internal override void Be(object value) => throw new InvalidOperationException("can't set the Conditional Item");
+        internal override void Be(object value) =>
+            throw new InvalidOperationException("can't set the Conditional Item");
 
         internal override void Reset() => throw new InvalidOperationException("can't set the Conditional Item");
-        internal override bool Replace(Item originalItem, Item newItem)
-        {
+
+        internal override bool Replace(Item originalItem, Item newItem) {
             var result = Replace(ref _baseItem, originalItem, newItem);
             result = Replace(ref _successItem, originalItem, newItem) || result;
-           return Replace(ref _failItem, originalItem, newItem) || result;
+            return Replace(ref _failItem, originalItem, newItem) || result;
         }
-        private bool Replace(ref Item? currentItem, Item originalItem, Item newItem)
-        {
+
+        private bool Replace(ref Item? currentItem, Item originalItem, Item newItem) {
             if (currentItem == null) return false;
-            if (currentItem == originalItem)
-            {
+            if (currentItem == originalItem) {
                 currentItem = newItem;
                 return true;
             }
 
             return currentItem.Replace(originalItem, newItem);
-
         }
-        internal override ItemStatus Status()
-        {
+
+        internal override ItemStatus Status() {
             if (_baseItem.Status() == Succeeded) return _successItem?.Status() ?? Succeeded;
             if (_baseItem.Status() == Failed) return _failItem?.Status() ?? Failed;
             return Unknown;
         }
 
-        internal override void AddPerson(Person person, Role role)
-        {
+        internal override void AddPerson(Person person, Role role) {
             base.AddPerson(person, role);
             _baseItem.AddPerson(person, role);
             _successItem?.AddPerson(person, role);
@@ -63,31 +58,30 @@ namespace Engine.Items
 
         internal override bool Contains(Item desiredItem) =>
             _baseItem.Contains(desiredItem)
-                || (_successItem?.Contains(desiredItem) ?? false)
-                || (_failItem?.Contains(desiredItem) ?? false);
+            || (_successItem?.Contains(desiredItem) ?? false)
+            || (_failItem?.Contains(desiredItem) ?? false);
 
-        internal override void Simplify()
-        {
+        internal override void Simplify() {
             _baseItem.Simplify();
             _successItem?.Simplify();
             _failItem?.Simplify();
         }
 
-        internal override bool Remove(Item item)
-        {
+        internal override bool Remove(Item item) {
             var result = false;
 
             if (_baseItem == item) throw new InvalidOperationException("Cannot remove the base item");
-            if (_successItem == item)
-            {
-                if (_failItem == null) throw new InvalidOperationException("Cannot remove the last leg in a conditional");
+            
+            if (_successItem == item) {
+                if (_failItem == null)
+                    throw new InvalidOperationException("Cannot remove the last leg in a conditional");
                 _successItem = null;
                 result = true;
             }
 
-            if (_failItem == item)
-            {
-                if (_successItem == null) throw new InvalidOperationException("Cannot remove the last leg in a conditional");
+            if (_failItem == item) {
+                if (_successItem == null)
+                    throw new InvalidOperationException("Cannot remove the last leg in a conditional");
                 _failItem = null;
                 result = true;
             }
