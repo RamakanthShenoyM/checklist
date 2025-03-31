@@ -101,7 +101,7 @@ namespace Engine.Tests.Unit {
                     "Replace2".TrueFalse()
                 )
                 .In(checklist);
-            _testOutput.WriteLine(checklist.ToString());
+            _testOutput.WriteLine(checklist.ToString(NoOperations));
             Assert.Equal(9, new QuestionCount(checklist).Count);
         }
 

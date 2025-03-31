@@ -9,6 +9,7 @@ namespace Engine.Items {
         private readonly List<Triple> _conditionalItems = [];
         private String _result = "";
         private readonly HashSet<Item> _extraIndentedItems = new();
+        private Position _position = new();
 
         public PrettyPrint(Checklist checklist, PrettyPrintOptions option = Full) {
             _option = option;
@@ -31,9 +32,10 @@ namespace Engine.Items {
             Dictionary<Person, List<Operation>> operations
         ) {
             LabelIndention(item);
-            _result += String.Format("{0}Question: {1} Value: {2}\n", Indention, question, Format(value));
+            _result += String.Format("{0}Question: [{1}] {2} Value: {3}\n", Indention, _position, question, Format(value));
             OperationsDescription(operations);
             LabelUndention(item);
+            _position.Increment();
         }
 
         public void Visit(
@@ -51,47 +53,59 @@ namespace Engine.Items {
 
         public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) {
             LabelIndention(item);
-            _result += String.Format("{0}Conditional\n", Indention);
+            _result += String.Format("{0}Conditional [{1}]\n", Indention, _position);
             _conditionalItems.Add(new Triple(baseItem, successItem, failureItem));
             _indentionLevel++;
+            _position.Deeper();
         }
 
         public void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) {
             _indentionLevel--;
             LabelUndention(item);
+            _position.Truncate();
+            _position.Increment();
         }
 
         public void PreVisit(OrItem item, Item item1, Item item2) {
             LabelIndention(item);
-            _result += String.Format("{0}Either/Or\n", Indention);
+            _result += String.Format("{0}Either/Or [{1}]\n", Indention, _position);
             _indentionLevel++;
+            _position.Deeper();
         }
 
         public void PostVisit(OrItem item, Item item1, Item item2) {
             _indentionLevel--;
             LabelUndention(item);
+            _position.Truncate();
+            _position.Increment();
         }
 
         public void PreVisit(NotItem item, Item negatedItem) {
             LabelIndention(item);
-            _result += String.Format("{0}Not (the following)\n", Indention);
+            _result += String.Format("{0}Not (the following) [{1}]\n", Indention, _position);
             _indentionLevel++;
+            _position.Deeper();
         }
 
         public void PostVisit(NotItem item, Item negatedItem) {
             _indentionLevel--;
             LabelUndention(item);
+            _position.Truncate();
+            _position.Increment();
         }
 
         public void PreVisit(GroupItem item, List<Item> childItems) {
             LabelIndention(item);
-            _result += String.Format("{0}Group of Items\n", Indention);
+            _result += String.Format("{0}Group of Items [{1}]\n", Indention, _position);
+            _position.Deeper();
             _indentionLevel++;
         }
 
         public void PostVisit(GroupItem item, List<Item> childItems) {
             _indentionLevel--;
             LabelUndention(item);
+            _position.Truncate();
+            _position.Increment();
         }
 
         private void OperationsDescription(Dictionary<Person, List<Operation>> operations) {
