@@ -8,6 +8,7 @@ namespace Engine.Items
         private Item _item1;
         private Item _item2;
 
+        // Use extension method to create an OrItem
         internal OrItem(Item item1, Item item2)
         {
             _item1 = item1;

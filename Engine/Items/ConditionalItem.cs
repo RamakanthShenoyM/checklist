@@ -9,7 +9,8 @@ namespace Engine.Items
         private Item? _successItem;
         private Item? _failItem;
         
-        public ConditionalItem(Item condition, Item? onSuccess = null, Item? onFail = null) {
+        // Use extension method to create a ConditionalItem
+        internal  ConditionalItem(Item condition, Item? onSuccess = null, Item? onFail = null) {
             _baseItem = condition;
             _successItem = onSuccess;
             _failItem = onFail;

@@ -7,6 +7,7 @@ namespace Engine.Items
     {
         private Item _item;
         
+        // Use extension method to create a new NotItem
         internal NotItem(Item item)
         {
             _item = item;

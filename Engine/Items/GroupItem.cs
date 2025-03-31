@@ -9,9 +9,10 @@ namespace Engine.Items
 {
     public class GroupItem:Item
     {
-        private readonly List<Item> _childItems = [];
+        private readonly List<Item> _childItems;
 
-        public GroupItem(Item firstItem, params Item[] items) 
+        // Use extension method to create a GroupItem
+        internal GroupItem(Item firstItem, params Item[] items) // Trick to ensure one Item exists
         {
             _childItems= items.ToList();
             _childItems.Insert(0, firstItem);
