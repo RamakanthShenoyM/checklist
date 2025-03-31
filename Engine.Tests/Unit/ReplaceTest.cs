@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Engine.Items;
 using Engine.Persons;
 using Xunit;
@@ -7,13 +9,15 @@ using static Engine.Tests.Unit.CarpetColor;
 using static Engine.Tests.Unit.MultipleChoiceItemTest;
 using static Engine.Items.ChecklistExtensions;
 using static Engine.Items.PrettyPrint.PrettyPrintOptions;
+using static Engine.Items.ChecklistExtensions;
+        
 
 namespace Engine.Tests.Unit {
     public class ReplaceTest {
         private static readonly Person Creator = new Person(0, 0);
         private readonly ITestOutputHelper _testOutput;
         private Checklist checklist;
-        
+
         public ReplaceTest(ITestOutputHelper testOutput) {
             _testOutput = testOutput;
             checklist = Creator.Checklist(
@@ -80,7 +84,7 @@ namespace Engine.Tests.Unit {
             checklist = Creator.Checklist(
                 "Which Carpet Color?".Choices(RedCarpet, GreenCarpet, NoCarpet),
                 Not(
-                    "Is US citizen?".TrueFalse() 
+                    "Is US citizen?".TrueFalse()
                 )
             );
             Assert.Equal(2, new QuestionCount(checklist).Count);
@@ -103,6 +107,7 @@ namespace Engine.Tests.Unit {
                 .In(checklist);
             _testOutput.WriteLine(checklist.ToString(NoOperations));
             Assert.Equal(9, new QuestionCount(checklist).Count);
+            AssertMissing(successItem2);
         }
 
         [Fact]
@@ -214,6 +219,12 @@ namespace Engine.Tests.Unit {
                 .In(checklist);
             _testOutput.WriteLine(checklist.ToString(NoOperations));
             Assert.Throws<ArgumentException>(() => new CurrentAnswers(checklist).Value("Item to remove")); // It's gone!
+        }
+
+        private void AssertMissing(Item item) {
+            var positions = checklist.Positions(item);
+            Assert.True(positions.Count == 0, 
+                $"Unexpectedly located item <{item}> in Checklist hierarchy at {string.Join(", ", positions)}");
         }
     }
 }

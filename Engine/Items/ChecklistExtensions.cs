@@ -15,4 +15,7 @@ public static class ChecklistExtensions {
         new (item);
     public static ConditionalItem Conditional(Item condition, Item? onSuccess = null, Item? onFailure = null) =>
         new (condition, onSuccess, onFailure);
+
+    public static List<Position> Positions(this Checklist checklist, Item item) =>
+        new PositionLocator(checklist, item).Results;
 }

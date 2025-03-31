@@ -1,6 +1,6 @@
 namespace Engine.Items;
 
-internal class Position {
+public class Position {
     private readonly List<int> _indexes = [0];
 
     public override string ToString() => string.Join(".", _indexes);
