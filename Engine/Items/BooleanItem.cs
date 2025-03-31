@@ -10,9 +10,12 @@
 			_question = question;
 		}
 
-		internal override void Be(object value) => _hasSucceeded = (bool)value;
+		internal override void Be(object value) {
+			ArgumentNullException.ThrowIfNull(value);
+			_hasSucceeded = (bool)value;
+		}
 
-        internal override void Reset() => _hasSucceeded = null;
+		internal override void Reset() => _hasSucceeded = null;
         
         internal override void Accept(ChecklistVisitor visitor) {
 	        visitor.Visit(this,_question, _hasSucceeded, Operations);

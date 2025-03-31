@@ -17,7 +17,12 @@
             visitor.Visit(this, _question, _value, _choices, Operations);
         }
 
-        internal override void Be(object value) => _value = value;
+        internal override void Be(object value) {
+            ArgumentNullException.ThrowIfNull(value);
+            if (value.GetType() != _choices[0].GetType()) throw new InvalidOperationException(
+                $"Unexpected value type of <{value.GetType()}>; expected type <{_choices[0].GetType()}>");
+            _value = value;
+        }
 
         internal override void Reset() => _value = null;
 

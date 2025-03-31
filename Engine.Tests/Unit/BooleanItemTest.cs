@@ -9,8 +9,10 @@ namespace Engine.Tests.Unit {
 
         [Fact]
         public void SingleItem() {
-            var item = "Is US citizen?".TrueFalse();
-            var checklist = new Checklist(Creator, item);
+            var checklist = Creator.Checklist(
+                "Is US citizen?".TrueFalse()
+            );
+            var item = checklist.I(0);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             Creator.Sets(item).To(true);
             Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
@@ -20,6 +22,8 @@ namespace Engine.Tests.Unit {
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             Creator.Sets(item).To(true);
             Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
+            Assert.Throws<ArgumentNullException>(() => Creator.Sets(item).To(null));
+            Assert.Throws<InvalidCastException>(() => Creator.Sets(item).To("India"));
         }
 
         [Fact]
@@ -54,8 +58,10 @@ namespace Engine.Tests.Unit {
 
         [Fact]
         public void InvalidValue() {
-            var item = "Is US citizen?".TrueFalse();
-            var checklist = new Checklist(Creator, item);
+            var checklist = Creator.Checklist(
+                "Is US citizen?".TrueFalse()
+            );
+            var item = checklist.I(0);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             Creator.Sets(item).To(true);
             Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
