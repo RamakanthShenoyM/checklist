@@ -22,7 +22,9 @@ namespace Engine.Tests.Unit {
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             Creator.Sets(item).To(true);
             Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
+                #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Assert.Throws<ArgumentNullException>(() => Creator.Sets(item).To(null));
+                #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             Assert.Throws<InvalidCastException>(() => Creator.Sets(item).To("India"));
         }
 

@@ -8,7 +8,8 @@ namespace Engine.Items {
         private Item _item;
         private readonly Person _creator;
 
-        public Checklist(Person creator, Item firstItem, params Item[] items) {
+        // Create with a Creator person only with extension method
+        internal Checklist(Person creator, Item firstItem, params Item[] items) {
             _item = (items.Length == 0) ? firstItem : new GroupItem(firstItem, items);
             _creator = creator;
             _item.AddPerson(_creator, Creator);
