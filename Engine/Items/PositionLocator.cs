@@ -17,7 +17,7 @@ public class PositionLocator : ChecklistVisitor {
     }
 
     public void Visit(BooleanItem item, string question, bool? value, Dictionary<Person, List<Operation>> operations) {
-        if (item == _item) _itemPositions.Add(_position);
+        if (item == _item) _itemPositions.Add(_position.Clone());
         _position.Increment();
     }
 
@@ -26,12 +26,12 @@ public class PositionLocator : ChecklistVisitor {
         object? value,
         List<object> choices,
         Dictionary<Person, List<Operation>> operations) {
-        if (item == _item) _itemPositions.Add(_position);
+        if (item == _item) _itemPositions.Add(_position.Clone());
         _position.Increment();
     }
 
     public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) {
-        if (item == _item) _itemPositions.Add(_position);
+        if (item == _item) _itemPositions.Add(_position.Clone());
         _position.Deeper();
     }
 
@@ -41,7 +41,7 @@ public class PositionLocator : ChecklistVisitor {
     }
 
     public void PreVisit(NotItem item, Item negatedItem) {
-        if (item == _item) _itemPositions.Add(_position);
+        if (item == _item) _itemPositions.Add(_position.Clone());
         _position.Deeper();
     }
 
@@ -51,7 +51,7 @@ public class PositionLocator : ChecklistVisitor {
     }
 
     public void PreVisit(OrItem item, Item item1, Item item2) {
-        if (item == _item) _itemPositions.Add(_position);
+        if (item == _item) _itemPositions.Add(_position.Clone());
         _position.Deeper();
     }
 
@@ -61,7 +61,7 @@ public class PositionLocator : ChecklistVisitor {
     }
 
     public void PreVisit(GroupItem item, List<Item> childItems) {
-        if (item == _item) _itemPositions.Add(_position);
+        if (item == _item) _itemPositions.Add(_position.Clone());
         _position.Deeper();
     }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Engine.Items;
 using Engine.Persons;
 using Xunit;
@@ -9,8 +8,6 @@ using static Engine.Tests.Unit.CarpetColor;
 using static Engine.Tests.Unit.MultipleChoiceItemTest;
 using static Engine.Items.ChecklistExtensions;
 using static Engine.Items.PrettyPrint.PrettyPrintOptions;
-using static Engine.Items.ChecklistExtensions;
-        
 
 namespace Engine.Tests.Unit {
     public class ReplaceTest {
@@ -18,6 +15,7 @@ namespace Engine.Tests.Unit {
         private readonly ITestOutputHelper _testOutput;
         private Checklist checklist;
 
+        // Common setup for MOST tests
         public ReplaceTest(ITestOutputHelper testOutput) {
             _testOutput = testOutput;
             checklist = Creator.Checklist(
@@ -57,6 +55,7 @@ namespace Engine.Tests.Unit {
                 )
                 .In(checklist);
             Assert.Equal(4, new QuestionCount(checklist).Count);
+            AssertMissing(item2);
         }
 
         [Fact]
@@ -77,6 +76,7 @@ namespace Engine.Tests.Unit {
                 )
                 .In(checklist);
             Assert.Equal(3, new QuestionCount(checklist).Count);
+            AssertMissing(item2);
         }
 
         [Fact]
@@ -121,6 +121,7 @@ namespace Engine.Tests.Unit {
                 .In(checklist);
             Assert.Equal(9, new QuestionCount(checklist).Count);
             _testOutput.WriteLine(checklist.ToString(NoOperations));
+            AssertMissing(baseItem2);
         }
 
         [Fact]
@@ -134,6 +135,7 @@ namespace Engine.Tests.Unit {
                 .In(checklist);
             Assert.Equal(9, new QuestionCount(checklist).Count);
             _testOutput.WriteLine(checklist.ToString(NoOperations));
+            AssertMissing(failItem1A);
         }
 
         [Fact]
@@ -147,10 +149,11 @@ namespace Engine.Tests.Unit {
                 .In(checklist);
             Assert.Equal(7, new QuestionCount(checklist).Count);
             _testOutput.WriteLine(checklist.ToString(NoOperations));
+            AssertMissing(secondConditional);
         }
 
         [Fact]
-        public void ReplaceOuterConditional() {
+        public void ReplaceOuterConditionalTwice() {
             var firstConditional = checklist.I(0, 1);
             Creator.Replace(firstConditional)
                 .With(
@@ -160,6 +163,7 @@ namespace Engine.Tests.Unit {
                 .In(checklist);
             Assert.Equal(4, new QuestionCount(checklist).Count);
             _testOutput.WriteLine(checklist.ToString(NoOperations));
+            AssertMissing(firstConditional);
 
             var newGroup = checklist.I(0, 1);
             Creator.Replace(newGroup) // Replace what we just replaced!
@@ -185,6 +189,9 @@ namespace Engine.Tests.Unit {
                 .In(checklist);
             _testOutput.WriteLine(checklist.ToString(NoOperations));
             Assert.Equal(10, new QuestionCount(checklist).Count);
+            var positions = checklist.Positions(innerConditional);
+            Assert.Single(positions);
+            Assert.Equal("0.1.1.0", positions[0].ToString()); // Conditional now first in the added Group
         }
 
         [Fact]
@@ -199,6 +206,9 @@ namespace Engine.Tests.Unit {
                 .In(checklist);
             _testOutput.WriteLine(checklist.ToString(NoOperations));
             Assert.Equal(10, new QuestionCount(checklist).Count);
+            var positions = checklist.Positions(innerConditional);
+            Assert.Single(positions);
+            Assert.Equal("0.1.1.2", positions[0].ToString()); // Conditional now last in the added Group
         }
 
         [Fact]
@@ -213,6 +223,8 @@ namespace Engine.Tests.Unit {
                     onSuccess: "Success condition".TrueFalse(),
                     onFailure: target)
             );
+            Assert.Equal(2, checklist.Positions(target).Count);
+            
             Creator
                 .Replace(target)
                 .With("Replacement".TrueFalse())
