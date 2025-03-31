@@ -5,8 +5,8 @@ using Engine.Items;
 using Engine.Persons;
 using Xunit;
 using Xunit.Abstractions;
-using static Engine.Tests.Unit.MultipleChoiceItemTest;
 using static Engine.Tests.Unit.GroupMergeTest.QuesitonType;
+using static Engine.Items.PrettyPrint.PrettyPrintOptions;
 
 namespace Engine.Tests.Unit;
 
@@ -22,7 +22,7 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
             "Item3".TrueFalse());
         Assert.Equal(3, new QuestionTypes(checklist).Count[BooleanQuestion]);
         Assert.Equal(1, new QuestionTypes(checklist).Count[GroupQuestion]);
-        testOutput.WriteLine(checklist.ToString(false));
+        testOutput.WriteLine(checklist.ToString(NoOperations));
 
         var replace2A = "Replace2A".TrueFalse();
         var replace2B = "Replace2B".TrueFalse();
@@ -30,12 +30,12 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
         Creator.Replace(checklist.I(0, 1)).With(replace2A, replace2B, replace2C).In(checklist);
         Assert.Equal(5, new QuestionTypes(checklist).Count[BooleanQuestion]);
         Assert.Equal(2, new QuestionTypes(checklist).Count[GroupQuestion]);
-        testOutput.WriteLine(checklist.ToString(false));
+        testOutput.WriteLine(checklist.ToString(NoOperations));
 
         checklist.Simplify();
         Assert.Equal(5, new QuestionTypes(checklist).Count[BooleanQuestion]);
         Assert.Equal(1, new QuestionTypes(checklist).Count[GroupQuestion]);
-        testOutput.WriteLine(checklist.ToString(false));
+        testOutput.WriteLine(checklist.ToString(NoOperations));
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
             "Item4".TrueFalse());
         Assert.Equal(4, new QuestionTypes(checklist).Count[BooleanQuestion]);
         Assert.Equal(1, new QuestionTypes(checklist).Count[GroupQuestion]);
-        testOutput.WriteLine(checklist.ToString(false));
+        testOutput.WriteLine(checklist.ToString(NoOperations));
 
         Creator.Replace(checklist.I(0, 1)).With(
             "Replace2A".TrueFalse(), 
@@ -56,7 +56,7 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
             ).In(checklist);
         Assert.Equal(6, new QuestionTypes(checklist).Count[BooleanQuestion]);
         Assert.Equal(2, new QuestionTypes(checklist).Count[GroupQuestion]);
-        testOutput.WriteLine(checklist.ToString(false));
+        testOutput.WriteLine(checklist.ToString(NoOperations));
 
         Creator.Replace(checklist.I(0, 3)).With(
             "Replace4A".TrueFalse(), 
@@ -65,12 +65,12 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
             ).In(checklist);
         Assert.Equal(8, new QuestionTypes(checklist).Count[BooleanQuestion]);
         Assert.Equal(3, new QuestionTypes(checklist).Count[GroupQuestion]);
-        testOutput.WriteLine(checklist.ToString(false));
+        testOutput.WriteLine(checklist.ToString(NoOperations));
 
         checklist.Simplify();
         Assert.Equal(8, new QuestionTypes(checklist).Count[BooleanQuestion]);
         Assert.Equal(1, new QuestionTypes(checklist).Count[GroupQuestion]);
-        testOutput.WriteLine(checklist.ToString(false));
+        testOutput.WriteLine(checklist.ToString(NoOperations));
     }
 
     internal class QuestionTypes : ChecklistVisitor {

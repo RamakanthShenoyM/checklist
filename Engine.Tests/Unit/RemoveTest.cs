@@ -4,6 +4,7 @@ using Engine.Persons;
 using Xunit.Abstractions;
 using System;
 using static Engine.Items.ChecklistExtensions;
+using static Engine.Items.PrettyPrint.PrettyPrintOptions;
 
 namespace Engine.Tests.Unit;
 
@@ -124,7 +125,7 @@ public class RemoveTest {
                 target)                        // ...and remove this one
         );
         Creator.Remove(target).From(checklist);
-        testOutput.WriteLine(checklist.ToString(false));
+        testOutput.WriteLine(checklist.ToString(NoOperations));
         Assert.Throws<ArgumentException>(() => new CurrentAnswers(checklist).Value("Item to remove"));
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Engine.Persons;
+using static Engine.Items.PrettyPrint;
 using static Engine.Persons.Role;
+using static Engine.Items.PrettyPrint.PrettyPrintOptions;
 
 namespace Engine.Items {
     public class Checklist {
@@ -28,9 +30,9 @@ namespace Engine.Items {
 
         internal bool HasCreator(Person person) => person == _creator;
 
-        public override string ToString() => ToString(true);
+        public override string ToString() => ToString(Full);
 
-        public string ToString(bool showOperations) => new PrettyPrint(this, showOperations).Result();
+        public string ToString(PrettyPrintOptions option) => new PrettyPrint(this, option).Result();
 
         public void Replace(Item originalItem, Item newItem) {
             newItem.AddPerson(_creator, Creator);
