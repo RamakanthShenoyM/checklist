@@ -2,6 +2,7 @@ using CommandEngine.Commands;
 using CommandEngine.Tasks;
 using static CommandEngine.Commands.CommandStatus;
 using static CommandEngine.Tests.Util.SuspendLabels;
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 
 
 namespace CommandEngine.Tests.Util
@@ -15,13 +16,22 @@ namespace CommandEngine.Tests.Util
         private readonly CommandStatus status = status;
 
         public CommandStatus Execute(Context c) => status;
+        
         public List<Enum> NeededLabels => [];
+        
         public List<Enum> ChangedLabels => [];
+        
         public override string ToString() => $"Task always is {status} ";
+        
         public CommandTask Clone() => this;
+        
         public override bool Equals(object? obj) => 
             this == obj || obj is PermanentStatus other &&  this.status == other.status;
+        
+        public override int GetHashCode() => status.GetHashCode();
+        
         public string ToMemento() => status.ToString();
+        
         public static PermanentStatus FromMemento(string memento) => memento switch
         {
             "Succeeded" => AlwaysSuccessful,
@@ -36,6 +46,7 @@ namespace CommandEngine.Tests.Util
         public List<Enum> NeededLabels => [];
 
         public List<Enum> ChangedLabels => [];
+        
         public override string ToString() => $"Task always Crashes ";
 
         public CommandStatus Execute(Context c) => throw new InvalidOperationException("unable to execute this task");
@@ -45,22 +56,26 @@ namespace CommandEngine.Tests.Util
     {
         private bool _hasRun = hasRun;
         public List<Enum> NeededLabels => [];
-
         public List<Enum> ChangedLabels => [];
         public override string ToString() => $"Task only run once";
+        
         public CommandStatus Execute(Context c)
         {
             if (_hasRun) throw new InvalidOperationException("unable to execute this task twice");
             _hasRun = true;
             return Succeeded;
         }
+        
         public CommandTask Clone() => new RunOnceTask(_hasRun);
+        
         public override bool Equals(object? obj) =>
             this == obj || obj is RunOnceTask other && this._hasRun == other._hasRun;
+
         public string? ToMemento() => _hasRun.ToString();
-        public static RunOnceTask FromMemento(string memento) =>
-            new (memento == "true");
+        
+        public static RunOnceTask FromMemento(string memento) => new (memento == "true");
     }
+    
     internal class SuspendFirstOnly : CommandTask
     {
         public List<Enum> NeededLabels => [HasRun];

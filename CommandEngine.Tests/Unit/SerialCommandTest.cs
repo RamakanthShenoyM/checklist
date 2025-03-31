@@ -24,7 +24,9 @@ namespace CommandEngine.Tests.Unit
             var command2 = command1.Clone();
             Assert.Equal(command1, command2);
             Assert.NotEqual(command1, new object());
+                #pragma warning disable xUnit2000
             Assert.NotEqual(command1, null);
+                #pragma warning restore xUnit2000
             Assert.Equal(command1.GetHashCode(), command2.GetHashCode());
         }
 

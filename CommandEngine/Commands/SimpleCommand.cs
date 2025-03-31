@@ -37,14 +37,15 @@ namespace CommandEngine.Commands
             if (nonPublicFields.Length == 0 && publicFields.Length == 0) return task;
             MethodInfo method = type.GetMethod("Clone", BindingFlags.Instance | BindingFlags.Public)
                 ?? throw new InvalidOperationException($"This task <{task}>is missing his Clone");
-            return (CommandTask) method.Invoke(task, null) ??
-                 throw new InvalidOperationException($"This task <{task}>is missing his Clone"); ;
+            return (CommandTask) (method.Invoke(task, null) ??
+                 throw new InvalidOperationException($"This task <{task}>is missing his Clone")); ;
         }
 
         public override bool Equals(object? obj) =>
           this == obj || obj is SimpleCommand other && this.Equals(other);
 
         public override int GetHashCode() => _executeTask.GetHashCode() * 37 + _revertTask.GetHashCode();
+        
         private bool Equals(SimpleCommand other) =>
             this._executeTask.Equals(other._executeTask)
             && this._revertTask.Equals(other._revertTask)

@@ -27,7 +27,9 @@ namespace CommandEngine.Tests.Unit {
             Assert.Equal("A", c[A]);
             Assert.True(c.Reset(A));
             Assert.False(c.Has(A));
+                #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Assert.Throws<InvalidOperationException>(() => c[A] = null);
+                #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             Assert.False(c.Reset(B));
         }
 

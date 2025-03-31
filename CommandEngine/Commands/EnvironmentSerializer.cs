@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using CommandEngine.Tasks;
+using static System.ArgumentNullException;
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 using static CommandEngine.Commands.CommandReflection;
 
@@ -31,7 +32,7 @@ namespace CommandEngine.Commands {
                     e.Key.ToString(),
                     e.Value.GetType().FullName ??
                     throw new InvalidOperationException("Missing required value for Context Value type in DTO"),
-                    e.Value.ToString() ?? null))
+                    e.Value.ToString()))
                 .ToList();
 
         public void Visit(CommandHistory history, List<string> events) => _events = events;
@@ -51,11 +52,13 @@ namespace CommandEngine.Commands {
             _simpleCommandDtos.Add(new SimpleCommandDto(state, Dto(executeTask), Dto(revertTask)));
 
         private TaskDto Dto(CommandTask task) {
-            if (!task.GetType().NeedsMemento())
-                return new TaskDto(task.GetType().FullName, "");
+            var taskType = task.GetType() ??
+                           throw new InvalidOperationException("Unexpected failure for GetType of the task");
+            var taskTypeName = taskType.FullName ?? throw new InvalidOperationException("Unexpected failure for FullName of the task");
+            if (!taskType.NeedsMemento()) return new TaskDto(taskTypeName, null);
             var method = task.GetType().GetMethod("ToMemento", BindingFlags.Instance | BindingFlags.Public);
             var memento = method?.Invoke(task, null);
-            return new TaskDto(task.GetType().FullName, (string)memento);
+            return new TaskDto(taskTypeName, (string?)memento);
         }
 
         public record ExtensionDto(
@@ -67,7 +70,7 @@ namespace CommandEngine.Commands {
 
         public record ContextEntryDto(string EnumType, string EnumValue, string ValueType, string ValueValue) { }
 
-        public record TaskDto(string TaskType, string Memento) { }
+        public record TaskDto(string TaskType, string? Memento) { }
 
         public record SimpleCommandDto(CommandState State, TaskDto ExecuteTask, TaskDto RevertTask) { }
     }
