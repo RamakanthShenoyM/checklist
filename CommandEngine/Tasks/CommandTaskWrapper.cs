@@ -22,8 +22,11 @@ namespace CommandEngine.Tasks
 
 		public string? ToMemento() => throw new NotImplementedException();
 
-		public static CommandTask FromMemento(string memento) => throw new NotImplementedException();
+		public static CommandTask FromMemento(string memento) => 
+			throw new InvalidOperationException("CommandTaskWrapper shouldn't need to be restored from a memento");
+		
         public override string ToString() => this.GetType().Name;
+        
         public override bool Equals(object? obj) => 
 			this == obj || obj is CommandTaskWrapper other && this.Equals(other);
 		
@@ -31,5 +34,7 @@ namespace CommandEngine.Tasks
 			this.NeededLabels.SequenceEqual(other.NeededLabels) && 
 			this.ChangedLabels.SequenceEqual(other.ChangedLabels) &&
 			this._environment.Equals(other._environment);
+
+		public override int GetHashCode() => HashCode.Combine(this.NeededLabels, this.ChangedLabels);
 	}
 }

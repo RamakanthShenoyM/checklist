@@ -7,58 +7,46 @@ using System.Threading.Tasks;
 using Engine.Persons;
 using static System.Text.Json.JsonSerializer;
 
-namespace Engine.Items
-{
-    internal class ChecklistDeserializer
-    {
+namespace Engine.Items {
+    internal class ChecklistDeserializer {
         private int level;
         private readonly Stack<List<Item>> items = new();
         internal Checklist Result => new Checklist(new Person(0, 0), items.Peek()[0]);
-        internal ChecklistDeserializer(string memento)
-        {
-            try
-            {
+
+        internal ChecklistDeserializer(string memento) {
+            try {
                 var dtos = Deserialize<List<ItemDto>>(memento) ?? throw new InvalidOperationException("Invalid Json");
-                level = Level(dtos[0]); 
+                level = Level(dtos[0]);
                 for (int i = 0; i < level; i++) items.Push([]);
-                foreach (var dto in dtos)
-                {
-                    var subItems=AdjustStack(dto);
-                    items.Peek().Add(dto.ItemClassName switch
-                    {
+                foreach (var dto in dtos) {
+                    var subItems = AdjustStack(dto);
+                    items.Peek().Add(dto.ItemClassName switch {
                         "BooleanItem" => TrueFalse(dto),
-                        "GroupItem"=> new GroupItem(subItems),
+                        "GroupItem" => new GroupItem(subItems),
                         _ => throw new InvalidOperationException($"Unknown item class name {dto.ItemClassName}")
                     });
-
                 }
-
             }
-            catch (InvalidOperationException)
-            {
+            catch (InvalidOperationException) {
                 throw;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 throw new InvalidOperationException($"Error deserializing environment: {e.Message}", e);
             }
         }
 
-        private BooleanItem TrueFalse(ItemDto dto)
-        {
-            var result = new BooleanItem(dto.Question);
-            if(dto.Value.ValueValue!= "")
-                result.Be(bool.Parse(dto.Value.ValueValue));
+        private BooleanItem TrueFalse(ItemDto dto) {
+            var result = new BooleanItem(dto.Question  ?? throw new InvalidOperationException("Improper DTO for BooleanItem: No question specified"));
+            var value = dto.Value?.ValueValue  ?? throw new InvalidOperationException("Improper DTO for BooleanItem: No value specified");
+            if (value != "") result.Be(bool.Parse(value));
             return result;
         }
 
-        private GroupItem Group(ItemDto dto,List<Item> items)
-        {
+        private GroupItem Group(ItemDto dto, List<Item> items) {
             return new GroupItem(items);
         }
 
-        private List<Item> AdjustStack(ItemDto dto)
-        {
+        private List<Item> AdjustStack(ItemDto dto) {
             var newLevel = Level(dto);
             var diff = newLevel - level;
             if (diff < -1) throw new InvalidOperationException($"Invalid level {newLevel} from {level}");
@@ -69,9 +57,8 @@ namespace Engine.Items
             return [];
         }
 
-        private static int Level(ItemDto dto)
-        {
-            return dto.Position.Count(p => p == '.')+1;
+        private static int Level(ItemDto dto) {
+            return dto.Position.Count(p => p == '.') + 1;
         }
     }
 }

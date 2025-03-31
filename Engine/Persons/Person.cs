@@ -9,6 +9,7 @@ namespace Engine.Persons
         {
 
         }
+        
         public AddingEngine Add(Person owner) => new(this, owner);
 
         public ActionEngine Can(Operation view) => new(this, view);
@@ -78,8 +79,8 @@ namespace Engine.Persons
         {
             private readonly Person _person;
             private readonly Item _originalItem;
-            private Item _firstItem;
-            private Item[] _items;
+            private Item? _firstItem;
+            private Item[] _items = [];
 
             internal ReplaceEngine(Person person, Item originalItem)
             {
@@ -95,7 +96,10 @@ namespace Engine.Persons
             }
 
             public void In(Checklist checklist) {
-                EnsureItemNotInTree(_originalItem, _firstItem);
+                EnsureItemNotInTree(
+                    _originalItem, 
+                    _firstItem ?? throw new InvalidOperationException("Improper DSL construction; missing first replacement Item")
+                    );
                 foreach (var item in _items) EnsureItemNotInTree(_originalItem, item);
                 var newItem = _items.Length == 0 ? _firstItem : new GroupItem(_firstItem, _items);
                 checklist.Replace(_originalItem, newItem);
@@ -113,8 +117,8 @@ namespace Engine.Persons
             private readonly Person _person;
             private readonly Item _item;
             private readonly List<Item> _items;
-            private Item _originalItem;
-            private Item _firstItem;
+            private Item? _originalItem;
+            private Item? _firstItem;
 
             internal InsertEngine(Person person, Item item, Item[] items)
             {
@@ -123,8 +127,10 @@ namespace Engine.Persons
                 _items = items.ToList();
             }
 
-            public void In(Checklist checklist) => 
-                _person.Replace(_originalItem).With(_firstItem, _items.ToArray()).In(checklist);
+            public void In(Checklist checklist) => _person
+                .Replace(_originalItem ?? throw new InvalidOperationException("Improper DSL construction; missing 'After' clause"))
+                .With(_firstItem ?? throw new InvalidOperationException("Improper DSL construction; missing Item to insert"), _items.ToArray())
+                .In(checklist);
 
             public InsertEngine After(Item originalItem)
             {
@@ -162,7 +168,7 @@ namespace Engine.Persons
         {
             private readonly Person _addingPerson;
             private readonly Person _addedPerson;
-            private Role _role;
+            private Role? _role;
 
             internal AddingEngine(Person addingPerson, Person addedPerson)
             {
@@ -180,7 +186,7 @@ namespace Engine.Persons
             {
                 if (!_addingPerson.Can(AddPerson).On(item))
                     throw new InvalidOperationException("Does not have permission to add new person");
-                item.AddPerson(_addedPerson, _role);
+                item.AddPerson(_addedPerson, _role ?? throw new InvalidOperationException("Improper DSL construction; missing Role!"));
 
             }
         }
