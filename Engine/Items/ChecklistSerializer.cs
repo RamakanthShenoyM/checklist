@@ -36,7 +36,7 @@ namespace Engine.Items
                 typeof(MultipleChoiceItem).Name, 
                 _position.ToString(), 
                 question, 
-                new ValueDto(value?.GetType().ToString(), value?.ToString()),
+                new ValueDto(value?.GetType().ToString(), value?.ToString()?? ""),
                 choices.Select(c => new ValueDto(c.GetType().ToString(), c.ToString())).ToList()));
             _position.Increment();
         }
@@ -47,7 +47,8 @@ namespace Engine.Items
         public void PreVisit(NotItem item, Item negatedItem) => _position.Deeper();
         public void PostVisit(NotItem item, Item negatedItem) => CreateComposite(item);
         public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) => _position.Deeper();
-        public void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) => CreateComposite(item);
+        public void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) => 
+            CreateComposite(item);
         private void CreateComposite(Item item)
         {
             _position.Truncate();

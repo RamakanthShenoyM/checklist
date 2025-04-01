@@ -106,8 +106,21 @@ namespace Engine.Tests.Unit
                 "Last simple item".TrueFalse()
             );
             var memento = checklist.ToMemento();
-            //var restoredChecklist = Checklist.FromMemento(memento);
+            var restoredChecklist = Checklist.FromMemento(memento);
             testOutput.WriteLine(memento);
         }
-    }
+
+		[Fact]
+		public void SimpleChecklistWithMultichoice()
+		{
+            var item1 = "First Item".Choices("A", "B", "C");
+			var checklist = Creator.Checklist(
+				item1
+			);
+			Creator.Sets(item1).To("A");
+			var memento = checklist.ToMemento();
+			var restoredChecklist = Checklist.FromMemento(memento);
+			testOutput.WriteLine(memento);
+		}
+	}
 }

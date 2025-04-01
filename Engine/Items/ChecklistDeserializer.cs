@@ -23,7 +23,11 @@ namespace Engine.Items {
                     items.Peek().Add(dto.ItemClassName switch {
                         "BooleanItem" => TrueFalse(dto),
                         "GroupItem" => new GroupItem(subItems),
-                        _ => throw new InvalidOperationException($"Unknown item class name {dto.ItemClassName}")
+						"MultipleChoiceItem" => MultipleChoice(dto),
+						"ConditionalItem" => new ConditionalItem(subItems[0], subItems[1], subItems[2]),
+						"OrItem" => new OrItem(subItems[0], subItems[1]),
+						"NotItem" => new NotItem(subItems[0]),
+						_ => throw new InvalidOperationException($"Unknown item class name {dto.ItemClassName}")
                     });
                 }
             }
@@ -42,7 +46,36 @@ namespace Engine.Items {
             return result;
         }
 
-        private GroupItem Group(ItemDto dto, List<Item> items) {
+		private MultipleChoiceItem MultipleChoice(ItemDto dto)
+		{   var choices = dto.Choices.Select(c => Value(c.ValueClass ?? throw new InvalidOperationException("Improper DTO for MultipleChoiceItem: No value class specified"), c.ValueValue)).ToList();
+			var result = new MultipleChoiceItem(dto.Question ?? throw new InvalidOperationException("Improper DTO for MultipleChoiceItem: No question specified"), choices[0], choices.GetRange(1, choices.Count - 1));
+            var value = dto.Value?.ValueValue ?? throw new InvalidOperationException("Improper DTO for MultipleChoiceItem: No value specified");
+			if (value != "") result.Be(value);
+			return result;
+		}
+
+		private static object Value(string entryValueType, string entryValueValue)
+		{
+			Type valueType = FoundType(entryValueType);
+			if (valueType.IsEnum)
+				return Enum.Parse(valueType, entryValueValue);
+
+			return Convert.ChangeType(entryValueValue, valueType);
+		}
+
+		internal static Type FoundType(string fullTypeName)
+		{
+			// Check all currently loaded assemblies in the AppDomain
+			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+			{
+				var type = assembly.GetType(fullTypeName);
+				if (type != null) return type;
+			}
+
+			throw new InvalidOperationException($"Type {fullTypeName} not found");
+		}
+
+		private GroupItem Group(ItemDto dto, List<Item> items) {
             return new GroupItem(items);
         }
 
