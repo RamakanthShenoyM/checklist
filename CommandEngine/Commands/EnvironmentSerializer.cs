@@ -32,7 +32,9 @@ namespace CommandEngine.Commands {
                     e.Key.ToString(),
                     e.Value.GetType().FullName ??
                     throw new InvalidOperationException("Missing required value for Context Value type in DTO"),
+#pragma warning disable CS8604 // Possible null reference argument.
                     e.Value.ToString()))
+#pragma warning restore CS8604 // Possible null reference argument.
                 .ToList();
 
         public void Visit(CommandHistory history, List<string> events) => _events = events;
