@@ -15,7 +15,14 @@
 			_hasSucceeded = (bool)value;
 		}
 
-		internal override void Reset() => _hasSucceeded = null;
+        public override bool Equals(object? obj) => this == obj || obj is BooleanItem other && this.Equals(other);
+
+        private bool Equals(BooleanItem other) =>
+            this._hasSucceeded== other._hasSucceeded && this._question == other._question;
+
+        public override int GetHashCode() => _question.GetHashCode();
+
+        internal override void Reset() => _hasSucceeded = null;
         
         internal override void Accept(ChecklistVisitor visitor) {
 	        visitor.Visit(this,_question, _hasSucceeded, Operations);

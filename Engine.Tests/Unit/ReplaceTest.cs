@@ -38,25 +38,7 @@ namespace Engine.Tests.Unit {
         }
 
 
-        [Fact]
-        public void ReplaceItemInGroup() {
-            checklist = Creator.Checklist(
-                "Which Carpet Color?".Choices(RedCarpet, GreenCarpet, NoCarpet),
-                "Is US citizen?".TrueFalse(), // Item2
-                "Which country?".Choices("India", "Iceland", "Norway")
-            );
-            Assert.Equal(3, new QuestionCount(checklist).Count);
-
-            var item2 = checklist.I(0, 1);
-            Creator.Replace(item2)
-                .With(
-                    "Vehicle Type?".Choices("Car", "Bike", "Bus"),
-                    "Is US citizen?".TrueFalse()
-                )
-                .In(checklist);
-            Assert.Equal(4, new QuestionCount(checklist).Count);
-            AssertMissing(item2);
-        }
+        
 
         [Fact]
         public void ReplaceNotItem() {
@@ -231,6 +213,26 @@ namespace Engine.Tests.Unit {
                 .In(checklist);
             _testOutput.WriteLine(checklist.ToString(NoOperations));
             Assert.Throws<ArgumentException>(() => new CurrentAnswers(checklist).Value("Item to remove")); // It's gone!
+        }
+
+        [Fact]
+        public void ReplaceItemInGroup() {
+            checklist = Creator.Checklist(
+                "Which Carpet Color?".Choices(RedCarpet, GreenCarpet, NoCarpet),
+                "Is US citizen?".TrueFalse(), // Item2
+                "Which country?".Choices("India", "Iceland", "Norway")
+            );
+            Assert.Equal(3, new QuestionCount(checklist).Count);
+
+            var item2 = checklist.I(0, 1);
+            Creator.Replace(item2)
+                .With(
+                    "Vehicle Type?".Choices("Car", "Bike", "Bus"),
+                    "Is Not US citizen?".TrueFalse()
+                )
+                .In(checklist);
+            Assert.Equal(4, new QuestionCount(checklist).Count);
+            AssertMissing(item2);
         }
 
         private void AssertMissing(Item item) {

@@ -31,9 +31,18 @@ namespace Engine.Items {
 
         internal bool HasCreator(Person person) => person == _creator;
 
+
         public override string ToString() => ToString(Full);
 
         public string ToString(PrettyPrintOptions option) => new PrettyPrint(this, option).Result();
+
+        public override bool Equals(object? obj) => this == obj || obj is Checklist other && this.Equals(other);
+
+        private bool Equals(Checklist other) =>
+            this._item.Equals(other._item);
+
+        public override int GetHashCode() => _creator.GetHashCode();
+
 
         public void Replace(Item originalItem, Item newItem) {
             newItem.AddPerson(_creator, Creator);

@@ -46,15 +46,22 @@ namespace Engine.Items {
             return result;
         }
 
-		private MultipleChoiceItem MultipleChoice(ItemDto dto)
-		{   var choices = dto.Choices.Select(c => Value(c.ValueClass ?? throw new InvalidOperationException("Improper DTO for MultipleChoiceItem: No value class specified"), c.ValueValue)).ToList();
-			var result = new MultipleChoiceItem(dto.Question ?? throw new InvalidOperationException("Improper DTO for MultipleChoiceItem: No question specified"), choices[0], choices.GetRange(1, choices.Count - 1));
+        private MultipleChoiceItem MultipleChoice(ItemDto dto)
+        {
+            var choices = dto.Choices.Select(c => Value(c.ValueClass ?? throw new InvalidOperationException("Improper DTO for MultipleChoiceItem: No value class specified"), c.ValueValue)).ToList();
+            if (choices.Count < 1) throw new InvalidOperationException("Improper DTO for MultipleChoiceItem: No choices specified");
+            var result = new MultipleChoiceItem(dto.Question ?? throw new InvalidOperationException("Improper DTO for MultipleChoiceItem: No question specified"), choices[0], choices.Skip(1).ToArray());
             var value = dto.Value?.ValueValue ?? throw new InvalidOperationException("Improper DTO for MultipleChoiceItem: No value specified");
-			if (value != "") result.Be(value);
-			return result;
-		}
+            if (value != "")
+            {
+                var valueClass = dto.Value?.ValueClass ?? throw new InvalidOperationException("Improper DTO for MultipleChoiceItem: No value class specified");
+                result.Be(Value(valueClass,value));
+            }
+            return result;
+        }
 
-		private static object Value(string entryValueType, string entryValueValue)
+
+        private static object Value(string entryValueType, string entryValueValue)
 		{
 			Type valueType = FoundType(entryValueType);
 			if (valueType.IsEnum)

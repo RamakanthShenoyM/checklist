@@ -7,14 +7,14 @@ using Engine.Persons;
 
 namespace Engine.Items
 {
-    public class GroupItem:Item
+    public class GroupItem : Item
     {
         private readonly List<Item> _childItems;
 
         // Use extension method to create a GroupItem
         internal GroupItem(Item firstItem, params Item[] items) // Trick to ensure one Item exists
         {
-            _childItems= items.ToList();
+            _childItems = items.ToList();
             _childItems.Insert(0, firstItem);
         }
 
@@ -35,6 +35,19 @@ namespace Engine.Items
 
         internal override void Reset() => throw new InvalidOperationException("can't reset the Group Item");
 
+
+        public override bool Equals(object? obj) => this == obj || obj is GroupItem other && this.Equals(other);
+
+        private bool Equals(GroupItem other) =>
+             this._childItems.SequenceEqual(other._childItems);
+
+        public override int GetHashCode()
+        {
+            var hash = new HashCode();
+            foreach (var item in _childItems) hash.Add(item);
+            return hash.ToHashCode();
+        }
+
         internal override bool Replace(Item originalItem, Item newItem)
         {
             var result = false;
@@ -52,8 +65,8 @@ namespace Engine.Items
         internal override void Accept(ChecklistVisitor visitor)
         {
             visitor.PreVisit(this, _childItems);
-            foreach (var item in _childItems) item.Accept(visitor) ;
-            visitor.PostVisit(this,_childItems);
+            foreach (var item in _childItems) item.Accept(visitor);
+            visitor.PostVisit(this, _childItems);
         }
 
         internal override void AddPerson(Person person, Role role)
@@ -65,10 +78,13 @@ namespace Engine.Items
         internal override bool Contains(Item desiredItem) =>
             _childItems.Contains(desiredItem);
 
-        internal override void Simplify() {
+        internal override void Simplify()
+        {
             var originalItems = new List<Item>(_childItems);
-            foreach (var item in originalItems) {
-                if (item is GroupItem) {
+            foreach (var item in originalItems)
+            {
+                if (item is GroupItem)
+                {
                     var index = _childItems.IndexOf(item);
                     _childItems.RemoveAt(index);
                     _childItems.InsertRange(index, ((GroupItem)item)._childItems);
@@ -80,20 +96,22 @@ namespace Engine.Items
 
         internal override bool Remove(Item item)
         {
-            if (_childItems.Contains(item)) {
+            if (_childItems.Contains(item))
+            {
                 if (_childItems.Count == 1) throw new InvalidOperationException("Cannot remove the only item in the checklist");
                 _childItems.Remove(item);
-                foreach(var childItem in _childItems) childItem.Remove(item);
+                foreach (var childItem in _childItems) childItem.Remove(item);
                 return true;
             }
-            
+
             var result = false;
             foreach (var childItem in _childItems) result = childItem.Remove(item) || result;
 
             return result;
         }
 
-        internal override Item I(List<int> indexes) {
+        internal override Item I(List<int> indexes)
+        {
             if (indexes.Count == 1) return this;
             if (indexes[1] >= _childItems.Count) throw new InvalidOperationException(
                 $"Invalid index of {indexes[0]} for a Group with only {_childItems.Count} items");
