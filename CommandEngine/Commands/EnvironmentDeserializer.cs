@@ -50,14 +50,13 @@ namespace CommandEngine.Commands {
             return (Enum)Enum.Parse(enumType, enumValue);
         }
 
-       
-
         public CommandEnvironment Result => _environment;
 
         public void Visit(SimpleCommand command, CommandState state, CommandTask executeTask, CommandTask revertTask) {
             command.State(_simpleCommandDtos[0].State);
+            // TODO: Do the same for the revertTask!
             if (_simpleCommandDtos[0].ExecuteTask.Memento != null)
-                command.ExecuteTask(Task(_simpleCommandDtos[0].ExecuteTask));
+                command.ExecuteTask(Task(_simpleCommandDtos[0].ExecuteTask)); // Replaces ExecuteTask with results from FromMemento()
             _simpleCommandDtos.RemoveAt(0);
         }
 

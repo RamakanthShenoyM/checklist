@@ -22,7 +22,8 @@ namespace CommandEngine.Tasks
 
 		public string? ToMemento() => throw new NotImplementedException();
 
-		public static CommandTask FromMemento(string memento) => 
+		public static CommandTaskWrapper FromMemento(string memento) => 
+			// TODO: Take the memento, pass it to CommandEnvironment.FromMemento(memento). Wrap the returned Enviroment in a new CommandTaskWrapper and return it.
 			throw new InvalidOperationException("CommandTaskWrapper shouldn't need to be restored from a memento");
 		
         public override string ToString() => this.GetType().Name;
