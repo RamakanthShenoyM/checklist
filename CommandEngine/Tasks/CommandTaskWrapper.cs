@@ -1,10 +1,9 @@
 ﻿using CommandEngine.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 using static CommandEngine.Commands.CommandEnvironment;
+using static CommandEngine.Commands.EnvironmentSerializer;
+using static System.Text.Json.JsonSerializer;
+using static CommandEngine.Commands.CommandReflection;
 
 namespace CommandEngine.Tasks
 {
@@ -20,11 +19,38 @@ namespace CommandEngine.Tasks
 
 		public CommandStatus Execute(Context c) => _environment.Execute(c);
 
-		public string? ToMemento() => throw new NotImplementedException();
+        public string? ToMemento()
+        {
+            return JsonSerializer.Serialize(new CommandWrapperDto(
+				Labels(NeededLabels),
+				Labels(ChangedLabels),
+                _environment.ToMemento()
+                ));
+        }
 
-		public static CommandTaskWrapper FromMemento(string memento) => 
-			// TODO: Take the memento, pass it to CommandEnvironment.FromMemento(memento). Wrap the returned Enviroment in a new CommandTaskWrapper and return it.
-			throw new InvalidOperationException("CommandTaskWrapper shouldn't need to be restored from a memento");
+        private List<LabelDto> Labels(List<Enum> labels) =>
+            labels.Select(label => new LabelDto(
+                label.GetType().FullName ??
+                throw new InvalidOperationException("Missing required value for Context Label type in DTO"),
+                label.ToString()
+            )).ToList();
+
+        private static List<Enum> Labels(List<LabelDto> labels) => 
+            labels.Select(label => Label(label.EnumType, label.EnumValue)).ToList();
+
+        private static Enum Label(string enumTypeName, string enumValue)
+        {
+            Type enumType = FoundType(enumTypeName);
+            if (enumType == null || !enumType.IsEnum) throw new InvalidOperationException(
+                $"Type '{enumTypeName}' is not an enum.");
+            return (Enum)Enum.Parse(enumType, enumValue);
+        }
+        public static CommandTaskWrapper FromMemento(string memento)
+        {
+           var dto = Deserialize<CommandWrapperDto>(memento) ?? throw new InvalidOperationException("Invalid Json");
+            var environment = CommandEnvironment.FromMemento(dto.environmentMemento);
+            return new CommandTaskWrapper(environment, Labels(dto.neededLabels), Labels(dto.changedLabels));
+        }
 		
         public override string ToString() => this.GetType().Name;
         
@@ -38,4 +64,7 @@ namespace CommandEngine.Tasks
 
 		public override int GetHashCode() => HashCode.Combine(this.NeededLabels, this.ChangedLabels);
 	}
+    internal record LabelDto(string EnumType, string EnumValue) { }
+    internal record CommandWrapperDto(List<LabelDto> neededLabels, List<LabelDto> changedLabels, string environmentMemento) { }
+	
 }

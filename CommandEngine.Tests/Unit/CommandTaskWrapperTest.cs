@@ -74,12 +74,13 @@ namespace CommandEngine.Tests.Unit
 			var master = "Master Environment".Template("Primary Group".Sequence(
 				wrapper.Otherwise(AlwaysSuccessful)
 			));
-
 			var originalEnvironment = CommandEnvironment.FreshEnvironment(master, c);
 			Assert.Throws<TaskSuspendedException>(() => originalEnvironment.Execute());
-			testOutput.WriteLine(c.History.ToString());
-			Assert.Equal("DChanged", c[D]);
-			//ToDo: Save resume command
-		}
+            Assert.Equal("DChanged", c[D]);
+            var memento = originalEnvironment.ToMemento();
+            var restoredEnvironment = CommandEnvironment.FromMemento(memento);
+			Assert.Equal(Succeeded, restoredEnvironment.Execute());
+            testOutput.WriteLine(restoredEnvironment.History().ToString());
+        }
 	}
 }

@@ -175,8 +175,9 @@ namespace CommandEngine.Commands
         }
 
         internal void ExecuteTask(CommandTask commandTask) => _executeTask = commandTask;
-        
+
         // TODO: We need the same for the RevertTask
+        public void RevertTask(CommandTask commandTask) => _revertTask = commandTask;
 
         private interface SimpleCommandState
         {
@@ -241,6 +242,8 @@ namespace CommandEngine.Commands
             public CommandStatus Undo(SimpleCommand command, Context c) =>
                     throw new InvalidOperationException("Command undo already failed");
         }
+
+       
     }
 
     public enum CommandState

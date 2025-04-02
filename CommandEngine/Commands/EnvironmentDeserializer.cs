@@ -11,7 +11,7 @@ namespace CommandEngine.Commands {
 
         public EnvironmentDeserializer(string json) {
             try {
-                var dto = Deserialize<ExtensionDto>(json) ?? throw new InvalidOperationException("Invalid Json");
+                var dto = Deserialize<EnvironmentDto>(json) ?? throw new InvalidOperationException("Invalid Json");
                 _simpleCommandDtos = dto.SimpleCommandDtos;
                 _environment = RestoredEnvironment(
                     Environment(new Guid(dto.EnvironmentId)),
@@ -28,7 +28,7 @@ namespace CommandEngine.Commands {
             }
         }
 
-        private static Context Context(ExtensionDto dto) {
+        private static Context Context(EnvironmentDto dto) {
             var c = new Context(dto.Events);
             foreach (var entry in dto.Entries)
                 c[Label(entry.EnumType, entry.EnumValue)] = Value(entry.ValueType, entry.ValueValue);
@@ -56,7 +56,9 @@ namespace CommandEngine.Commands {
             command.State(_simpleCommandDtos[0].State);
             // TODO: Do the same for the revertTask!
             if (_simpleCommandDtos[0].ExecuteTask.Memento != null)
-                command.ExecuteTask(Task(_simpleCommandDtos[0].ExecuteTask)); // Replaces ExecuteTask with results from FromMemento()
+                command.ExecuteTask(Task(_simpleCommandDtos[0].ExecuteTask));
+            if (_simpleCommandDtos[0].RevertTask.Memento != null)
+                command.RevertTask(Task(_simpleCommandDtos[0].RevertTask));
             _simpleCommandDtos.RemoveAt(0);
         }
 

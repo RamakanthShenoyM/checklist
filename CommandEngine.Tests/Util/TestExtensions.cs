@@ -17,5 +17,19 @@ namespace CommandEngine.Tests.Util
 			foreach (var label in labels) result[label] = label.ToString().ToUpper();
 			return result;
 		}
-	}
+
+        internal static CommandHistory History(this CommandEnvironment environment) => new HistoryDump(environment).Result;
+
+        private class HistoryDump : CommandVisitor
+        {
+            private CommandHistory? _history;
+            internal CommandHistory Result => _history ?? throw new InvalidOperationException("Visit Failure");
+            internal HistoryDump(CommandEnvironment environment)
+            {
+                environment.Accept(this);
+            }
+
+            public void Visit(CommandHistory history, List<string> events) => _history = history;
+        }
+    }
 }

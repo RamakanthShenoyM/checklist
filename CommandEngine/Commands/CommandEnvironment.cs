@@ -65,7 +65,7 @@ namespace CommandEngine.Commands
 
 		public object this[Enum label] => _context[label];
         
-        internal void Accept(CommandVisitor visitor)
+        public void Accept(CommandVisitor visitor)
         {
             visitor.PreVisit(this, EnvironmentId, ClientId, _command, _context);
             _command.Accept(visitor);

@@ -7,7 +7,7 @@ using static CommandEngine.Commands.CommandReflection;
 
 namespace CommandEngine.Commands {
     internal class EnvironmentSerializer : CommandVisitor {
-        private ExtensionDto? _root;
+        private EnvironmentDto? _root;
         private readonly List<SimpleCommandDto> _simpleCommandDtos = [];
         private List<string> _events;
         private List<ContextEntryDto> _entries;
@@ -44,7 +44,7 @@ namespace CommandEngine.Commands {
             Guid clientId,
             Command command,
             Context c) =>
-            _root = new ExtensionDto(environmentId.ToString(),
+            _root = new EnvironmentDto(environmentId.ToString(),
                 clientId.ToString(),
                 _simpleCommandDtos,
                 _events,
@@ -63,7 +63,7 @@ namespace CommandEngine.Commands {
             return new TaskDto(taskTypeName, (string?)memento);
         }
 
-        public record ExtensionDto(
+        public record EnvironmentDto(
             string EnvironmentId,
             string ClientId,
             List<SimpleCommandDto> SimpleCommandDtos,
@@ -74,6 +74,9 @@ namespace CommandEngine.Commands {
 
         public record TaskDto(string TaskType, string? Memento) { }
 
-        public record SimpleCommandDto(CommandState State, TaskDto ExecuteTask, TaskDto RevertTask) { }
+        public record SimpleCommandDto(CommandState State, TaskDto ExecuteTask, TaskDto RevertTask)
+        {
+           
+        }
     }
 }
