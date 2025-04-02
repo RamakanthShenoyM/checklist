@@ -16,12 +16,13 @@ public class PositionLocator : ChecklistVisitor {
         checklist.Accept(this);
     }
 
-    public void Visit(BooleanItem item, string question, bool? value, Dictionary<Person, List<Operation>> operations) {
+    public void Visit(BooleanItem item,Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations) {
         if (item == _item) _itemPositions.Add(_position.Clone());
         _position.Increment();
     }
 
     public void Visit(MultipleChoiceItem item,
+        Guid id,
         string question,
         object? value,
         List<object> choices,

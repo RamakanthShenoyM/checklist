@@ -33,7 +33,7 @@ namespace Engine.Items
 		public static OrItem Or(this Item item1, Item item2) => new OrItem(item1, item2);
 
 		public static BooleanItem TrueFalse(this string question) => new BooleanItem(question);
-		public static MultipleChoiceItem Choices(this string question, object firstChoice, params object[] choices) => new MultipleChoiceItem(question, firstChoice, choices);
+		public static MultipleChoiceItem Choices(this string question, object firstChoice, params object[] choices) => new MultipleChoiceItem(question, firstChoice, choices:choices);
 
 	}
 }

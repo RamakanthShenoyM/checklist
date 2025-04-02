@@ -4,20 +4,22 @@ namespace Engine.Items
 {
     public class MultipleChoiceItem : Item
     {
+        private readonly Guid _id;
         private readonly List<object> _choices;
         private readonly string _question;
         private object? _value;
 
-        public MultipleChoiceItem(string question, object firstChoice, params object[] choices)
+        public MultipleChoiceItem(string question, object firstChoice,Guid? id=null, params object[] choices)
         {
             _choices = choices.ToList();
             _choices.Insert(0, firstChoice);
             _question = question;
+            _id = id ?? Guid.NewGuid();
         }
 
         internal override void Accept(ChecklistVisitor visitor)
         {
-            visitor.Visit(this, _question, _value, _choices, Operations);
+            visitor.Visit(this,_id, _question, _value, _choices, Operations);
         }
 
         internal override void Be(object value)
@@ -33,9 +35,9 @@ namespace Engine.Items
         public override bool Equals(object? obj) => this == obj || obj is MultipleChoiceItem other && this.Equals(other);
 
         private bool Equals(MultipleChoiceItem other) =>
-            Equals(this._value,other._value)&& this._question == other._question && this._choices.SequenceEqual(other._choices);
+            Equals(this._value,other._value)&& this._question == other._question && this._choices.SequenceEqual(other._choices) && this._id == other._id;
 
-        public override int GetHashCode() => _question.GetHashCode() + Join("", _choices).GetHashCode();
+        public override int GetHashCode() => HashCode.Combine(_question, _id, Join(",", _choices));
 
         internal override ItemStatus Status()
         {

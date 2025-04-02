@@ -6,8 +6,9 @@ namespace Engine.Items;
 public interface ChecklistVisitor {
     void PreVisit(Checklist checklist, Person creator) {}
     void PostVisit(Checklist checklist, Person creator) {}
-    void Visit(BooleanItem item, string question, bool? value, Dictionary<Person, List<Operation>> operations) {}
-    void Visit(MultipleChoiceItem item, string question, object? value, List<object> choices, Dictionary<Person, List<Operation>> operations) {}
+    void Visit(BooleanItem item, Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations) {}
+    void Visit(MultipleChoiceItem item, Guid id, string question, object? value, List<object> choices,
+        Dictionary<Person, List<Operation>> operations) {}
     void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) {}
     void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) {}
     void PreVisit(NotItem item, Item negatedItem) {}

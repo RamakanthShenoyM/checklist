@@ -228,7 +228,7 @@ namespace Engine.Tests.Unit {
             Creator.Replace(item2)
                 .With(
                     "Vehicle Type?".Choices("Car", "Bike", "Bus"),
-                    "Is Not US citizen?".TrueFalse()
+                    "Is US citizen?".TrueFalse()
                 )
                 .In(checklist);
             Assert.Equal(4, new QuestionCount(checklist).Count);
