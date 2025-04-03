@@ -1,7 +1,10 @@
 ﻿using CommandEngine.Tasks;
+using CommonUtilities.Util;
+
 
 namespace CommandEngine.Commands {
-    public interface CommandVisitor {
+    
+    public interface CommandVisitor : HistoryVisitor {
         public void PreVisit(CommandEnvironment environment, Guid environmentId, Guid clientId, Command command, Context c) { }
 
         public void PostVisit(CommandEnvironment environment, Guid environmentId, Guid clientId, Command command, Context c) { }
@@ -21,6 +24,5 @@ namespace CommandEngine.Commands {
             History history)
 		{ }
 
-        public void Visit(History history, List<string> events){}
     }
 }

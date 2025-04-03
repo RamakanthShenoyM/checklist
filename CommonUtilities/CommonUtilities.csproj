@@ -6,12 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Doc\" />
-  </ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\CommonUtilities\CommonUtilities.csproj" />
-	</ItemGroup>
-
-
 </Project>

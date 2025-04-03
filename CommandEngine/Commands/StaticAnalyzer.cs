@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using CommandEngine.Tasks;
 using System.Reflection.Emit;
+using CommonUtilities.Util;
 using static CommandEngine.Commands.CommandEventType;
 using static System.String;
 
@@ -35,9 +36,11 @@ namespace CommandEngine.Commands
             _writtenLabels.UnionWith(newWrittenLabels);
 
         }
-
-        public void Visit(History history, List<string> events)
-        {
+        public void Visit(
+            Context c,
+            Dictionary<Enum, object> entries,
+            History history)
+        { 
             history.Add(OutSideLabels, $"<{Join(", ", SortedList(_outSideLabels))}> are needed from the outside");
             history.Add(WrittenLabels, $"<{Join(", ", SortedList(_writtenLabels.Except(_setAndUsedLabels).ToHashSet()))}> are set for the outside");
             history.Add(SetAndUsedLabels, $"<{Join(", ", SortedList(_setAndUsedLabels))}> are being set and used in the same command environment");

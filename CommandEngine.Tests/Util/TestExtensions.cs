@@ -1,5 +1,6 @@
 ﻿using CommandEngine.Commands;
 using CommandEngine.Tasks;
+using CommonUtilities.Util;
 
 namespace CommandEngine.Tests.Util
 {
@@ -28,8 +29,12 @@ namespace CommandEngine.Tests.Util
             {
                 environment.Accept(this);
             }
-
-            public void Visit(History history, List<string> events) => _history = history;
+            public void Visit(
+                Context c,
+                Dictionary<Enum, object> entries,
+                History history)
+                => _history = history;
+           
         }
     }
 }
