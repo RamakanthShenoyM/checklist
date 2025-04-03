@@ -1,24 +1,25 @@
 ﻿using Engine.Persons;
+using static Engine.Items.ItemExtensions;
 using static Engine.Items.ItemStatus;
 
 namespace Engine.Items {
     public class ConditionalItem : Item {
         private Item _conditionItem;
-        private Item? _onSuccessItem;
-        private Item? _onFailItem;
+        private Item _onSuccessItem;
+        private Item _onFailItem;
 
         // Use extension method to create a ConditionalItem
         internal ConditionalItem(Item condition, Item? onSuccess = null, Item? onFail = null) {
             _conditionItem = condition;
-            _onSuccessItem = onSuccess;
-            _onFailItem = onFail;
+            _onSuccessItem = onSuccess ?? NullItem.Instance;
+            _onFailItem = onFail ?? NullItem.Instance;
         }
 
         internal override void Accept(ChecklistVisitor visitor) {
             visitor.PreVisit(this, _conditionItem, _onSuccessItem, _onFailItem);
             _conditionItem.Accept(visitor);
-            _onSuccessItem?.Accept(visitor);
-            _onFailItem?.Accept(visitor);
+            _onSuccessItem.Accept(visitor);
+            _onFailItem.Accept(visitor);
             visitor.PostVisit(this, _conditionItem, _onSuccessItem, _onFailItem);
         }
 

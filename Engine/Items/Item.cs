@@ -38,5 +38,6 @@ namespace Engine.Items
 			if (choices.Any(choice => choice.GetType() != firstChoice.GetType())) throw new ArgumentException("All choices must be of the same type.");
 			return new MultipleChoiceItem(question, firstChoice, choices: choices);
 		}
-	}
+
+    }
 }

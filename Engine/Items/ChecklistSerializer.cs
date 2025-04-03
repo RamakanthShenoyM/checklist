@@ -33,6 +33,12 @@ namespace Engine.Items
             _position.Increment();
         }
 
+        public void Visit(NullItem item)
+        {
+            _dtos.Add(new ItemDto(nameof(NullItem), _position.ToString()));
+            _position.Increment();
+        }
+
         public void Visit(MultipleChoiceItem item,Guid id, string question, object? value,List<object> choices, 
             Dictionary<Person, List<Operation>> operations)
         {

@@ -247,5 +247,51 @@ namespace Engine.Tests.Unit
             var restoredChecklist = Checklist.FromMemento(memento);
             Assert.Equal(checklist, restoredChecklist);
         }
+
+        [Fact]
+        public void MissingFailureLegInConditionalInCheckList()
+        {
+            var checklist = Creator.Checklist(
+                "First simple item".TrueFalse(),
+                Conditional(
+                    condition: "First condition".TrueFalse(),
+                    onSuccess: Conditional(
+                        condition: "Second condition".TrueFalse(),
+                        onSuccess: "Second success leg".TrueFalse()
+                    ),
+                    onFailure: Or(
+                        Not(new BooleanItem("First Or of first failure leg")),
+                        new BooleanItem("Second Or of first failure leg")
+                    )
+                ),
+                "Last simple item".TrueFalse()
+            );
+            var memento= checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+        }
+
+        [Fact]
+        public void MissingSuccessLegInConditionalInCheckList()
+        {
+            var checklist = Creator.Checklist(
+                "First simple item".TrueFalse(),
+                Conditional(
+                    condition: "First condition".TrueFalse(),
+                    onSuccess: Conditional(
+                        condition: "Second condition".TrueFalse(),
+                        onFailure: "Second failure leg".TrueFalse()
+                    ),
+                    onFailure: Or(
+                        Not(new BooleanItem("First Or of first failure leg")),
+                        new BooleanItem("Second Or of first failure leg")
+                    )
+                ),
+                "Last simple item".TrueFalse()
+            );
+            var memento= checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+        }
     }
 }

@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Engine.Persons;
 using static System.Text.Json.JsonSerializer;
+using static Engine.Items.NullItem;
 
 namespace Engine.Items {
     internal class ChecklistDeserializer {
@@ -27,7 +28,8 @@ namespace Engine.Items {
 						"ConditionalItem" => new ConditionalItem(subItems[0], subItems[1], subItems[2]),
 						"OrItem" => new OrItem(subItems[0], subItems[1]),
 						"NotItem" => new NotItem(subItems[0]),
-						_ => throw new InvalidOperationException($"Unknown item class name {dto.ItemClassName}")
+                        "NullItem" => Instance,
+                        _ => throw new InvalidOperationException($"Unknown item class name {dto.ItemClassName}")
                     });
                 }
             }
