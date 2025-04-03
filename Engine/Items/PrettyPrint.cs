@@ -27,6 +27,7 @@ namespace Engine.Items {
 
         public void Visit(
             BooleanItem item,
+            Guid id,
             string question,
             bool? value,
             Dictionary<Person, List<Operation>> operations
@@ -40,6 +41,7 @@ namespace Engine.Items {
 
         public void Visit(
             MultipleChoiceItem item,
+            Guid id,
             string question,
             object? value,
             List<object> choices,

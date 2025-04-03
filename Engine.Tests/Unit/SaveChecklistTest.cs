@@ -93,7 +93,7 @@ namespace Engine.Tests.Unit
                     condition: "First condition".TrueFalse(),
                     onSuccess: Conditional(
                         condition: "Second condition".TrueFalse(),
-                        onSuccess: "Second success leg".Choices("A",'B',42),
+                        onSuccess: "Second success leg".Choices("A","B","C"),
                         onFailure: "Second failure leg".TrueFalse()
                     ),
                     onFailure: Not(
@@ -107,6 +107,7 @@ namespace Engine.Tests.Unit
             );
             var memento = checklist.ToMemento();
             var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
             testOutput.WriteLine(memento);
         }
 
@@ -122,5 +123,129 @@ namespace Engine.Tests.Unit
 			var restoredChecklist = Checklist.FromMemento(memento);
 			testOutput.WriteLine(memento);
 		}
-	}
+        
+        [Fact]
+		public void CheckEqualsForBooleanItemChecklist()
+        {
+            var item1 = "First Item".TrueFalse();
+			var checklist = Creator.Checklist(
+				item1
+			);
+			Creator.Sets(item1).To(true);
+			var memento = checklist.ToMemento();
+			var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+            testOutput.WriteLine(memento);
+		}
+
+        [Fact]
+        public void CheckEqualsForGroupItemCheckList()
+        {
+            var item1 = Group(
+                "first inner question".TrueFalse(),
+                "second inner question".TrueFalse()
+            );
+            var checklist = Creator.Checklist(
+                item1
+            );
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+            testOutput.WriteLine(memento);
+        }
+
+        [Fact]
+        public void CheckEqualsForOrItemCheckList()
+        {
+            var item1 = Or(
+                "first inner question".TrueFalse(),
+                "second inner question".TrueFalse()
+            );
+            var checklist = Creator.Checklist(
+                item1
+            );
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+            testOutput.WriteLine(memento);
+        }
+
+        [Fact]
+        public void CheckEqualsForNotItemCheckList()
+        {
+            var item1 = Not(
+                Group(
+                    "first inner question".TrueFalse(),
+                    "second inner question".TrueFalse()
+                )
+            );
+            var checklist = Creator.Checklist(
+                item1
+            );
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+            testOutput.WriteLine(memento);
+        }
+
+        [Fact]
+        public void CheckEqualsForConditionalItemCheckList()
+        {
+            var item1 = Conditional(
+                "Conditional question".TrueFalse(),
+                Group(
+                    "first Succeed inner question".TrueFalse(),
+                    "second Succeed inner question".TrueFalse()
+                ),
+                "Failed question".TrueFalse()
+            );
+            var checklist = Creator.Checklist(
+                item1
+            );
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+            testOutput.WriteLine(memento);
+        }
+
+        [Fact]
+        public void CheckEqualsForMultipleChoiceItem()
+        {
+            var item1 = "second question".Choices(1, 2, 3,4);
+            var checklist = Creator.Checklist(
+                item1
+            );
+            Creator.Sets(item1).To(1);
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+            testOutput.WriteLine(memento);
+
+        }
+
+        [Fact]
+        public void CheckEqualsForComplexCheckList()
+        {
+            var checklist = Creator.Checklist(
+                "First simple item".TrueFalse(),
+                Conditional(
+                    condition: "First condition".TrueFalse(),
+                    onSuccess: Conditional(
+                        condition: "Second condition".TrueFalse(),
+                        onSuccess: "Second success leg".TrueFalse(), 
+                        onFailure: "Second failure leg".TrueFalse()
+                    ),
+                    onFailure: Or(
+                        Not(new BooleanItem("First Or of first failure leg")),
+                        new BooleanItem("Second Or of first failure leg")
+                    )
+                ),
+                "Last simple item".TrueFalse()
+            );
+
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+        }
+    }
 }

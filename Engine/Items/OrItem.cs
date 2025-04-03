@@ -32,6 +32,13 @@ namespace Engine.Items
             throw new InvalidOperationException("can't reset the Or");
         }
 
+        public override bool Equals(object? obj) => this == obj || obj is OrItem other && this.Equals(other);
+
+        private bool Equals(OrItem other) =>
+            this._item1.Equals(other._item1) && this._item2.Equals(other._item2);
+
+        public override int GetHashCode() => _item1.GetHashCode() + _item2.GetHashCode();
+
         internal override bool Replace(Item originalItem, Item newItem)
         {
             var result = false;

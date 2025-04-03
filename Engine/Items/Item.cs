@@ -33,7 +33,10 @@ namespace Engine.Items
 		public static OrItem Or(this Item item1, Item item2) => new OrItem(item1, item2);
 
 		public static BooleanItem TrueFalse(this string question) => new BooleanItem(question);
-		public static MultipleChoiceItem Choices(this string question, object firstChoice, params object[] choices) => new MultipleChoiceItem(question, firstChoice, choices);
-
+		public static MultipleChoiceItem Choices(this string question, object firstChoice, params object[] choices)
+		{
+			if (choices.Any(choice => choice.GetType() != firstChoice.GetType())) throw new ArgumentException("All choices must be of the same type.");
+			return new MultipleChoiceItem(question, firstChoice, choices: choices);
+		}
 	}
 }

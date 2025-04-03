@@ -23,6 +23,13 @@ namespace Engine.Items
 
         internal override void Reset() => throw new InvalidOperationException("can't Reset the Not");
 
+        public override bool Equals(object? obj) => this == obj || obj is NotItem other && this.Equals(other);
+
+        private bool Equals(NotItem other) =>
+            this._item.Equals(other._item);
+
+        public override int GetHashCode() => _item.GetHashCode();
+
         internal override bool Replace(Item originalItem, Item newItem)
         {
             if (_item == originalItem)

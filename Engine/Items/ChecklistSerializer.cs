@@ -11,6 +11,7 @@ namespace Engine.Items
         {
             checklist.Accept(this);
         }
+
         internal string Result
         {
             get
@@ -21,25 +22,30 @@ namespace Engine.Items
             }
         }
 
-        public void Visit(BooleanItem item, string question, bool? value, Dictionary<Person, List<Operation>> operations)
+        public void Visit(BooleanItem item,Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations)
         {
             _dtos.Add(new ItemDto(
-                typeof(BooleanItem).Name,
-                _position.ToString(), question, 
+                nameof(BooleanItem),
+                _position.ToString(),
+                id,
+                question, 
                 new ValueDto(typeof(Boolean).ToString(), value.ToString())));
             _position.Increment();
         }
-        public void Visit(MultipleChoiceItem item, string question, object? value,List<object> choices, 
+
+        public void Visit(MultipleChoiceItem item,Guid id, string question, object? value,List<object> choices, 
             Dictionary<Person, List<Operation>> operations)
         {
             _dtos.Add(new ItemDto(
-                typeof(MultipleChoiceItem).Name, 
+                nameof(MultipleChoiceItem), 
                 _position.ToString(), 
+                id,
                 question, 
                 new ValueDto(value?.GetType().ToString(), value?.ToString()?? ""),
                 choices.Select(c => new ValueDto(c.GetType().ToString(), c.ToString())).ToList()));
             _position.Increment();
         }
+
         public void PreVisit(GroupItem item, List<Item> childItems) => _position.Deeper();
         public void PostVisit(GroupItem item, List<Item> childItems) => CreateComposite(item);
         public void PreVisit(OrItem item, Item item1, Item item2) => _position.Deeper();
@@ -60,6 +66,7 @@ namespace Engine.Items
     public record ItemDto(
         string ItemClassName,
         string Position, 
+        Guid? Id = null,
         string? Question = null, 
         ValueDto? Value=null,
         List<ValueDto>? Choices = null);

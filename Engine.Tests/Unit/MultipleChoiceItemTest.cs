@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using static Engine.Tests.Unit.CarpetColor;
 using Xunit;
 using Engine.Persons;
+using System.ComponentModel;
 
 namespace Engine.Tests.Unit
 {
@@ -33,6 +34,23 @@ namespace Engine.Tests.Unit
 				#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 			Assert.Throws<ArgumentNullException>(() => Creator.Sets(item).To(null));
 				#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+		}
+
+		[Fact]
+		public void DontAllowMixedType()
+		{
+			Assert.Throws<ArgumentException>(() => Creator.Checklist(
+				"Which Carpet Color?".Choices("Red", GreenCarpet, NoCarpet)
+			));
+
+			Assert.Throws<ArgumentException>(() => Creator.Checklist(
+				"Which Carpet Color?".Choices(1,2, NoCarpet)
+			));
+
+			Assert.Throws<ArgumentException>(() => Creator.Checklist(
+				"Which Carpet Color?".Choices(GreenCarpet, NoCarpet, 'C')
+			));
+
 		}
 
 		[Fact]
@@ -69,10 +87,10 @@ namespace Engine.Tests.Unit
                 checklist.Accept(this);
             }
 
-            public void Visit(BooleanItem item, string question, bool? value, Dictionary<Person, List<Operation>> operations) =>
+            public void Visit(BooleanItem item, Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations) =>
                 Count++;
 
-            public void Visit(MultipleChoiceItem item, string question, object? value, List<object> choices, Dictionary<Person, List<Operation>> operations) =>
+            public void Visit(MultipleChoiceItem item,Guid id, string question, object? value, List<object> choices, Dictionary<Person, List<Operation>> operations) =>
                 Count++;
         }
 

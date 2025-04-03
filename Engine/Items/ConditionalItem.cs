@@ -27,6 +27,15 @@ namespace Engine.Items {
 
         internal override void Reset() => throw new InvalidOperationException("can't set the Conditional Item");
 
+        public override bool Equals(object? obj) => this == obj || obj is ConditionalItem other && this.Equals(other);
+
+        private bool Equals(ConditionalItem other) =>
+            this._conditionItem.Equals(other._conditionItem)
+            && (this._onSuccessItem?.Equals(other._onSuccessItem) ?? other._onSuccessItem == null)
+            && (this._onFailItem?.Equals(other._onFailItem) ?? other._onFailItem == null);
+
+        public override int GetHashCode() => _conditionItem.GetHashCode() + (_onSuccessItem?.GetHashCode() ?? 0) + (_onFailItem?.GetHashCode() ?? 0);
+
         internal override bool Replace(Item originalItem, Item newItem) {
                 #pragma warning disable CS8601 // Possible null reference assignment.
             var result = Replace(ref _conditionItem, originalItem, newItem);

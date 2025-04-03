@@ -1,24 +1,33 @@
 ﻿namespace Engine.Items
 {
 	public class BooleanItem : Item
-	{
+    {
+        private readonly Guid _id;
 		private bool? _hasSucceeded;
 		private readonly string _question;
 
-		public BooleanItem(string question)
+		public BooleanItem(string question,Guid?id=null)
 		{
 			_question = question;
-		}
+            _id = id??Guid.NewGuid();
+        }
 
 		internal override void Be(object value) {
 			ArgumentNullException.ThrowIfNull(value);
 			_hasSucceeded = (bool)value;
 		}
 
-		internal override void Reset() => _hasSucceeded = null;
+        public override bool Equals(object? obj) => this == obj || obj is BooleanItem other && this.Equals(other);
+
+        private bool Equals(BooleanItem other) =>
+            this._hasSucceeded== other._hasSucceeded && this._question == other._question && this._id == other._id;
+
+        public override int GetHashCode() => _question.GetHashCode()*37+_id.GetHashCode();
+
+        internal override void Reset() => _hasSucceeded = null;
         
         internal override void Accept(ChecklistVisitor visitor) {
-	        visitor.Visit(this,_question, _hasSucceeded, Operations);
+	        visitor.Visit(this,_id,_question, _hasSucceeded, Operations);
         }
 
         internal override Item I(List<int> indexes) {
