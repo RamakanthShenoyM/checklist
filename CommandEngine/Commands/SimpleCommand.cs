@@ -2,7 +2,9 @@
 using System.Reflection;
 using System.Windows.Input;
 using static CommandEngine.Commands.CommandStatus;
+using static CommandEngine.Commands.CommandEventType;
 using static CommandEngine.Commands.CommandReflection;
+using System.Threading.Tasks;
 
 namespace CommandEngine.Commands
 {
@@ -77,7 +79,7 @@ namespace CommandEngine.Commands
         private CommandStatus RealExecute(Context c)
         {
             var subContext = c.SubContext(_executeTask.NeededLabels, _executeTask.ChangedLabels);
-            c.History.Event(this, _executeTask);
+            c.History.Add(TaskExecuted,  $"Starting Command <{this}>, executing Task <{_executeTask}>");
             try
             {
                 var status = _executeTask.Execute(subContext);

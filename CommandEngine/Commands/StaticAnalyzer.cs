@@ -1,5 +1,8 @@
-﻿using CommandEngine.Tasks;
+﻿using System.Collections;
+using CommandEngine.Tasks;
+using System.Reflection.Emit;
 using static CommandEngine.Commands.CommandEventType;
+using static System.String;
 
 namespace CommandEngine.Commands
 {
@@ -33,13 +36,12 @@ namespace CommandEngine.Commands
 
         }
 
-        public void Visit(CommandHistory history, List<string> events)
+        public void Visit(History history, List<string> events)
         {
-            history.Event(SortedList(_outSideLabels), OutSideLabels);
-            history.Event(SortedList(_writtenLabels.Except(_setAndUsedLabels).ToHashSet()), WrittenLabels);
-            history.Event(SortedList(_setAndUsedLabels), SetAndUsedLabels);
-            history.Event(SortedList(_beforeNeededlabel), NeededLabelBeforeSet);
-
+            history.Add(OutSideLabels, $"<{Join(", ", SortedList(_outSideLabels))}> are needed from the outside");
+            history.Add(WrittenLabels, $"<{Join(", ", SortedList(_writtenLabels.Except(_setAndUsedLabels).ToHashSet()))}> are set for the outside");
+            history.Add(SetAndUsedLabels, $"<{Join(", ", SortedList(_setAndUsedLabels))}> are being set and used in the same command environment");
+            history.Add(NeededLabelBeforeSet, $"<{Join(", ", SortedList(_beforeNeededlabel))}> set before need");
         }
 
         private List<string> SortedList(HashSet<Enum> labels) => 

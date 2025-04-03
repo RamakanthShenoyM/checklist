@@ -1,11 +1,12 @@
 ﻿using CommandEngine.Commands;
+using static CommandEngine.Commands.CommandEventType;
 
 namespace CommandEngine.Tasks
 {
     public class Context
     {
         private readonly Dictionary<Enum, object> _values = new();
-        private readonly CommandHistory _history;
+        private readonly History _history;
         private List<Enum>? _changedLabels;
 
         internal Context(List<string> events)
@@ -30,7 +31,7 @@ namespace CommandEngine.Tasks
         }
         public bool Has(Enum label) => _values.ContainsKey(label);
 
-        public CommandHistory History => _history;
+        public History History => _history;
 
         public Context SubContext(List<Enum> labelsToCopy, List<Enum> changedLabels)
         {
@@ -44,7 +45,7 @@ namespace CommandEngine.Tasks
         {
             foreach (var label in changedLabels)
                 if (subContext.Has(label)) this[label] = subContext[label];
-            this.History.Update(subContext.History);
+            this.History.Update(subContext.History, StartSubTaskHistory, EndSubTaskHistory);
             
         }
 
@@ -56,27 +57,32 @@ namespace CommandEngine.Tasks
 		private bool Equals(Context other) => this._history.Equals(other._history) && this._values.SequenceEqual(other._values);
 
 		internal void Event(SimpleCommand command, CommandState originalState, CommandState newState) => 
-            _history.Event(command, originalState, newState);
+            _history.Add(CommandStateChange, $"Command <{command}> Changed State from <{originalState}> To <{newState}>");
+
         internal void Event(SimpleCommand command, CommandTask task, object conclusion) =>
-            _history.Event(command, task, conclusion);
+            _history.Add(ConclusionReached, $"Task <{task}> reached a conclusion<{conclusion}>");
 
-        internal void Event(SimpleCommand command, CommandTask task, CommandStatus status) => 
-            _history.Event(command, task, status);
+        internal void Event(SimpleCommand command, CommandTask task, CommandStatus status)
+        {
+            var statusMsg = (task is IgnoreTask) ?
+                $"Command <{command}> has no Undo"
+                : $"Task <{task}> completed with status <{status}>";
+            _history.Add(CommandEventType.TaskStatus, statusMsg);
+        }
 
-        internal void Event(SimpleCommand command, CommandTask task, Exception e) => 
-            _history.Event(command, task, e);
-
-        internal void Event(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue) => 
-            _history.Event(command, task, label,previousValue,newValue);
-
-        internal void StartEvent(SerialCommand command) => _history.StartEvent(command);
-
-        internal void CompletedEvent(SerialCommand command) => _history.CompletedEvent(command);
-
+        internal void Event(SimpleCommand command, CommandTask task, Exception e) =>
+             _history.Add(TaskException, $"Task <{task}> threw an exception <{e}>");
+        internal void Event(SimpleCommand command, CommandTask task, object label, object? previousValue, object? newValue) =>
+            _history.Add(ValueChanged, 
+                $"Task <{task}> in Command <{command}> changed <{label}> from <{previousValue}> to <{newValue}>");
+        internal void StartEvent(SerialCommand command) =>
+             _history.Add(GroupSerialStart, $"Group Command <{command.NameOnly()}> started");
+        internal void CompletedEvent(SerialCommand command) =>
+            _history.Add(GroupSerialComplete, $"Group Command <{command.NameOnly()}> completed");
         internal void Event(SimpleCommand simpleCommand, CommandTask task, MissingContextInformationException e, object missingLabel) =>
-            _history.Event(simpleCommand, task, e, missingLabel);
+            _history.Add(InvalidAccessAttempt, $"Invalid Access to <{missingLabel}> by <{task}>");
         internal void Event(SimpleCommand simpleCommand, CommandTask task, object changedLabel, UpdateNotCapturedException e) => 
-            _history.Event(simpleCommand,  task, changedLabel, e);
+            _history.Add(UpdateNotCaptured,  $"Attempt to set <{changedLabel}> in the context, but not marked as a change field");
         internal void Accept(CommandVisitor visitor)
         {
             visitor.Visit(this, _values, _history);

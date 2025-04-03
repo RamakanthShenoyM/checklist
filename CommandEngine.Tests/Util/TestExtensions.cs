@@ -18,18 +18,18 @@ namespace CommandEngine.Tests.Util
 			return result;
 		}
 
-        internal static CommandHistory History(this CommandEnvironment environment) => new HistoryDump(environment).Result;
+        internal static History History(this CommandEnvironment environment) => new HistoryDump(environment).Result;
 
         private class HistoryDump : CommandVisitor
         {
-            private CommandHistory? _history;
-            internal CommandHistory Result => _history ?? throw new InvalidOperationException("Visit Failure");
+            private History? _history;
+            internal History Result => _history ?? throw new InvalidOperationException("Visit Failure");
             internal HistoryDump(CommandEnvironment environment)
             {
                 environment.Accept(this);
             }
 
-            public void Visit(CommandHistory history, List<string> events) => _history = history;
+            public void Visit(History history, List<string> events) => _history = history;
         }
     }
 }

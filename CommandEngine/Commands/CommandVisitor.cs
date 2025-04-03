@@ -18,9 +18,9 @@ namespace CommandEngine.Commands {
         public void Visit(
 			Context c,
 			Dictionary<Enum, object> entries, 
-            CommandHistory history)
+            History history)
 		{ }
 
-        public void Visit(CommandHistory history, List<string> events){}
+        public void Visit(History history, List<string> events){}
     }
 }

@@ -25,7 +25,7 @@ namespace CommandEngine.Commands {
             }
         }
 
-        public void Visit(Context c, Dictionary<Enum, object> entries, CommandHistory history) =>
+        public void Visit(Context c, Dictionary<Enum, object> entries, History history) =>
             _entries = entries.Select(e => new ContextEntryDto(
                     e.Key.GetType().FullName ??
                     throw new InvalidOperationException("Missing required value for Context Label type in DTO"),
@@ -37,7 +37,7 @@ namespace CommandEngine.Commands {
 #pragma warning restore CS8604 // Possible null reference argument.
                 .ToList();
 
-        public void Visit(CommandHistory history, List<string> events) => _events = events;
+        public void Visit(History history, List<string> events) => _events = events;
 
         public void PostVisit(CommandEnvironment environment,
             Guid environmentId,
