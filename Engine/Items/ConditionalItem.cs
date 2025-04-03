@@ -56,8 +56,9 @@ namespace Engine.Items {
         }
 
         internal override ItemStatus Status() {
-            if (_conditionItem.Status() == Succeeded) return _onSuccessItem?.Status() ?? Succeeded;
-            if (_conditionItem.Status() == Failed) return _onFailItem?.Status() ?? Failed;
+            if (_conditionItem.Status() == Succeeded) return (_onSuccessItem is NullItem)? Succeeded 
+                    : _onSuccessItem.Status();
+            if (_conditionItem.Status() == Failed) return (_onFailItem is NullItem) ? Failed : _onFailItem.Status();
             return Unknown;
         }
 
@@ -85,16 +86,16 @@ namespace Engine.Items {
             if (_conditionItem == item) throw new InvalidOperationException("Cannot remove the base item");
             
             if (_onSuccessItem == item) {
-                if (_onFailItem == null)
+                if (_onFailItem is NullItem)
                     throw new InvalidOperationException("Cannot remove the last leg in a conditional");
-                _onSuccessItem = null;
+                _onSuccessItem = NullItem.Instance;
                 result = true;
             }
 
             if (_onFailItem == item) {
-                if (_onSuccessItem == null)
+                if (_onSuccessItem is NullItem)
                     throw new InvalidOperationException("Cannot remove the last leg in a conditional");
-                _onFailItem = null;
+                _onFailItem = NullItem.Instance;
                 result = true;
             }
 
