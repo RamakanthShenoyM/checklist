@@ -20,7 +20,7 @@ namespace Engine.Tests.Unit
             var checklist = Creator.Checklist(
                 "Which Carpet Color?".Choices(RedCarpet, GreenCarpet, NoCarpet)
             );
-            var item = checklist.I(0);
+            var item = (SimpleItem)checklist.I(0);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             Creator.Sets(item).To(GreenCarpet);
             Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
@@ -64,9 +64,9 @@ namespace Engine.Tests.Unit
                 ("Is US citizen?").TrueFalse(),
                 "Which country?".Choices("India", "Iceland", "Norway")
             );
-            var item1 = checklist.I(0, 0);
-            var item2 = checklist.I(0, 1);
-            var item3 = checklist.I(0, 2);
+            var item1 = (SimpleItem)checklist.I(0, 0);
+            var item2 = (SimpleItem)checklist.I(0, 1);
+            var item3 = (SimpleItem)checklist.I(0, 2);
 
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             Creator.Sets(item1).To(GreenCarpet);

@@ -22,8 +22,8 @@ namespace Engine.Tests.Unit
                     new BooleanItem("Is US citizen?")
                     )
             );
-            var item1 = checklist.I(0, 0);
-            var item2 = checklist.I(0, 1);
+            var item1 = (SimpleItem)checklist.I(0, 0);
+            var item2 = (SimpleItem)checklist.I(0, 1);
             Assert.Equal(InProgress, checklist.Status());
             Creator.Sets(item1).To(false);
             Assert.Equal(Failed, checklist.Status());

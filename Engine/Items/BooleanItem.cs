@@ -3,7 +3,7 @@ using Engine.Persons;
 
 namespace Engine.Items
 {
-	public class BooleanItem : Item
+	public class BooleanItem : SimpleItem
     {
         private readonly Guid _id;
 		private bool? _hasSucceeded;

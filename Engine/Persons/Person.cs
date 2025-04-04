@@ -20,7 +20,7 @@ namespace Engine.Persons
 
         public ActionEngine Can(Operation view) => new(this, view);
 
-        public AssignEngine Sets(Item item)
+        public AssignEngine Sets(SimpleItem item)
         {
             return new AssignEngine(this, item);
 
@@ -43,7 +43,7 @@ namespace Engine.Persons
             return new(this, originalItem);
         }
 
-        public void Reset(Item item)
+        public void Reset(SimpleItem item)
         {
             if (!Can(Set).On(item))
                 throw new InvalidOperationException("Does not have permission to reset an Item");
@@ -71,9 +71,9 @@ namespace Engine.Persons
         public class AssignEngine
         {
             private readonly Person _person;
-            private readonly Item _item;
+            private readonly SimpleItem _item;
 
-            internal AssignEngine(Person person, Item item)
+            internal AssignEngine(Person person, SimpleItem item)
 
             {
                 _person = person;

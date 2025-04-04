@@ -16,7 +16,7 @@ namespace Engine.Tests.Unit
             var checklist = Creator.Checklist(
                 Not( new BooleanItem("Is US citizen?") )
             );
-            var booleanItem = checklist.I(0, 0);
+            var booleanItem = (SimpleItem)checklist.I(0, 0);
             var notItem = checklist.I(0);
             Assert.Equal(InProgress, checklist.Status());
             Creator.Sets(booleanItem).To(true);
@@ -25,7 +25,6 @@ namespace Engine.Tests.Unit
             Assert.Equal(Succeeded, checklist.Status());
             Creator.Reset(booleanItem);
             Assert.Equal(InProgress, checklist.Status());
-            Assert.Throws<InvalidOperationException>(() => Creator.Sets(notItem).To(true));
         }
 
         [Fact]
@@ -34,7 +33,7 @@ namespace Engine.Tests.Unit
             var checklist = Creator.Checklist(
                 Not( "Which country?".Choices("India","Srilanka") )
             );
-            var multipleChoiceItem = checklist.I(0, 0);
+            var multipleChoiceItem = (SimpleItem)checklist.I(0, 0);
             var notItem = checklist.I(0);
             Assert.Equal(InProgress, checklist.Status());
             Creator.Sets(multipleChoiceItem).To("India");

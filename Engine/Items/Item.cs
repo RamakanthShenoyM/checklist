@@ -10,8 +10,7 @@ namespace Engine.Items
 		internal abstract void Be(object value);
 		internal abstract void Reset();
 
-        internal virtual History History() => 
-            throw new InvalidOperationException("No access to the history");
+        
 
         internal virtual void AddPerson(Person person, Role role, History history) => 
             Operations[person] = role.Operations;
@@ -31,6 +30,11 @@ namespace Engine.Items
 			return I(results);
 		}
 		internal abstract Item I(List<int> indexes);
+    }
+
+    public abstract class SimpleItem: Item
+    {
+        internal abstract History History();
     }
 
 	public static class ItemExtensions

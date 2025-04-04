@@ -18,9 +18,9 @@ namespace Engine.Tests.Unit {
                     onSuccess: "Is Nevada resident?".TrueFalse(),
                     onFailure: "Is Canadian citizen?".TrueFalse()
                 ));
-            var baseItem = checklist.I(0, 0);
-            var successItem = checklist.I(0, 1);
-            var failItem = checklist.I(0, 2);
+            var baseItem = (SimpleItem)checklist.I(0, 0);
+            var successItem = (SimpleItem)checklist.I(0, 1);
+            var failItem = (SimpleItem)checklist.I(0, 2);
 
             Assert.Equal(InProgress, checklist.Status());
             Creator.Sets(baseItem).To(true);
@@ -42,8 +42,8 @@ namespace Engine.Tests.Unit {
                     condition: "Is US citizen?".TrueFalse(),
                     onFailure: "Is Canadian citizen?".TrueFalse()
                 ));
-            var baseItem = checklist.I(0, 0);
-            var failItem = checklist.I(0, 2);
+            var baseItem = (SimpleItem)checklist.I(0, 0);
+            var failItem = (SimpleItem)checklist.I(0, 2);
 
             Assert.Equal(InProgress, checklist.Status());
             Creator.Sets(baseItem).To(true);
@@ -61,8 +61,8 @@ namespace Engine.Tests.Unit {
                     condition: "Is US citizen?".TrueFalse(),
                     onSuccess: "Is Nevada resident?".TrueFalse()
                 ));
-            var baseItem = checklist.I(0, 0);
-            var successItem = checklist.I(0, 1);
+            var baseItem = (SimpleItem)checklist.I(0, 0);
+            var successItem = (SimpleItem)checklist.I(0, 1);
 
             Assert.Equal(InProgress, checklist.Status());
             Creator.Sets(baseItem).To(false);

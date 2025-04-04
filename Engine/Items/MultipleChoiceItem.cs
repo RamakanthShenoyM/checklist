@@ -4,7 +4,7 @@ using static System.String;
 
 namespace Engine.Items
 {
-    public class MultipleChoiceItem : Item
+    public class MultipleChoiceItem : SimpleItem
     {
         private readonly Guid _id;
         private readonly List<object> _choices;
