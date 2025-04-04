@@ -25,7 +25,11 @@ namespace Engine.Items
         public override bool Equals(object? obj) => this == obj || obj is BooleanItem other && this.Equals(other);
 
         private bool Equals(BooleanItem other) =>
-            this._hasSucceeded== other._hasSucceeded && this._question == other._question && this._id == other._id;
+            this._hasSucceeded == other._hasSucceeded
+            && this._question == other._question
+            && this._id == other._id
+            && this.Operations.SequenceEqual(other.Operations);
+
 
         public override int GetHashCode() => _question.GetHashCode()*37+_id.GetHashCode();
 

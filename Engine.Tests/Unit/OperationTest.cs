@@ -9,7 +9,7 @@ namespace Engine.Tests.Unit
     public class OperationTest
 	{
 		private static readonly Person Creator = new Person(0, 0);
-		private static readonly Person Owner = new Person(0, 0);
+		private static readonly Person Owner = new Person(3, 4);
 		
 		[Fact]
 		public void SingleItem() {

@@ -42,7 +42,7 @@ namespace Engine.Items {
         public override bool Equals(object? obj) => this == obj || obj is Checklist other && this.Equals(other);
 
         private bool Equals(Checklist other) =>
-            this._item.Equals(other._item);
+            this._item.Equals(other._item) && this._creator.Equals(other._creator);
 
         public override int GetHashCode() => _creator.GetHashCode();
 

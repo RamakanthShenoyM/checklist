@@ -16,6 +16,7 @@ namespace Engine.Tests.Unit
     public class SaveChecklistTest(ITestOutputHelper testOutput)
     {
         private static readonly Person Creator = new Person(0, 0);
+        private static readonly Person Owner = new Person(1, 2);
         [Fact]
         public void SaveGroupChecklist()
         {
@@ -132,7 +133,8 @@ namespace Engine.Tests.Unit
 				item1
 			);
 			Creator.Sets(item1).To(true);
-			var memento = checklist.ToMemento();
+            Creator.Add(Owner).As(Role.Owner).To(item1);
+            var memento = checklist.ToMemento();
 			var restoredChecklist = Checklist.FromMemento(memento);
             Assert.Equal(checklist, restoredChecklist);
             testOutput.WriteLine(memento);

@@ -7,15 +7,16 @@ namespace Engine.Persons
 {
     public class Person
     {
-        private readonly int _organizationId;
-        private readonly int _personId;
+        internal readonly int _organizationId;
+        internal readonly int _personId;
 
         public Person(int organizationId, int personId)
         {
             _organizationId = organizationId;
             _personId = personId;
         }
-        
+
+
         public AddingEngine Add(Person owner) => new(this, owner);
 
         public ActionEngine Can(Operation view) => new(this, view);
@@ -51,6 +52,13 @@ namespace Engine.Persons
             item.History().Add(ResetValueEvent, $"<{this}> reset item <{item}>");
         }
         public override string ToString() => $"org <{_organizationId}> person <{_personId}>";
+
+        public override bool Equals(object? obj) => this == obj || obj is Person other && this.Equals(other);
+
+        private bool Equals(Person other) =>
+            this._organizationId==other._organizationId && this._personId==other._personId;
+
+        public override int GetHashCode() => HashCode.Combine(_organizationId, _personId);
 
         public class ActionEngine
         {

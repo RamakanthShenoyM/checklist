@@ -15,6 +15,7 @@ namespace Engine.Items
         internal virtual void AddPerson(Person person, Role role, History history) => 
             Operations[person] = role.Operations;
 		internal bool HasPerson(Person person) => Operations.Keys.Contains(person);
+        internal virtual void AddOperation(Person person,List<Operation> operations) => Operations[person] = operations;
 		internal bool DoesAllow(Person person, Operation operation) => 
 			Operations.ContainsKey(person) && Operations[person].Contains(operation);
 		internal virtual bool Contains(Item desiredItem) => this == desiredItem;

@@ -8,6 +8,7 @@ public interface ChecklistVisitor: HistoryVisitor {
     void PreVisit(Checklist checklist, Person creator, History history) {}
     void PostVisit(Checklist checklist, Person creator, History history) {}
     void Visit(NullItem item) { }
+    void Visit(Person person,int organizationId, int personId) { }
     void Visit(BooleanItem item, Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations) {}
     void Visit(MultipleChoiceItem item, Guid id, string question, object? value, List<object> choices,
         Dictionary<Person, List<Operation>> operations) {}

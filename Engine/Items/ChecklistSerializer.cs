@@ -1,4 +1,5 @@
-﻿using Engine.Persons;
+﻿using CommonUtilities.Util;
+using Engine.Persons;
 using System.Text.Json;
 
 namespace Engine.Items
@@ -6,6 +7,7 @@ namespace Engine.Items
     internal class ChecklistSerializer: ChecklistVisitor
     {
         private readonly List<ItemDto> _dtos = [];
+        private PersonDto _person;
         private readonly Position _position = new();
         internal ChecklistSerializer(Checklist checklist)
         {
@@ -16,9 +18,9 @@ namespace Engine.Items
         {
             get
             {
-                if (_dtos.Count == 0) throw new InvalidOperationException(
+                if (_dtos.Count == 0 || _person is null) throw new InvalidOperationException(
                     "The serializer has not examined the Checklist. Visitor issue possible?");
-                return JsonSerializer.Serialize(_dtos);
+                return JsonSerializer.Serialize(new CheckListDto(_person,_dtos));
             }
         }
 
@@ -29,7 +31,8 @@ namespace Engine.Items
                 _position.ToString(),
                 id,
                 question, 
-                new ValueDto(typeof(Boolean).ToString(), value.ToString())));
+                new ValueDto(typeof(Boolean).ToString(), value.ToString()),
+                Operations:operations.Select(o=>new OperationDto(new PersonDto(o.Key._organizationId,o.Key._personId),o.Value)).ToList()));
             _position.Increment();
         }
 
@@ -52,6 +55,8 @@ namespace Engine.Items
             _position.Increment();
         }
 
+        public void PreVisit(Checklist checklist, Person creator,History history) => 
+            _person = new PersonDto(creator._organizationId, creator._personId);
         public void PreVisit(GroupItem item, List<Item> childItems) => _position.Deeper();
         public void PostVisit(GroupItem item, List<Item> childItems) => CreateComposite(item);
         public void PreVisit(OrItem item, Item item1, Item item2) => _position.Deeper();
@@ -69,14 +74,21 @@ namespace Engine.Items
         }
     }
 
+    public record CheckListDto(PersonDto Person, List<ItemDto> Items);
+
     public record ItemDto(
         string ItemClassName,
         string Position, 
         Guid? Id = null,
         string? Question = null, 
         ValueDto? Value=null,
-        List<ValueDto>? Choices = null);
+        List<ValueDto>? Choices = null,
+        List<OperationDto>? Operations=null);
 
     public record ValueDto(string? ValueClass, string? ValueValue);
+
+    public record PersonDto(int OrganizationId, int PersonId);
+
+    public record OperationDto(PersonDto Person, List<Operation> Operations);
 
 }
