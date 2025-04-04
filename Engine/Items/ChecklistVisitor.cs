@@ -1,11 +1,12 @@
+using CommonUtilities.Util;
 using Engine.Persons;
 
 namespace Engine.Items;
 
 // Supports walking a Checklist Item hierarchy
-public interface ChecklistVisitor {
-    void PreVisit(Checklist checklist, Person creator) {}
-    void PostVisit(Checklist checklist, Person creator) {}
+public interface ChecklistVisitor: HistoryVisitor {
+    void PreVisit(Checklist checklist, Person creator, History history) {}
+    void PostVisit(Checklist checklist, Person creator, History history) {}
     void Visit(NullItem item) { }
     void Visit(BooleanItem item, Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations) {}
     void Visit(MultipleChoiceItem item, Guid id, string question, object? value, List<object> choices,

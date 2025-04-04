@@ -1,4 +1,5 @@
-﻿using Engine.Persons;
+﻿using CommonUtilities.Util;
+using Engine.Persons;
 
 namespace Engine.Items
 {
@@ -8,7 +9,12 @@ namespace Engine.Items
 		internal abstract ItemStatus Status();
 		internal abstract void Be(object value);
 		internal abstract void Reset();
-		internal virtual void AddPerson(Person person, Role role) => Operations[person] = role.Operations;
+
+        internal virtual History History() => 
+            throw new InvalidOperationException("No access to the history");
+
+        internal virtual void AddPerson(Person person, Role role, History history) => 
+            Operations[person] = role.Operations;
 		internal bool HasPerson(Person person) => Operations.Keys.Contains(person);
 		internal bool DoesAllow(Person person, Operation operation) => 
 			Operations.ContainsKey(person) && Operations[person].Contains(operation);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommonUtilities.Util;
 using Engine.Persons;
 
 namespace Engine.Items
@@ -69,10 +70,10 @@ namespace Engine.Items
             visitor.PostVisit(this, _childItems);
         }
 
-        internal override void AddPerson(Person person, Role role)
+        internal override void AddPerson(Person person, Role role, History history)
         {
-            base.AddPerson(person, role);
-            foreach (var item in _childItems) item.AddPerson(person, role);
+            base.AddPerson(person, role, history);
+            foreach (var item in _childItems) item.AddPerson(person, role, history);
         }
 
         internal override bool Contains(Item desiredItem) =>

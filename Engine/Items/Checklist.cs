@@ -1,4 +1,5 @@
-﻿using Engine.Persons;
+﻿using CommonUtilities.Util;
+using Engine.Persons;
 using static Engine.Items.PrettyPrint;
 using static Engine.Persons.Role;
 using static Engine.Items.PrettyPrint.PrettyPrintOptions;
@@ -7,18 +8,20 @@ namespace Engine.Items {
     public class Checklist {
         private Item _item;
         private readonly Person _creator;
+        private readonly History _history = new([]);
 
         // Create with a Creator person only with extension method
         internal Checklist(Person creator, Item firstItem, params Item[] items) {
             _item = (items.Length == 0) ? firstItem : new GroupItem(firstItem, items);
             _creator = creator;
-            _item.AddPerson(_creator, Creator);
+            _item.AddPerson(_creator, Creator, _history);
         }
 
         public void Accept(ChecklistVisitor visitor) {
-            visitor.PreVisit(this, _creator);
+            visitor.PreVisit(this, _creator, _history);
+            _history.Accept(visitor);
             _item.Accept(visitor);
-            visitor.PostVisit(this, _creator);
+            visitor.PostVisit(this, _creator, _history);
         }
 
         public ChecklistStatus Status() {
@@ -43,9 +46,9 @@ namespace Engine.Items {
 
         public override int GetHashCode() => _creator.GetHashCode();
 
-
+        public History History => _history;
         public void Replace(Item originalItem, Item newItem) {
-            newItem.AddPerson(_creator, Creator);
+            newItem.AddPerson(_creator, Creator, _history);
             if (_item == originalItem) {
                 _item = newItem;
                 return;
@@ -77,4 +80,5 @@ namespace Engine.Items {
         public static Checklist FromMemento(string memento) => 
             new ChecklistDeserializer(memento).Result;
     }
+   
 }

@@ -1,3 +1,4 @@
+using CommonUtilities.Util;
 using Engine.Persons;
 using static Engine.Items.PrettyPrint.PrettyPrintOptions;
 
@@ -16,12 +17,12 @@ namespace Engine.Items {
             checklist.Accept(this);
         }
 
-        public void PreVisit(Checklist checklist, Person creator) {
+        public void PreVisit(Checklist checklist, Person creator, History history) {
             _result += String.Format("{0}Checklist created by {1}\n", Indention, creator);
             _indentionLevel++;
         }
 
-        public void PostVisit(Checklist checklist, Person creator) {
+        public void PostVisit(Checklist checklist, Person creator, History history) {
             _indentionLevel--;
         }
 

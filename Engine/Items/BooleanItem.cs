@@ -1,17 +1,22 @@
-﻿namespace Engine.Items
+﻿using CommonUtilities.Util;
+using Engine.Persons;
+
+namespace Engine.Items
 {
 	public class BooleanItem : Item
     {
         private readonly Guid _id;
 		private bool? _hasSucceeded;
 		private readonly string _question;
+        private  History _history;
 
-		public BooleanItem(string question,Guid?id=null)
+        public BooleanItem(string question,Guid?id=null)
 		{
 			_question = question;
             _id = id??Guid.NewGuid();
         }
 
+        internal override History History() => _history;
 		internal override void Be(object value) {
 			ArgumentNullException.ThrowIfNull(value);
 			_hasSucceeded = (bool)value;
@@ -41,6 +46,13 @@
             false => ItemStatus.Failed,
             _ => ItemStatus.Unknown,
         };
+        internal override void AddPerson(Person person, Role role, History history)
+        {
+            _history = history;
+            base.AddPerson(person, role, history);
+        }
+
+        public override string ToString() => _question;
     }
 }
 

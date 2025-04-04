@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using CommonUtilities.Util;
 using Engine.Persons;
 using static System.Text.Json.JsonSerializer;
 using static Engine.Items.NullItem;
@@ -12,10 +7,12 @@ namespace Engine.Items {
     internal class ChecklistDeserializer {
         private int level;
         private readonly Stack<List<Item>> items = new();
+        private readonly History _history = new([]);
         internal Checklist Result => new Checklist(new Person(0, 0), items.Peek()[0]);
 
         internal ChecklistDeserializer(string memento) {
             try {
+                
                 var dtos = Deserialize<List<ItemDto>>(memento) ?? throw new InvalidOperationException("Invalid Json");
                 level = Level(dtos[0]);
                 for (int i = 0; i < level; i++) items.Push([]);
@@ -32,6 +29,7 @@ namespace Engine.Items {
                         _ => throw new InvalidOperationException($"Unknown item class name {dto.ItemClassName}")
                     });
                 }
+              
             }
             catch (InvalidOperationException) {
                 throw;
@@ -40,6 +38,7 @@ namespace Engine.Items {
                 throw new InvalidOperationException($"Error deserializing environment: {e.Message}", e);
             }
         }
+       
 
         private BooleanItem TrueFalse(ItemDto dto) {
             var result = new BooleanItem(dto.Question  ?? throw new InvalidOperationException("Improper DTO for BooleanItem: No question specified"),dto.Id);
@@ -98,4 +97,5 @@ namespace Engine.Items {
             return dto.Position.Count(p => p == '.') + 1;
         }
     }
+    
 }

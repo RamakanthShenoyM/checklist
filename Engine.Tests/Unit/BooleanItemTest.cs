@@ -1,10 +1,13 @@
 ﻿using System;
 using Engine.Items;
 using Engine.Persons;
+using Engine.Tests.Util;
 using Xunit;
+using Xunit.Abstractions;
+using static Engine.Items.ChecklistEventType;
 
 namespace Engine.Tests.Unit {
-    public class BooleanItemTest {
+    public class BooleanItemTest(ITestOutputHelper testOutput) {
         private static readonly Person Creator = new Person(0, 0);
 
         [Fact]
@@ -26,6 +29,20 @@ namespace Engine.Tests.Unit {
             Assert.Throws<ArgumentNullException>(() => Creator.Sets(item).To(null));
                 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             Assert.Throws<InvalidCastException>(() => Creator.Sets(item).To("India"));
+        }
+        
+        [Fact]
+        public void SingleItemHistory() {
+            var checklist = Creator.Checklist(
+                "Is US citizen?".TrueFalse()
+            );
+            var item = checklist.I(0);
+            Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
+            Creator.Sets(item).To(true);
+            var history = new HistoryDump(checklist).Result;
+            testOutput.WriteLine(history.ToString());
+            Assert.Single(history.Events(SetValueEvent));
+            Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
         }
 
         [Fact]

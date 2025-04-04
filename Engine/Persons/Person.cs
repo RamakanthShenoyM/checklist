@@ -1,20 +1,30 @@
-﻿using Engine.Items;
+﻿using CommonUtilities.Util;
+using Engine.Items;
+using static Engine.Items.ChecklistEventType;
 using static Engine.Persons.Operation;
 
 namespace Engine.Persons
 {
     public class Person
     {
+        private readonly int _organizationId;
+        private readonly int _personId;
+
         public Person(int organizationId, int personId)
         {
-
+            _organizationId = organizationId;
+            _personId = personId;
         }
         
         public AddingEngine Add(Person owner) => new(this, owner);
 
         public ActionEngine Can(Operation view) => new(this, view);
 
-        public AssignEngine Sets(Item item) => new(this, item);
+        public AssignEngine Sets(Item item)
+        {
+            return new AssignEngine(this, item);
+
+        }
 
         public InsertEngine Insert(Item firstItem, params Item[] items) => 
             new(this, firstItem,items);
@@ -38,7 +48,9 @@ namespace Engine.Persons
             if (!Can(Set).On(item))
                 throw new InvalidOperationException("Does not have permission to reset an Item");
             item.Reset();
+            item.History().Add(ResetValueEvent, $"<{this}> reset item <{item}>");
         }
+        public override string ToString() => $"org <{_organizationId}> person <{_personId}>";
 
         public class ActionEngine
         {
@@ -62,6 +74,7 @@ namespace Engine.Persons
             private readonly Item _item;
 
             internal AssignEngine(Person person, Item item)
+
             {
                 _person = person;
                 _item = item;
@@ -71,7 +84,24 @@ namespace Engine.Persons
             {
                 if (!_person.Can(Set).On(_item))
                     throw new InvalidOperationException("Does not have permission to set an Item");
-                _item.Be(value);
+                try
+                {
+                    _item.Be(value);
+                }
+                catch (InvalidOperationException)
+                {
+                    _item.History().Add(InvalidValueEvent,
+                        $"<{_person}> attempted to set item <{_item}> to invalid <{value}>");
+                    throw;
+                }
+                catch (ArgumentNullException)
+                {
+                    _item.History().Add(InvalidValueEvent,
+                        $"<{_person}> attempted to set item <{_item}> to null");
+                    throw;
+                }
+
+                _item.History().Add(SetValueEvent, $"<{_person}> set item <{_item}> to <{value}>");
             }
         }
 
@@ -169,6 +199,7 @@ namespace Engine.Persons
             private readonly Person _addingPerson;
             private readonly Person _addedPerson;
             private Role? _role;
+            private readonly History _history = new([]);
 
             internal AddingEngine(Person addingPerson, Person addedPerson)
             {
@@ -186,7 +217,7 @@ namespace Engine.Persons
             {
                 if (!_addingPerson.Can(AddPerson).On(item))
                     throw new InvalidOperationException("Does not have permission to add new person");
-                item.AddPerson(_addedPerson, _role ?? throw new InvalidOperationException("Improper DSL construction; missing Role!"));
+                item.AddPerson(_addedPerson, _role, _history ?? throw new InvalidOperationException("Improper DSL construction; missing Role!"));
 
             }
         }

@@ -1,4 +1,6 @@
-﻿using static System.String;
+﻿using CommonUtilities.Util;
+using Engine.Persons;
+using static System.String;
 
 namespace Engine.Items
 {
@@ -8,6 +10,7 @@ namespace Engine.Items
         private readonly List<object> _choices;
         private readonly string _question;
         private object? _value;
+        private History _history;
 
         public MultipleChoiceItem(string question, object firstChoice,Guid? id=null, params object[] choices)
         {
@@ -16,7 +19,12 @@ namespace Engine.Items
             _question = question;
             _id = id ?? Guid.NewGuid();
         }
-
+        internal override History History() => _history;
+        internal override void AddPerson(Person person, Role role, History history)
+        {
+            _history = history;
+            base.AddPerson(person, role, history);
+        }
         internal override void Accept(ChecklistVisitor visitor)
         {
             visitor.Visit(this,_id, _question, _value, _choices, Operations);
@@ -50,5 +58,7 @@ namespace Engine.Items
             if (indexes.Count == 1) return this;
             throw new InvalidOperationException($"No more items exist to reach with indexes {indexes}");
         }
+
+        public override string ToString() => _question;
     }
 }
