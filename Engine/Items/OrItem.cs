@@ -17,7 +17,7 @@ namespace Engine.Items
         }
         
         internal override void Accept(ChecklistVisitor visitor) {
-            visitor.PreVisit(this, _item1, _item2);
+            visitor.PreVisit(this, _item1, _item2, Operations);
             _item1.Accept(visitor);
             _item2.Accept(visitor);
             visitor.PostVisit(this, _item1, _item2, Operations);

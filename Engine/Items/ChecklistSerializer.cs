@@ -61,28 +61,27 @@ namespace Engine.Items
             _position.Increment();
         }
 
-        private static List<OperationDto> OperationDtos(Dictionary<Person, List<Operation>> operations) => 
-            operations.Select(o => new OperationDto(new PersonDto(o.Key._organizationId, o.Key._personId), o.Value)).ToList();
-
         public void PreVisit(Checklist checklist, Person creator,History history) => 
             _person = new PersonDto(creator._organizationId, creator._personId);
-        public void PreVisit(GroupItem item, List<Item> childItems) => _position.Deeper();
-        public void PostVisit(GroupItem item, List<Item> childItems, Dictionary<Person, List<Operation>> operations) => CreateComposite(item, OperationDtos(operations));
-        public void PreVisit(OrItem item, Item item1, Item item2) => _position.Deeper();
-        public void PostVisit(OrItem item, Item item1, Item item2, Dictionary<Person, List<Operation>> operations) => CreateComposite(item, OperationDtos(operations));
-        public void PreVisit(NotItem item, Item negatedItem) => _position.Deeper();
-        public void PostVisit(NotItem item, Item negatedItem, Dictionary<Person, List<Operation>> operations) => CreateComposite(item, OperationDtos(operations));
+        public void PreVisit(GroupItem item, List<Item> childItems, Dictionary<Person, List<Operation>> operations) => _position.Deeper();
+        public void PostVisit(GroupItem item, List<Item> childItems, Dictionary<Person, List<Operation>> operations) => CreateComposite(item, operations);
+        public void PreVisit(OrItem item, Item item1, Item item2, Dictionary<Person, List<Operation>> operations) => _position.Deeper();
+        public void PostVisit(OrItem item, Item item1, Item item2, Dictionary<Person, List<Operation>> operations) => CreateComposite(item, operations);
+        public void PreVisit(NotItem item, Item negatedItem, Dictionary<Person, List<Operation>> operations) => _position.Deeper();
+        public void PostVisit(NotItem item, Item negatedItem, Dictionary<Person, List<Operation>> operations) => CreateComposite(item, operations);
         public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
             Dictionary<Person, List<Operation>> operations) => _position.Deeper();
         public void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
             Dictionary<Person, List<Operation>> operations) => 
-            CreateComposite(item,OperationDtos(operations));
-        private void CreateComposite(Item item,List<OperationDto> dtos)
+            CreateComposite(item,operations);
+        private void CreateComposite(Item item, Dictionary<Person, List<Operation>> operations)
         {
             _position.Truncate();
-            _dtos.Add(new ItemDto(item.GetType().Name, _position.ToString(),Operations:dtos));
+            _dtos.Add(new ItemDto(item.GetType().Name, _position.ToString(),Operations: OperationDtos(operations)));
             _position.Increment();
         }
+        private static List<OperationDto> OperationDtos(Dictionary<Person, List<Operation>> operations) =>
+            operations.Select(o => new OperationDto(new PersonDto(o.Key._organizationId, o.Key._personId), o.Value)).ToList();
     }
 
     public record CheckListDto(PersonDto Person, List<ItemDto> Items,List<string> Events);

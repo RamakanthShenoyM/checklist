@@ -69,7 +69,7 @@ namespace Engine.Items {
             _position.Increment();
         }
 
-        public void PreVisit(OrItem item, Item item1, Item item2) {
+        public void PreVisit(OrItem item, Item item1, Item item2, Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
             _result += String.Format("{0}Either/Or [{1}]\n", Indention, _position);
             _indentionLevel++;
@@ -83,7 +83,7 @@ namespace Engine.Items {
             _position.Increment();
         }
 
-        public void PreVisit(NotItem item, Item negatedItem) {
+        public void PreVisit(NotItem item, Item negatedItem, Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
             _result += String.Format("{0}Not (the following) [{1}]\n", Indention, _position);
             _indentionLevel++;
@@ -97,7 +97,7 @@ namespace Engine.Items {
             _position.Increment();
         }
 
-        public void PreVisit(GroupItem item, List<Item> childItems) {
+        public void PreVisit(GroupItem item, List<Item> childItems, Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
             _result += String.Format("{0}Group of Items [{1}]\n", Indention, _position);
             _position.Deeper();

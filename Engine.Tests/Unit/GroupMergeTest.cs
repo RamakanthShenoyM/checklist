@@ -102,9 +102,9 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
             Dictionary<Person, List<Operation>> operations) =>
             Count[ConditionalQuestion] += 1;
 
-        public void PreVisit(NotItem item, Item negatedItem) => Count[NotQuestion] += 1;
-        public void PreVisit(OrItem item, Item item1, Item item2) => Count[OrQuestion] += 1;
-        public void PreVisit(GroupItem item, List<Item> childItems) => Count[GroupQuestion] += 1;
+        public void PreVisit(NotItem item, Item negatedItem, Dictionary<Person, List<Operation>> operations) => Count[NotQuestion] += 1;
+        public void PreVisit(OrItem item, Item item1, Item item2, Dictionary<Person, List<Operation>> operations) => Count[OrQuestion] += 1;
+        public void PreVisit(GroupItem item, List<Item> childItems, Dictionary<Person, List<Operation>> operations) => Count[GroupQuestion] += 1;
     }
 
     internal enum QuesitonType {
