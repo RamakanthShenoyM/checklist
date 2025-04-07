@@ -24,7 +24,7 @@ public static class ChecklistExtensions {
 
     // From ChatGPT
     public static bool DeepEquals<TKey, TEnum>(this Dictionary<TKey, List<TEnum>> left,
-        Dictionary<TKey, List<TEnum>> right) where TEnum : Enum {
+        Dictionary<TKey, List<TEnum>> right) where TEnum : Enum where TKey : notnull {
         // First, check if the keys match
         if (!new HashSet<TKey>(left.Keys).SetEquals(right.Keys)) return false;
         // Then, compare the values ignoring order
