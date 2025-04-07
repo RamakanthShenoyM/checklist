@@ -22,25 +22,18 @@ public static class ChecklistExtensions {
         new PositionLocator(checklist, item).Results;
 
     // From ChatGPT
-    public static bool DeepEquals(this Dictionary<Person, List<Operation>> left,
-        Dictionary<Person, List<Operation>> right) {
+    public static bool DeepEquals<TKey, TEnum>(this Dictionary<TKey, List<TEnum>> left,
+        Dictionary<TKey, List<TEnum>> right) where TEnum : Enum where TKey : notnull {
         // First, check if the keys match
-        if (!left.Keys.SetEquals(right.Keys)) return false;
+        if (!new HashSet<TKey>(left.Keys).SetEquals(right.Keys)) return false;
         // Then, compare the values ignoring order
         foreach (var key in left.Keys) {
-            var leftOperations = left[key];
-            var rightOperations = right[key];
+            var leftOperations = new HashSet<TEnum>(left[key]);
+            var rightOperations = new HashSet<TEnum>(right[key]);
             if (leftOperations.Count != rightOperations.Count) return false;
-
-            var leftSet = new HashSet<Operation>(leftOperations);
-            var rightSet = new HashSet<Operation>(rightOperations);
-            if (!leftSet.SetEquals(rightSet)) return false;
+            if (!leftOperations.SetEquals(rightOperations)) return false;
         }
 
         return true;
     }
-
-    // Helper extension method
-    private static bool SetEquals<T>(this ICollection<T> a, ICollection<T> b) =>
-        new HashSet<T>(a).SetEquals(b);
 }
