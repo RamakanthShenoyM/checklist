@@ -17,6 +17,7 @@ namespace Engine.Items
         }
 
         internal override History History() => _history;
+        
 		internal override void Be(object value) {
 			ArgumentNullException.ThrowIfNull(value);
 			_hasSucceeded = (bool)value;
@@ -28,7 +29,7 @@ namespace Engine.Items
             this._hasSucceeded == other._hasSucceeded
             && this._question == other._question
             && this._id == other._id
-            && this.Operations.SequenceEqual(other.Operations);
+            && this.Operations.DeepEquals(other.Operations);
 
 
         public override int GetHashCode() => _question.GetHashCode()*37+_id.GetHashCode();
