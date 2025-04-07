@@ -9,6 +9,7 @@ namespace Engine.Items
         private readonly List<ItemDto> _dtos = [];
         private PersonDto _person;
         private readonly Position _position = new();
+        private List<string> _events;
         internal ChecklistSerializer(Checklist checklist)
         {
             checklist.Accept(this);
@@ -20,11 +21,13 @@ namespace Engine.Items
             {
                 if (_dtos.Count == 0 || _person is null) throw new InvalidOperationException(
                     "The serializer has not examined the Checklist. Visitor issue possible?");
-                return JsonSerializer.Serialize(new CheckListDto(_person,_dtos));
+                return JsonSerializer.Serialize(new CheckListDto(_person,_dtos,_events));
             }
         }
 
-        public void Visit(BooleanItem item,Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations)
+        public void Visit(History history, List<string> events) => _events = events;
+
+        public void Visit(BooleanItem item,Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations,History history)
         {
             _dtos.Add(new ItemDto(
                 nameof(BooleanItem),
@@ -32,7 +35,8 @@ namespace Engine.Items
                 id,
                 question, 
                 new ValueDto(typeof(Boolean).ToString(), value.ToString()),
-                Operations:operations.Select(o=>new OperationDto(new PersonDto(o.Key._organizationId,o.Key._personId),o.Value)).ToList()));
+                Operations:OperationDtos(operations),
+                Events:history.Events()));
             _position.Increment();
         }
 
@@ -42,8 +46,8 @@ namespace Engine.Items
             _position.Increment();
         }
 
-        public void Visit(MultipleChoiceItem item,Guid id, string question, object? value,List<object> choices, 
-            Dictionary<Person, List<Operation>> operations)
+        public void Visit(MultipleChoiceItem item, Guid id, string question, object? value, List<object> choices,
+            Dictionary<Person, List<Operation>> operations, History history)
         {
             _dtos.Add(new ItemDto(
                 nameof(MultipleChoiceItem), 
@@ -51,30 +55,37 @@ namespace Engine.Items
                 id,
                 question, 
                 new ValueDto(value?.GetType().ToString(), value?.ToString()?? ""),
-                choices.Select(c => new ValueDto(c.GetType().ToString(), c.ToString())).ToList()));
+                choices.Select(c => new ValueDto(c.GetType().ToString(), c.ToString())).ToList(),
+                Operations:OperationDtos(operations),
+                Events:history.Events()));
             _position.Increment();
         }
+
+        private static List<OperationDto> OperationDtos(Dictionary<Person, List<Operation>> operations) => 
+            operations.Select(o => new OperationDto(new PersonDto(o.Key._organizationId, o.Key._personId), o.Value)).ToList();
 
         public void PreVisit(Checklist checklist, Person creator,History history) => 
             _person = new PersonDto(creator._organizationId, creator._personId);
         public void PreVisit(GroupItem item, List<Item> childItems) => _position.Deeper();
-        public void PostVisit(GroupItem item, List<Item> childItems) => CreateComposite(item);
+        public void PostVisit(GroupItem item, List<Item> childItems, Dictionary<Person, List<Operation>> operations) => CreateComposite(item, OperationDtos(operations));
         public void PreVisit(OrItem item, Item item1, Item item2) => _position.Deeper();
-        public void PostVisit(OrItem item, Item item1, Item item2) => CreateComposite(item);
+        public void PostVisit(OrItem item, Item item1, Item item2, Dictionary<Person, List<Operation>> operations) => CreateComposite(item, OperationDtos(operations));
         public void PreVisit(NotItem item, Item negatedItem) => _position.Deeper();
-        public void PostVisit(NotItem item, Item negatedItem) => CreateComposite(item);
-        public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) => _position.Deeper();
-        public void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) => 
-            CreateComposite(item);
-        private void CreateComposite(Item item)
+        public void PostVisit(NotItem item, Item negatedItem, Dictionary<Person, List<Operation>> operations) => CreateComposite(item, OperationDtos(operations));
+        public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
+            Dictionary<Person, List<Operation>> operations) => _position.Deeper();
+        public void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
+            Dictionary<Person, List<Operation>> operations) => 
+            CreateComposite(item,OperationDtos(operations));
+        private void CreateComposite(Item item,List<OperationDto> dtos)
         {
             _position.Truncate();
-            _dtos.Add(new ItemDto(item.GetType().Name, _position.ToString()));
+            _dtos.Add(new ItemDto(item.GetType().Name, _position.ToString(),Operations:dtos));
             _position.Increment();
         }
     }
 
-    public record CheckListDto(PersonDto Person, List<ItemDto> Items);
+    public record CheckListDto(PersonDto Person, List<ItemDto> Items,List<string> Events);
 
     public record ItemDto(
         string ItemClassName,
@@ -83,7 +94,8 @@ namespace Engine.Items
         string? Question = null, 
         ValueDto? Value=null,
         List<ValueDto>? Choices = null,
-        List<OperationDto>? Operations=null);
+        List<OperationDto>? Operations=null,
+        List<string>? Events=null);
 
     public record ValueDto(string? ValueClass, string? ValueValue);
 

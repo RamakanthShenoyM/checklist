@@ -1,4 +1,5 @@
-﻿using Engine.Persons;
+﻿using CommonUtilities.Util;
+using Engine.Persons;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,12 +26,13 @@ namespace Engine.Items
 
 		public object? this[string question] => Value(question);
 
-		public void Visit(BooleanItem item,Guid id,string question, bool? value, Dictionary<Person, List<Operation>> operations)
+		public void Visit(BooleanItem item,Guid id,string question, bool? value, Dictionary<Person, List<Operation>> operations,History history)
 		{
 			_answers[question]= value;
 		}
 
-		public void Visit(MultipleChoiceItem item,Guid id, string question, object? value, List<object> choices,Dictionary<Person, List<Operation>> operations)
+		public void Visit(MultipleChoiceItem item, Guid id, string question, object? value, List<object> choices,
+            Dictionary<Person, List<Operation>> operations, History history)
 		{
 			_answers[question] = value;
 		}

@@ -1,4 +1,6 @@
-﻿using static Engine.Items.ItemStatus;
+﻿using CommonUtilities.Util;
+using Engine.Persons;
+using static Engine.Items.ItemStatus;
 
 namespace Engine.Items
 {
@@ -14,5 +16,9 @@ namespace Engine.Items
         internal override void Reset() { }
 
         internal override ItemStatus Status() => Succeeded;
+        internal override void AddPerson(Person person, Role role, History history)
+        {
+            //Ignore this
+        }
     }
 }

@@ -10,6 +10,7 @@ public class History
     {
         _events = events;
     }
+
     public override bool Equals(object? obj) =>
         this == obj || obj is History other && this.Equals(other);
 
@@ -29,6 +30,8 @@ public class History
 
     public List<string> Events(Enum type) =>
         _events.FindAll(e => e.Contains($">> {type} <<"));
+
+    public List<string> Events() => _events;
 
     public void Add(Enum type, string message) => _events.Add(Header(type) + message);
 

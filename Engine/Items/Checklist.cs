@@ -6,14 +6,15 @@ using static Engine.Items.PrettyPrint.PrettyPrintOptions;
 
 namespace Engine.Items {
     public class Checklist {
-        private Item _item;
+        internal Item _item;
         private readonly Person _creator;
         private readonly History _history = new([]);
 
         // Create with a Creator person only with extension method
-        internal Checklist(Person creator, Item firstItem, params Item[] items) {
+        internal Checklist(Person creator, Item firstItem,History? history=null, params Item[] items) {
             _item = (items.Length == 0) ? firstItem : new GroupItem(firstItem, items);
             _creator = creator;
+            _history = history ?? _history;
             _item.AddPerson(_creator, Creator, _history);
         }
 
@@ -34,7 +35,6 @@ namespace Engine.Items {
 
         internal bool HasCreator(Person person) => person == _creator;
 
-
         public override string ToString() => ToString(Full);
 
         public string ToString(PrettyPrintOptions option) => new PrettyPrint(this, option).Result();
@@ -42,9 +42,11 @@ namespace Engine.Items {
         public override bool Equals(object? obj) => this == obj || obj is Checklist other && this.Equals(other);
 
         private bool Equals(Checklist other) =>
-            this._item.Equals(other._item) && this._creator.Equals(other._creator);
+            this._item.Equals(other._item) 
+            && this._creator.Equals(other._creator) 
+            && this._history.Equals(other._history);
 
-        public override int GetHashCode() => _creator.GetHashCode();
+        public override int GetHashCode() => _creator.GetHashCode()*37 + _history.GetHashCode();
 
         public History History => _history;
         public void Replace(Item originalItem, Item newItem) {

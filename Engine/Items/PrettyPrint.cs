@@ -31,7 +31,7 @@ namespace Engine.Items {
             Guid id,
             string question,
             bool? value,
-            Dictionary<Person, List<Operation>> operations
+            Dictionary<Person, List<Operation>> operations,History history
         ) {
             LabelIndention(item);
             _result += String.Format("{0}Question: [{1}] {2} Value: {3}\n", Indention, _position, question, Format(value));
@@ -40,21 +40,20 @@ namespace Engine.Items {
             _position.Increment();
         }
 
-        public void Visit(
-            MultipleChoiceItem item,
+        public void Visit(MultipleChoiceItem item,
             Guid id,
             string question,
             object? value,
             List<object> choices,
-            Dictionary<Person, List<Operation>> operations
-        ) {
+            Dictionary<Person, List<Operation>> operations, History history) {
             LabelIndention(item);
             _result += String.Format("{0}Boolean Item with value {1}\n", Indention, Format(value));
             OperationsDescription(operations);
             LabelUndention(item);
         }
 
-        public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) {
+        public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
+            Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
             _result += String.Format("{0}Conditional [{1}]\n", Indention, _position);
             _conditionalItems.Add(new Triple(baseItem, successItem, failureItem));
@@ -62,7 +61,8 @@ namespace Engine.Items {
             _position.Deeper();
         }
 
-        public void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) {
+        public void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
+            Dictionary<Person, List<Operation>> operations) {
             _indentionLevel--;
             LabelUndention(item);
             _position.Truncate();
@@ -76,7 +76,7 @@ namespace Engine.Items {
             _position.Deeper();
         }
 
-        public void PostVisit(OrItem item, Item item1, Item item2) {
+        public void PostVisit(OrItem item, Item item1, Item item2, Dictionary<Person, List<Operation>> operations) {
             _indentionLevel--;
             LabelUndention(item);
             _position.Truncate();
@@ -90,7 +90,7 @@ namespace Engine.Items {
             _position.Deeper();
         }
 
-        public void PostVisit(NotItem item, Item negatedItem) {
+        public void PostVisit(NotItem item, Item negatedItem, Dictionary<Person, List<Operation>> operations) {
             _indentionLevel--;
             LabelUndention(item);
             _position.Truncate();
@@ -104,7 +104,7 @@ namespace Engine.Items {
             _indentionLevel++;
         }
 
-        public void PostVisit(GroupItem item, List<Item> childItems) {
+        public void PostVisit(GroupItem item, List<Item> childItems, Dictionary<Person, List<Operation>> operations) {
             _indentionLevel--;
             LabelUndention(item);
             _position.Truncate();

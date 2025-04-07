@@ -8,9 +8,11 @@ namespace Engine.Items {
         private readonly string _question;
         private History? _history;
 
-        public BooleanItem(string question, Guid? id = null) {
-            _question = question;
-            _id = id ?? Guid.NewGuid();
+        public BooleanItem(string question,Guid?id=null,List<string>? events=null)
+		{
+			_question = question;
+            _id = id??Guid.NewGuid();
+            _history = new History(events ?? []);
         }
 
         internal override History History() => 
@@ -27,7 +29,8 @@ namespace Engine.Items {
             this._hasSucceeded == other._hasSucceeded
             && this._question == other._question
             && this._id == other._id
-            && this.Operations.DeepEquals(other.Operations);
+            && this.Operations.DeepEquals(other.Operations)
+            && this._history.Equals(other._history);
 
 
         public override int GetHashCode() => _question.GetHashCode() * 37 + _id.GetHashCode();
@@ -35,7 +38,7 @@ namespace Engine.Items {
         internal override void Reset() => _hasSucceeded = null;
 
         internal override void Accept(ChecklistVisitor visitor) {
-            visitor.Visit(this, _id, _question, _hasSucceeded, Operations);
+	        visitor.Visit(this,_id,_question, _hasSucceeded, Operations,_history);
         }
 
         internal override Item I(List<int> indexes) {
@@ -49,7 +52,9 @@ namespace Engine.Items {
             _ => ItemStatus.Unknown,
         };
 
-        internal override void AddPerson(Person person, Role role, History history) {
+        internal override void AddPerson(Person person, Role role, History history)
+        {
+            if (Operations.ContainsKey(person) && Operations.Keys.Count > 1) return;
             _history = history;
             base.AddPerson(person, role, history);
         }

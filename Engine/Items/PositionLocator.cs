@@ -1,3 +1,4 @@
+using CommonUtilities.Util;
 using Engine.Persons;
 
 namespace Engine.Items;
@@ -16,7 +17,7 @@ public class PositionLocator : ChecklistVisitor {
         checklist.Accept(this);
     }
 
-    public void Visit(BooleanItem item,Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations) {
+    public void Visit(BooleanItem item,Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations,History history) {
         if (item == _item) _itemPositions.Add(_position.Clone());
         _position.Increment();
     }
@@ -26,17 +27,19 @@ public class PositionLocator : ChecklistVisitor {
         string question,
         object? value,
         List<object> choices,
-        Dictionary<Person, List<Operation>> operations) {
+        Dictionary<Person, List<Operation>> operations, History history) {
         if (item == _item) _itemPositions.Add(_position.Clone());
         _position.Increment();
     }
 
-    public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) {
+    public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
+        Dictionary<Person, List<Operation>> operations) {
         if (item == _item) _itemPositions.Add(_position.Clone());
         _position.Deeper();
     }
 
-    public void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) {
+    public void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
+        Dictionary<Person, List<Operation>> operations) {
         _position.Truncate();
         _position.Increment();
     }
@@ -46,7 +49,7 @@ public class PositionLocator : ChecklistVisitor {
         _position.Deeper();
     }
 
-    public void PostVisit(NotItem item, Item negatedItem) {
+    public void PostVisit(NotItem item, Item negatedItem, Dictionary<Person, List<Operation>> operations) {
         _position.Truncate();
         _position.Increment();
     }
@@ -56,7 +59,7 @@ public class PositionLocator : ChecklistVisitor {
         _position.Deeper();
     }
 
-    public void PostVisit(OrItem item, Item item1, Item item2) {
+    public void PostVisit(OrItem item, Item item1, Item item2, Dictionary<Person, List<Operation>> operations) {
         _position.Truncate();
         _position.Increment();
     }
@@ -66,7 +69,7 @@ public class PositionLocator : ChecklistVisitor {
         _position.Deeper();
     }
 
-    public void PostVisit(GroupItem item, List<Item> childItems) {
+    public void PostVisit(GroupItem item, List<Item> childItems, Dictionary<Person, List<Operation>> operations) {
         _position.Truncate();
         _position.Increment();
     }

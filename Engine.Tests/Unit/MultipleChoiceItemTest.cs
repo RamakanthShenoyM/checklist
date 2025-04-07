@@ -7,6 +7,7 @@ using Engine.Persons;
 using Xunit.Abstractions;
 using Engine.Tests.Util;
 using static Engine.Items.ChecklistEventType;
+using CommonUtilities.Util;
 
 namespace Engine.Tests.Unit
 {
@@ -91,10 +92,11 @@ namespace Engine.Tests.Unit
                 checklist.Accept(this);
             }
 
-            public void Visit(BooleanItem item, Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations) =>
+            public void Visit(BooleanItem item, Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations,History history) =>
                 Count++;
 
-            public void Visit(MultipleChoiceItem item, Guid id, string question, object? value, List<object> choices, Dictionary<Person, List<Operation>> operations) =>
+            public void Visit(MultipleChoiceItem item, Guid id, string question, object? value, List<object> choices,
+                Dictionary<Person, List<Operation>> operations, History history) =>
                 Count++;
         }
 

@@ -227,7 +227,8 @@ namespace Engine.Persons
                     throw new InvalidOperationException("Does not have permission to add new person");
                 item.AddPerson(_addedPerson, _role, _history ?? throw new InvalidOperationException("Improper DSL construction; missing Role!"));
 
-            }
+            } 
+            public void To(Checklist checklist) => To(checklist._item);
         }
     }
 }

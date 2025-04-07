@@ -20,7 +20,7 @@ namespace Engine.Items
             visitor.PreVisit(this, _item1, _item2);
             _item1.Accept(visitor);
             _item2.Accept(visitor);
-            visitor.PostVisit(this, _item1, _item2);
+            visitor.PostVisit(this, _item1, _item2, Operations);
         }
 
         internal override void Be(object value)
@@ -36,7 +36,8 @@ namespace Engine.Items
         public override bool Equals(object? obj) => this == obj || obj is OrItem other && this.Equals(other);
 
         private bool Equals(OrItem other) =>
-            this._item1.Equals(other._item1) && this._item2.Equals(other._item2);
+            this._item1.Equals(other._item1) && this._item2.Equals(other._item2) &&
+            this.Operations.DeepEquals(other.Operations);
 
         public override int GetHashCode() => _item1.GetHashCode() + _item2.GetHashCode();
 

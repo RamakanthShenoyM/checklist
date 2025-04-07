@@ -17,7 +17,7 @@ namespace Engine.Items
         internal override void Accept(ChecklistVisitor visitor) {
             visitor.PreVisit(this, _item);
             _item.Accept(visitor);
-            visitor.PostVisit(this, _item);
+            visitor.PostVisit(this, _item, Operations);
         }
 
         internal override void Be(object value) => throw new InvalidOperationException("can't set the Not");
@@ -27,7 +27,7 @@ namespace Engine.Items
         public override bool Equals(object? obj) => this == obj || obj is NotItem other && this.Equals(other);
 
         private bool Equals(NotItem other) =>
-            this._item.Equals(other._item);
+            this._item.Equals(other._item) && this.Operations.DeepEquals(other.Operations);
 
         public override int GetHashCode() => _item.GetHashCode();
 

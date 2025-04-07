@@ -17,11 +17,11 @@ namespace Engine.Items {
         }
 
         internal override void Accept(ChecklistVisitor visitor) {
-            visitor.PreVisit(this, _conditionItem, _onSuccessItem, _onFailItem);
+            visitor.PreVisit(this, _conditionItem, _onSuccessItem, _onFailItem, Operations);
             _conditionItem.Accept(visitor);
             _onSuccessItem.Accept(visitor);
             _onFailItem.Accept(visitor);
-            visitor.PostVisit(this, _conditionItem, _onSuccessItem, _onFailItem);
+            visitor.PostVisit(this, _conditionItem, _onSuccessItem, _onFailItem, Operations);
         }
 
         internal override void Be(object value) =>
@@ -34,7 +34,8 @@ namespace Engine.Items {
         private bool Equals(ConditionalItem other) =>
             this._conditionItem.Equals(other._conditionItem)
             && (this._onSuccessItem?.Equals(other._onSuccessItem) ?? other._onSuccessItem == null)
-            && (this._onFailItem?.Equals(other._onFailItem) ?? other._onFailItem == null);
+            && (this._onFailItem?.Equals(other._onFailItem) ?? other._onFailItem == null)
+            && this.Operations.DeepEquals(other.Operations);
 
         public override int GetHashCode() => _conditionItem.GetHashCode() + (_onSuccessItem?.GetHashCode() ?? 0) + (_onFailItem?.GetHashCode() ?? 0);
 

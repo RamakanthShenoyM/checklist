@@ -7,6 +7,7 @@ using Xunit;
 using Xunit.Abstractions;
 using static Engine.Tests.Unit.GroupMergeTest.QuesitonType;
 using static Engine.Items.PrettyPrint.PrettyPrintOptions;
+using CommonUtilities.Util;
 
 namespace Engine.Tests.Unit;
 
@@ -86,18 +87,19 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
             Guid id,
             string question,
             bool? value,
-            Dictionary<Person, List<Operation>> operations) =>
+            Dictionary<Person, List<Operation>> operations, History history) =>
             Count[BooleanQuestion] += 1;
 
         public void Visit(MultipleChoiceItem item,
             Guid id,
             string question,
             object? value,
-            List<object> choices, 
-            Dictionary<Person, List<Operation>> operations) =>
+            List<object> choices,
+            Dictionary<Person, List<Operation>> operations, History history) =>
             Count[MultipleChoiceQuestion] += 1;
 
-        public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem) =>
+        public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
+            Dictionary<Person, List<Operation>> operations) =>
             Count[ConditionalQuestion] += 1;
 
         public void PreVisit(NotItem item, Item negatedItem) => Count[NotQuestion] += 1;

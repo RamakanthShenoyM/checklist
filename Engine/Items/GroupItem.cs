@@ -40,7 +40,7 @@ namespace Engine.Items
         public override bool Equals(object? obj) => this == obj || obj is GroupItem other && this.Equals(other);
 
         private bool Equals(GroupItem other) =>
-             this._childItems.SequenceEqual(other._childItems);
+            this._childItems.SequenceEqual(other._childItems) && this.Operations.DeepEquals(other.Operations);
 
         public override int GetHashCode()
         {
@@ -67,7 +67,7 @@ namespace Engine.Items
         {
             visitor.PreVisit(this, _childItems);
             foreach (var item in _childItems) item.Accept(visitor);
-            visitor.PostVisit(this, _childItems);
+            visitor.PostVisit(this, _childItems, Operations);
         }
 
         internal override void AddPerson(Person person, Role role, History history)

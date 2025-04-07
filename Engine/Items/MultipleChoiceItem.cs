@@ -12,22 +12,24 @@ namespace Engine.Items
         private object? _value;
         private History _history;
 
-        public MultipleChoiceItem(string question, object firstChoice,Guid? id=null, params object[] choices)
+        public MultipleChoiceItem(string question, object firstChoice,Guid? id=null,List<string>? events=null,params object[] choices)
         {
             _choices = choices.ToList();
             _choices.Insert(0, firstChoice);
             _question = question;
             _id = id ?? Guid.NewGuid();
+            _history = new History(events ?? []);
         }
         internal override History History() => _history;
         internal override void AddPerson(Person person, Role role, History history)
         {
+            if (Operations.ContainsKey(person) && Operations.Keys.Count > 1) return;
             _history = history;
             base.AddPerson(person, role, history);
         }
         internal override void Accept(ChecklistVisitor visitor)
         {
-            visitor.Visit(this,_id, _question, _value, _choices, Operations);
+            visitor.Visit(this,_id, _question, _value, _choices, Operations, _history);
         }
 
         internal override void Be(object value)
@@ -43,7 +45,12 @@ namespace Engine.Items
         public override bool Equals(object? obj) => this == obj || obj is MultipleChoiceItem other && this.Equals(other);
 
         private bool Equals(MultipleChoiceItem other) =>
-            Equals(this._value,other._value)&& this._question == other._question && this._choices.SequenceEqual(other._choices) && this._id == other._id;
+            Equals(this._value, other._value)
+            && this._question == other._question
+            && this._choices.SequenceEqual(other._choices)
+            && this._id == other._id
+            && this.Operations.DeepEquals(other.Operations)
+            && this._history.Equals(other._history);
 
         public override int GetHashCode() => HashCode.Combine(_question, _id, Join(",", _choices));
 

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Engine.Items;
+﻿using Engine.Items;
 using Engine.Persons;
 using Xunit;
 using Xunit.Abstractions;
@@ -126,20 +119,36 @@ namespace Engine.Tests.Unit
 		}
         
         [Fact]
-		public void CheckEqualsForBooleanItemChecklist()
+		public void BooleanItemChecklistEquality()
         {
             var item1 = "First Item".TrueFalse();
-			var checklist = Creator.Checklist(
+            var checklist = Creator.Checklist(
 				item1
 			);
-			Creator.Sets(item1).To(true);
-            Creator.Add(Owner).As(Role.Owner).To(item1);
+            Creator.Sets(item1).To(true);
             var memento = checklist.ToMemento();
 			var restoredChecklist = Checklist.FromMemento(memento);
             Assert.Equal(checklist, restoredChecklist);
             testOutput.WriteLine(memento);
 		}
 
+        [Fact]
+        public void BooleanItemChecklistEqualityWithMultiplePersons()
+        {
+            var item1 = "First Item".TrueFalse();
+            var item2 = "Second Item".TrueFalse();
+            var checklist = Creator.Checklist(
+                item1,item2
+            );
+            Creator.Sets(item1).To(true);
+            Creator.Add(Owner).As(Role.Owner).To(item2);
+            Owner.Sets(item2).To(false);
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+            testOutput.WriteLine(memento);
+        }
+        
         [Fact]
         public void CheckEqualsForGroupItemCheckList()
         {
@@ -150,6 +159,22 @@ namespace Engine.Tests.Unit
             var checklist = Creator.Checklist(
                 item1
             );
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+            testOutput.WriteLine(memento);
+        }
+        [Fact]
+        public void CheckEqualsForGroupItemCheckListWithMultiplePersons()
+        {
+            var item1 = Group(
+                "first inner question".TrueFalse(),
+                "second inner question".TrueFalse()
+            );
+            var checklist = Creator.Checklist(
+                item1
+            );
+            Creator.Add(Owner).As(Role.Owner).To(item1);
             var memento = checklist.ToMemento();
             var restoredChecklist = Checklist.FromMemento(memento);
             Assert.Equal(checklist, restoredChecklist);
@@ -170,6 +195,22 @@ namespace Engine.Tests.Unit
             var restoredChecklist = Checklist.FromMemento(memento);
             Assert.Equal(checklist, restoredChecklist);
             testOutput.WriteLine(memento);
+        } 
+        [Fact]
+        public void CheckEqualsForOrItemCheckListWithMultiplePerson()
+        {
+            var item1 = Or(
+                "first inner question".TrueFalse(),
+                "second inner question".TrueFalse()
+            );
+            var checklist = Creator.Checklist(
+                item1
+            );
+            Creator.Add(Owner).As(Role.Owner).To(item1);
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+            testOutput.WriteLine(memento);
         }
 
         [Fact]
@@ -184,6 +225,24 @@ namespace Engine.Tests.Unit
             var checklist = Creator.Checklist(
                 item1
             );
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+            testOutput.WriteLine(memento);
+        }
+        [Fact]
+        public void CheckEqualsForNotItemCheckListWithMultiplePersons()
+        {
+            var item1 = Not(
+                Group(
+                    "first inner question".TrueFalse(),
+                    "second inner question".TrueFalse()
+                )
+            );
+            var checklist = Creator.Checklist(
+                item1
+            );
+            Creator.Add(Owner).As(Role.Owner).To(item1);
             var memento = checklist.ToMemento();
             var restoredChecklist = Checklist.FromMemento(memento);
             Assert.Equal(checklist, restoredChecklist);
@@ -209,9 +268,30 @@ namespace Engine.Tests.Unit
             Assert.Equal(checklist, restoredChecklist);
             testOutput.WriteLine(memento);
         }
+        
+        [Fact]
+        public void CheckEqualsForConditionalItemCheckListWithMultiplePersons()
+        {
+            var item1 = Conditional(
+                "Conditional question".TrueFalse(),
+                Group(
+                    "first Succeed inner question".TrueFalse(),
+                    "second Succeed inner question".TrueFalse()
+                ),
+                "Failed question".TrueFalse()
+            );
+            var checklist = Creator.Checklist(
+                item1
+            );
+            Creator.Add(Owner).As(Role.Owner).To(item1);
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+            testOutput.WriteLine(memento);
+        }
 
         [Fact]
-        public void CheckEqualsForMultipleChoiceItem()
+        public void MultipleChoiceItemChecklistEquality()
         {
             var item1 = "second question".Choices(1, 2, 3,4);
             var checklist = Creator.Checklist(
@@ -222,8 +302,25 @@ namespace Engine.Tests.Unit
             var restoredChecklist = Checklist.FromMemento(memento);
             Assert.Equal(checklist, restoredChecklist);
             testOutput.WriteLine(memento);
-
         }
+
+        [Fact]
+        public void MultipleChoiceItemChecklistEqualityWithMultiplePersons()
+        {
+            var item1 = "second question".Choices(1, 2, 3, 4);
+            var item2 = "second question".Choices("A", "B", "C", "D");
+            var checklist = Creator.Checklist(
+                item1,item2
+            );
+            Creator.Sets(item1).To(1);
+            Creator.Add(Owner).As(Role.Owner).To(item2);
+            Owner.Sets(item2).To("A");
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+            testOutput.WriteLine(memento);
+        }
+
 
         [Fact]
         public void CheckEqualsForComplexCheckList()
