@@ -15,8 +15,9 @@ namespace Engine.Items
             _item1 = item1;
             _item2 = item2;
         }
-        
-        internal override void Accept(ChecklistVisitor visitor) {
+
+        internal override void Accept(ChecklistVisitor visitor)
+        {
             visitor.PreVisit(this, _item1, _item2, Operations);
             _item1.Accept(visitor);
             _item2.Accept(visitor);
@@ -79,11 +80,19 @@ namespace Engine.Items
             _item2.History(history);
         }
 
+        internal override void RemovePerson(Person person)
+        {
+             base.RemovePerson(person);
+            _item1.RemovePerson(person);
+            _item2.RemovePerson(person);
+        }
+
         internal override bool Contains(Item desiredItem) =>
            _item1.Contains(desiredItem)
                || _item2.Contains(desiredItem);
 
-        internal override void Simplify() {
+        internal override void Simplify()
+        {
             _item1.Simplify();
             _item2.Simplify();
         }
@@ -96,13 +105,14 @@ namespace Engine.Items
             return _item2.Remove(item) || result;
         }
 
-        internal override Item I(List<int> indexes) {
+        internal override Item I(List<int> indexes)
+        {
             if (indexes.Count == 1) return this;
             if (indexes[1] == 0) return _item1.I(indexes.Skip(1).ToList());
             if (indexes[1] == 1) return _item2.I(indexes.Skip(1).ToList());
             throw new InvalidOperationException($"Invalid index of {indexes[1]} for an OrItem. Should be 0 or 1 only.");
         }
 
-        internal override List<SimpleItem> ActiveItems() => [.._item1.ActiveItems().Concat(_item2.ActiveItems())];
+        internal override List<SimpleItem> ActiveItems() => [.. _item1.ActiveItems().Concat(_item2.ActiveItems())];
     }
 }

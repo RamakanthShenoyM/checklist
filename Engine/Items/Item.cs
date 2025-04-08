@@ -23,9 +23,13 @@ namespace Engine.Items
             Operations[person] = role.Operations.Concat(Operations[person]).ToHashSet().ToList();
         }
 
+        internal virtual void RemovePerson(Person person) => Operations.Remove(person);
+
+        
+		internal bool HasPerson(Person person) => Operations.Keys.Contains(person);
         internal virtual void History(History history) => _history = history;
 
-        internal bool HasPerson(Person person) => Operations.Keys.Contains(person);
+        
 		
         internal virtual void AddOperation(Person person,List<Operation> operations) => 
 	        Operations[person] = operations;

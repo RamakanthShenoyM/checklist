@@ -59,6 +59,12 @@ namespace Engine.Items
             base.History(history);  
             _item.History(history);
         }
+        
+        internal override void RemovePerson(Person person)
+        {
+            base.RemovePerson(person);
+            _item.RemovePerson(person);
+        }
 
         internal override bool Contains(Item desiredItem) =>
            _item.Contains(desiredItem);

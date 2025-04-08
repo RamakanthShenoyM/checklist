@@ -81,6 +81,12 @@ namespace Engine.Items
             base.History(history);
             foreach (var item in _childItems) item.History(history);
         }
+        
+        internal override void RemovePerson(Person person)
+        {
+            base.RemovePerson(person);
+            foreach (var item in _childItems) item.RemovePerson(person);
+        }
 
         internal override bool Contains(Item desiredItem) =>
             _childItems.Contains(desiredItem);
