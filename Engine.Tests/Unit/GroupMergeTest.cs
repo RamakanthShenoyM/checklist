@@ -28,7 +28,7 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
         var replace2A = "Replace2A".TrueFalse();
         var replace2B = "Replace2B".TrueFalse();
         var replace2C = "Replace2C".TrueFalse();
-        Creator.Replace(checklist.I(0, 1)).With(replace2A, replace2B, replace2C).In(checklist);
+        Creator.Replace(checklist.P(0, 1)).With(replace2A, replace2B, replace2C).In(checklist);
         Assert.Equal(5, new QuestionTypes(checklist).Count[BooleanQuestion]);
         Assert.Equal(2, new QuestionTypes(checklist).Count[GroupQuestion]);
         testOutput.WriteLine(checklist.ToString(NoOperations));
@@ -50,7 +50,7 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
         Assert.Equal(1, new QuestionTypes(checklist).Count[GroupQuestion]);
         testOutput.WriteLine(checklist.ToString(NoOperations));
 
-        Creator.Replace(checklist.I(0, 1)).With(
+        Creator.Replace(checklist.P(0, 1)).With(
             "Replace2A".TrueFalse(), 
             "Replace2B".TrueFalse(), 
             "Replace2C".TrueFalse()
@@ -59,7 +59,7 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
         Assert.Equal(2, new QuestionTypes(checklist).Count[GroupQuestion]);
         testOutput.WriteLine(checklist.ToString(NoOperations));
 
-        Creator.Replace(checklist.I(0, 3)).With(
+        Creator.Replace(checklist.P(0, 3)).With(
             "Replace4A".TrueFalse(), 
             "Replace4B".TrueFalse(), 
             "Replace4C".TrueFalse()

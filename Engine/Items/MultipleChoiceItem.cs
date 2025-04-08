@@ -52,7 +52,7 @@ namespace Engine.Items
             return _choices.Contains(_value) ? ItemStatus.Succeeded : ItemStatus.Failed;
         }
 
-        internal override Item I(List<int> indexes)
+        internal override Item P(List<int> indexes)
         {
             if (indexes.Count == 1) return this;
             throw new InvalidOperationException($"No more items exist to reach with indexes {indexes}");

@@ -48,18 +48,19 @@ namespace Engine.Items {
             && this._history.Equals(other._history);
 
         public override int GetHashCode() => _creator.GetHashCode()*37 + _history.GetHashCode();
-
-        public History History => _history;
         
         public void Replace(Item originalItem, Item newItem) {
             newItem.AddPerson(_creator, Creator);
+            newItem.History(_history);
             if (_item == originalItem) {
                 _item = newItem;
+                new ChecklistIndexer(this);
                 return;
             }
 
             if (!_item.Replace(originalItem, newItem))
                 throw new InvalidOperationException("Item not found in checklist");
+            new ChecklistIndexer(this);
         }
 
         public void Simplify() {
@@ -69,14 +70,15 @@ namespace Engine.Items {
         internal void Remove(Item item) {
             if (item == _item) throw new InvalidOperationException("Cannot remove the only item in the checklist");
             if (!_item.Remove(item)) throw new InvalidOperationException("Item not found in checklist");
+            new ChecklistIndexer(this);
         }
 
-        public Item I(int firstIndex, params int[] rest) {
+        public Item P(int firstIndex, params int[] rest) {
             if (firstIndex != 0) throw new InvalidOperationException(
                 "There is only one item at the root of the Checklist hierarchy, so use index 0.");
             var indexes = rest.ToList();
             indexes.Insert(0, firstIndex);
-            return _item.I(indexes);
+            return _item.P(indexes);
         }
 
         public string ToMemento() => new ChecklistSerializer(this).Result;

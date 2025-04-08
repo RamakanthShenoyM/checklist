@@ -22,8 +22,8 @@ namespace Engine.Tests.Unit
 				"Is India citizen?".TrueFalse(),
 				"Is Kanataka Resident?".TrueFalse()
 			);
-			var item1 = checklist.I(0, 0);
-			var item2 = checklist.I(0, 1);
+			var item1 = checklist.P(0, 0);
+			var item2 = checklist.P(0, 1);
 			
 			Assert.True(Creator.Can(Set).On(item1));
 			Assert.False(Owner.Can(Set).On(item1));
@@ -43,8 +43,8 @@ namespace Engine.Tests.Unit
 				"Is India citizen?".TrueFalse(),
 				"Is Kanataka Resident?".TrueFalse()
 			);
-			var item1 = checklist.I(0, 0);
-			var item2 = checklist.I(0, 1);
+			var item1 = checklist.P(0, 0);
+			var item2 = checklist.P(0, 1);
 
 			Creator.Add(Owner).As(Role.Owner).To(checklist);
 			Assert.True(Owner.Can(Set).On(item1));

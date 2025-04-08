@@ -17,10 +17,10 @@ namespace Engine.Items {
 
         internal virtual void History(History history) => _history = history;
 
-        public Item I(int firstIndex, params int[] rest) {
+        public Item P(int firstIndex, params int[] rest) {
             var results = rest.ToList();
             results.Insert(0, firstIndex);
-            return I(results);
+            return P(results);
         }
 
         internal abstract ItemStatus Status();
@@ -48,7 +48,7 @@ namespace Engine.Items {
 
         internal virtual bool Remove(Item item) => false;
 
-        internal abstract Item I(List<int> indexes);
+        internal abstract Item P(List<int> indexes);
 
         internal abstract List<SimpleItem> ActiveItems();
     }

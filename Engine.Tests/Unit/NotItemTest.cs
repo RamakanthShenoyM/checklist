@@ -16,8 +16,8 @@ namespace Engine.Tests.Unit
             var checklist = Creator.Checklist(
                 Not( new BooleanItem("Is US citizen?") )
             );
-            var booleanItem = (SimpleItem)checklist.I(0, 0);
-            var notItem = checklist.I(0);
+            var booleanItem = (SimpleItem)checklist.P(0, 0);
+            var notItem = checklist.P(0);
             Assert.Equal(InProgress, checklist.Status());
             Creator.Sets(booleanItem).To(true);
             Assert.Equal(Failed, checklist.Status());
@@ -33,8 +33,8 @@ namespace Engine.Tests.Unit
             var checklist = Creator.Checklist(
                 Not( "Which country?".Choices("India","Srilanka") )
             );
-            var multipleChoiceItem = (SimpleItem)checklist.I(0, 0);
-            var notItem = checklist.I(0);
+            var multipleChoiceItem = (SimpleItem)checklist.P(0, 0);
+            var notItem = checklist.P(0);
             Assert.Equal(InProgress, checklist.Status());
             Creator.Sets(multipleChoiceItem).To("India");
             Assert.Equal(Failed, checklist.Status());

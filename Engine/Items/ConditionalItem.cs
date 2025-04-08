@@ -143,14 +143,14 @@ namespace Engine.Items
             return result || baseResult || successResult || failItemResult;
         }
 
-        internal override Item I(List<int> indexes)
+        internal override Item P(List<int> indexes)
         {
             if (indexes.Count == 1) return this;
             return indexes[1] switch
             {
-                0 => _conditionItem.I(indexes.Skip(1).ToList()),
-                1 => _onSuccessItem?.I(indexes.Skip(1).ToList()) ?? Fail("success"),
-                2 => _onFailItem?.I(indexes.Skip(1).ToList()) ?? Fail("failure"),
+                0 => _conditionItem.P(indexes.Skip(1).ToList()),
+                1 => _onSuccessItem?.P(indexes.Skip(1).ToList()) ?? Fail("success"),
+                2 => _onFailItem?.P(indexes.Skip(1).ToList()) ?? Fail("failure"),
                 _ => throw new InvalidOperationException("Invalid index for a Conditional Item")
             };
         }
