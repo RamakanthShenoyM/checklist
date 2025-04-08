@@ -10,7 +10,6 @@ namespace Engine.Items {
         private readonly List<Triple> _conditionalItems = [];
         private String _result = "";
         private readonly HashSet<Item> _extraIndentedItems = new();
-        private Position _position = new();
 
         internal PrettyPrint(Checklist checklist, PrettyPrintOptions option = Full) {
             _option = option;
@@ -34,10 +33,9 @@ namespace Engine.Items {
             Dictionary<Person, List<Operation>> operations,
             History history) {
             LabelIndention(item);
-            _result += String.Format("{0}Question: [{1}] {2} Value: {3}\n", Indention, _position, question, Format(value));
+            _result += String.Format("{0}Question: [{1}] {2} Value: {3}\n", Indention, position, question, Format(value));
             OperationsDescription(operations);
             LabelUndention(item);
-            _position.Increment();
         }
 
         public void Visit(MultipleChoiceItem item,
@@ -52,7 +50,6 @@ namespace Engine.Items {
             _result += String.Format("{0}Boolean Item with value {1}\n", Indention, Format(value));
             OperationsDescription(operations);
             LabelUndention(item);
-            _position.Increment();
         }
 
         public void PreVisit(ConditionalItem item,
@@ -62,10 +59,9 @@ namespace Engine.Items {
             Item? failureItem,
             Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
-            _result += String.Format("{0}Conditional [{1}]\n", Indention, _position);
+            _result += String.Format("{0}Conditional [{1}]\n", Indention, position);
             _conditionalItems.Add(new Triple(baseItem, successItem, failureItem));
             _indentionLevel++;
-            _position.Deeper();
         }
 
         public void PostVisit(ConditionalItem item,
@@ -76,8 +72,6 @@ namespace Engine.Items {
             Dictionary<Person, List<Operation>> operations) {
             _indentionLevel--;
             LabelUndention(item);
-            _position.Truncate();
-            _position.Increment();
         }
 
         public void PreVisit(OrItem item,
@@ -86,9 +80,8 @@ namespace Engine.Items {
             Item item2,
             Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
-            _result += String.Format("{0}Either/Or [{1}]\n", Indention, _position);
+            _result += String.Format("{0}Either/Or [{1}]\n", Indention, position);
             _indentionLevel++;
-            _position.Deeper();
         }
 
         public void PostVisit(OrItem item,
@@ -98,8 +91,6 @@ namespace Engine.Items {
             Dictionary<Person, List<Operation>> operations) {
             _indentionLevel--;
             LabelUndention(item);
-            _position.Truncate();
-            _position.Increment();
         }
 
         public void PreVisit(NotItem item,
@@ -107,9 +98,8 @@ namespace Engine.Items {
             Item negatedItem,
             Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
-            _result += String.Format("{0}Not (the following) [{1}]\n", Indention, _position);
+            _result += String.Format("{0}Not (the following) [{1}]\n", Indention, position);
             _indentionLevel++;
-            _position.Deeper();
         }
 
         public void PostVisit(NotItem item,
@@ -118,8 +108,6 @@ namespace Engine.Items {
             Dictionary<Person, List<Operation>> operations) {
             _indentionLevel--;
             LabelUndention(item);
-            _position.Truncate();
-            _position.Increment();
         }
 
         public void PreVisit(GroupItem item,
@@ -127,8 +115,7 @@ namespace Engine.Items {
             List<Item> childItems,
             Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
-            _result += String.Format("{0}Group of Items [{1}]\n", Indention, _position);
-            _position.Deeper();
+            _result += String.Format("{0}Group of Items [{1}]\n", Indention, position);
             _indentionLevel++;
         }
 
@@ -138,8 +125,6 @@ namespace Engine.Items {
             Dictionary<Person, List<Operation>> operations) {
             _indentionLevel--;
             LabelUndention(item);
-            _position.Truncate();
-            _position.Increment();
         }
 
         private void OperationsDescription(Dictionary<Person, List<Operation>> operations) {
