@@ -82,6 +82,7 @@ namespace Engine.Items {
 
         internal override void History(History history)
         {
+            base.History(history);
             _conditionItem.History(history);
             _onSuccessItem.History(history);
             _onFailItem.History(history);

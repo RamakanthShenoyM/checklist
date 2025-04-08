@@ -226,6 +226,7 @@ namespace Engine.Persons
                 if (!_addingPerson.Can(AddPerson).On(item))
                     throw new InvalidOperationException("Does not have permission to add new person");
                 item.AddPerson(_addedPerson, _role);
+                item.History().Add(PersonAddEvent, $"Person<{_addingPerson}> added <{_addedPerson}> To <{item}>");
 
             } 
             public void To(Checklist checklist) => To(checklist._item);

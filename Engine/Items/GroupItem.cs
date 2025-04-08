@@ -78,6 +78,7 @@ namespace Engine.Items
 
         internal override void History(History history)
         {
+            base.History(history);
             foreach (var item in _childItems) item.History(history);
         }
 

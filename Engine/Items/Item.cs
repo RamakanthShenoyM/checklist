@@ -5,9 +5,13 @@ namespace Engine.Items
 {
 	public abstract class Item
 	{
-		protected readonly Dictionary<Person, List<Operation>> Operations = [];
-		
-		internal abstract ItemStatus Status();
+		 protected History? _history;
+       
+        protected readonly Dictionary<Person, List<Operation>> Operations = [];
+        internal History History() => _history;
+       
+
+        internal abstract ItemStatus Status();
 		
 		internal abstract void Be(object value);
 		
@@ -19,9 +23,9 @@ namespace Engine.Items
             Operations[person] = role.Operations.Concat(Operations[person]).ToHashSet().ToList();
         }
 
-        internal abstract void History(History history);
-        
-		internal bool HasPerson(Person person) => Operations.Keys.Contains(person);
+        internal virtual void History(History history) => _history = history;
+
+        internal bool HasPerson(Person person) => Operations.Keys.Contains(person);
 		
         internal virtual void AddOperation(Person person,List<Operation> operations) => 
 	        Operations[person] = operations;
@@ -52,9 +56,9 @@ namespace Engine.Items
 
     public abstract class SimpleItem: Item
     {
-        protected History? _history;
-        internal History History() => _history;
-        internal override void History(History history) => _history = history;
+       
+       
+
     }
 
 	public static class ItemExtensions

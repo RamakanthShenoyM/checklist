@@ -54,7 +54,11 @@ namespace Engine.Items
             _item.AddPerson(person, role);
         }
 
-        internal override void History(History history) => _item.History(history);
+        internal override void History(History history)
+        {
+            base.History(history);  
+            _item.History(history);
+        }
 
         internal override bool Contains(Item desiredItem) =>
            _item.Contains(desiredItem);
