@@ -29,5 +29,10 @@ namespace Engine.Items
         {
             //Ignore this
         }
+
+        internal override void RemovePerson(Person person)
+        {
+            //Ignore this
+        }
     }
 }

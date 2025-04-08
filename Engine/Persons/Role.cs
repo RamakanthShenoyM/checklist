@@ -7,14 +7,12 @@ namespace Engine.Persons
         View,
         ModifyChecklist,
         Set,
-        AddPerson,
-        RemovePerson});
+        SetRole});
 
 		public static readonly Role Owner = new Role(new List<Operation> {
 				View,
 				Set,
-				AddPerson,
-				RemovePerson});
+				SetRole});
 
 		public static readonly Role Viewer = new Role(new List<Operation> {
 				View
@@ -28,7 +26,6 @@ namespace Engine.Persons
 		View,
 		ModifyChecklist,
 		Set,
-		AddPerson,
-		RemovePerson
+		SetRole
 	}
 }

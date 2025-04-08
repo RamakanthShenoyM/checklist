@@ -47,5 +47,22 @@ namespace Engine.Tests.Unit
             Creator.Add(Owner).As(Role.Viewer).To(item1);
             Assert.True(Owner.Can(Set).On(item1));
         }
+
+		[Fact]
+		public void RemovePerson() {
+			var checklist = Creator.Checklist(
+				"Is India citizen?".TrueFalse(),
+				"Is Kanataka Resident?".TrueFalse()
+			);
+			var item1 = checklist.I(0, 0);
+			var item2 = checklist.I(0, 1);
+
+			Creator.Add(Owner).As(Role.Owner).To(checklist);
+			Assert.True(Owner.Can(Set).On(item1));
+			Assert.True(Owner.Can(Set).On(item2));
+			Creator.Remove(Owner).From(item1);
+            Assert.False(Owner.Can(Set).On(item1));
+            Assert.True(Owner.Can(Set).On(item2));
+        }
 	}
 }

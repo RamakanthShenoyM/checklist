@@ -36,6 +36,7 @@ namespace Engine.Persons
                 throw new InvalidOperationException("Does not have permission to modify checklist");
             return new(item);
         }
+        public RemovePersonEngine Remove(Person person) => new(this,person);
 
         public ReplaceEngine Replace(Item originalItem)
         {
@@ -223,12 +224,33 @@ namespace Engine.Persons
 
             public void To(Item item)
             {
-                if (!_addingPerson.Can(AddPerson).On(item))
+                if (!_addingPerson.Can(SetRole).On(item))
                     throw new InvalidOperationException("Does not have permission to add new person");
                 item.AddPerson(_addedPerson, _role);
 
             } 
             public void To(Checklist checklist) => To(checklist._item);
+        }
+        public class RemovePersonEngine
+        {
+            private readonly Person _addingPerson;
+            private readonly Person _addedPerson;
+            private readonly History _history = new([]);
+
+            internal RemovePersonEngine(Person addingPerson, Person addedPerson)
+            {
+                _addingPerson = addingPerson;
+                _addedPerson = addedPerson;
+            }
+
+            public void From(Item item)
+            {
+                if (!_addingPerson.Can(SetRole).On(item))
+                    throw new InvalidOperationException("Does not have permission to remove person");
+                item.RemovePerson(_addedPerson);
+
+            } 
+            public void From(Checklist checklist) => From(checklist._item);
         }
     }
 }
