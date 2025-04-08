@@ -4,7 +4,7 @@ using Engine.Persons;
 using Xunit.Abstractions;
 using System;
 using static Engine.Items.ChecklistExtensions;
-using static Engine.Items.PrettyPrint.PrettyPrintOptions;
+using static Engine.Items.PrettyPrintOptions;
 
 namespace Engine.Tests.Unit;
 

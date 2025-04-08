@@ -1,8 +1,7 @@
 ﻿using CommonUtilities.Util;
 using Engine.Persons;
-using static Engine.Items.PrettyPrint;
 using static Engine.Persons.Role;
-using static Engine.Items.PrettyPrint.PrettyPrintOptions;
+using static Engine.Items.PrettyPrintOptions;
 
 namespace Engine.Items {
     public class Checklist {
@@ -17,6 +16,7 @@ namespace Engine.Items {
             _history = history ?? _history;
             _item.AddPerson(_creator, Creator);
             _item.History(_history);
+            new ChecklistIndexer(this);
         }
 
         public void Accept(ChecklistVisitor visitor) {

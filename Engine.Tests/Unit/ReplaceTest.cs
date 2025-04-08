@@ -7,7 +7,7 @@ using Xunit.Abstractions;
 using static Engine.Tests.Unit.CarpetColor;
 using static Engine.Tests.Unit.MultipleChoiceItemTest;
 using static Engine.Items.ChecklistExtensions;
-using static Engine.Items.PrettyPrint.PrettyPrintOptions;
+using static Engine.Items.PrettyPrintOptions;
 
 namespace Engine.Tests.Unit {
     public class ReplaceTest {
@@ -174,7 +174,7 @@ namespace Engine.Tests.Unit {
             Assert.Equal(10, new QuestionCount(checklist).Count);
             var positions = checklist.Positions(innerConditional);
             Assert.Single(positions);
-            Assert.Equal("0.1.1.0", positions[0].ToString()); // Conditional now first in the added Group
+            Assert.Equal("P[0.1.1.0]", positions[0].ToString()); // Conditional now first in the added Group
         }
 
         [Fact]
@@ -191,7 +191,7 @@ namespace Engine.Tests.Unit {
             Assert.Equal(10, new QuestionCount(checklist).Count);
             var positions = checklist.Positions(innerConditional);
             Assert.Single(positions);
-            Assert.Equal("0.1.1.2", positions[0].ToString()); // Conditional now last in the added Group
+            Assert.Equal("P[0.1.1.2]", positions[0].ToString()); // Conditional now last in the added Group
         }
 
         [Fact]

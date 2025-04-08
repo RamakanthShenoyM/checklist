@@ -4,10 +4,16 @@ using Engine.Persons;
 namespace Engine.Items {
     public abstract class Item {
         protected readonly Dictionary<Person, List<Operation>> Operations = [];
-        protected History? _history;
+        protected History? _history; // Shadow reference to Checklist History
+        private Position? _position;
 
-        internal History History() => _history
-                                      ?? throw new InvalidOperationException("History hasn't been initialized");
+        internal Position Position() =>
+            _position ?? throw new InvalidOperationException("Position has not been initialized");
+
+        internal Position Position(Position position) => _position = position;
+        
+        internal History History() =>
+            _history ?? throw new InvalidOperationException("History hasn't been initialized");
 
         internal virtual void History(History history) => _history = history;
 
@@ -48,7 +54,6 @@ namespace Engine.Items {
     }
 
     public abstract class SimpleItem : Item {
-        
         internal abstract void Be(object value);
 
         internal abstract void Reset();

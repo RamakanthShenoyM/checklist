@@ -6,7 +6,7 @@ using Engine.Persons;
 using Xunit;
 using Xunit.Abstractions;
 using static Engine.Tests.Unit.GroupMergeTest.QuesitonType;
-using static Engine.Items.PrettyPrint.PrettyPrintOptions;
+using static Engine.Items.PrettyPrintOptions;
 using CommonUtilities.Util;
 
 namespace Engine.Tests.Unit;

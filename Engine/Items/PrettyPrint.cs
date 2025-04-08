@@ -1,10 +1,10 @@
 using CommonUtilities.Util;
 using Engine.Persons;
-using static Engine.Items.PrettyPrint.PrettyPrintOptions;
+using static Engine.Items.PrettyPrintOptions;
 
 namespace Engine.Items {
     // Understands a text rendering of a Checklist hierarchy
-    public class PrettyPrint : ChecklistVisitor {
+    internal class PrettyPrint : ChecklistVisitor {
         private readonly PrettyPrintOptions _option;
         private int _indentionLevel;
         private readonly List<Triple> _conditionalItems = [];
@@ -12,7 +12,7 @@ namespace Engine.Items {
         private readonly HashSet<Item> _extraIndentedItems = new();
         private Position _position = new();
 
-        public PrettyPrint(Checklist checklist, PrettyPrintOptions option = Full) {
+        internal PrettyPrint(Checklist checklist, PrettyPrintOptions option = Full) {
             _option = option;
             checklist.Accept(this);
         }
@@ -50,6 +50,7 @@ namespace Engine.Items {
             _result += String.Format("{0}Boolean Item with value {1}\n", Indention, Format(value));
             OperationsDescription(operations);
             LabelUndention(item);
+            _position.Increment();
         }
 
         public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
@@ -185,12 +186,10 @@ namespace Engine.Items {
 
                 return "";
             }
-
-            internal bool IsEmpty() => _baseItem == null && _successItem == null && _failItem == null;
         }
+    }
 
-        public enum PrettyPrintOptions {
-            Full, NoOperations
-        }
+    public enum PrettyPrintOptions {
+        Full, NoOperations
     }
 }

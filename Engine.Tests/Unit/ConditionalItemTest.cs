@@ -31,8 +31,7 @@ namespace Engine.Tests.Unit {
             Assert.Equal(InProgress, checklist.Status());
             Creator.Sets(failItem).To(true);
             Assert.Equal(Succeeded, checklist.Status());
-            var output = new PrettyPrint(checklist).Result();
-            testOutput.WriteLine(output);
+            testOutput.WriteLine(checklist.ToString());
         }
 
         [Fact]
