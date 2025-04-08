@@ -20,10 +20,6 @@ namespace Engine.Items
             visitor.PostVisit(this, _item, Operations);
         }
 
-        internal override void Be(object value) => throw new InvalidOperationException("can't set the Not");
-
-        internal override void Reset() => throw new InvalidOperationException("can't Reset the Not");
-
         public override bool Equals(object? obj) => this == obj || obj is NotItem other && this.Equals(other);
 
         private bool Equals(NotItem other) =>

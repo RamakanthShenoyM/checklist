@@ -16,22 +16,11 @@ namespace Engine.Items
             _item2 = item2;
         }
 
-        internal override void Accept(ChecklistVisitor visitor)
-        {
+        internal override void Accept(ChecklistVisitor visitor) {
             visitor.PreVisit(this, _item1, _item2, Operations);
             _item1.Accept(visitor);
             _item2.Accept(visitor);
             visitor.PostVisit(this, _item1, _item2, Operations);
-        }
-
-        internal override void Be(object value)
-        {
-            throw new InvalidOperationException("can't set the Or");
-        }
-
-        internal override void Reset()
-        {
-            throw new InvalidOperationException("can't reset the Or");
         }
 
         public override bool Equals(object? obj) => this == obj || obj is OrItem other && this.Equals(other);

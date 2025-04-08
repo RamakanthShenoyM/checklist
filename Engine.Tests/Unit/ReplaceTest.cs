@@ -72,9 +72,10 @@ namespace Engine.Tests.Unit {
             Assert.Equal(2, new QuestionCount(checklist).Count);
 
             var firstItem = checklist.I(0, 0);
+            var notFirstItem = Not(firstItem);
             Assert.Throws<InvalidOperationException>(() => Creator
                 .Replace(firstItem)
-                .With(firstItem.Not())
+                .With(notFirstItem)
                 .In(checklist));
         }
 

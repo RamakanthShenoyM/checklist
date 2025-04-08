@@ -27,12 +27,7 @@ namespace Engine.Items
             _onFailItem.Accept(visitor);
             visitor.PostVisit(this, _conditionItem, _onSuccessItem, _onFailItem, Operations);
         }
-
-        internal override void Be(object value) =>
-            throw new InvalidOperationException("can't set the Conditional Item");
-
-        internal override void Reset() => throw new InvalidOperationException("can't set the Conditional Item");
-
+        
         public override bool Equals(object? obj) => this == obj || obj is ConditionalItem other && this.Equals(other);
 
         private bool Equals(ConditionalItem other) =>

@@ -31,12 +31,7 @@ namespace Engine.Items
                 return ItemStatus.Failed;
             return ItemStatus.Unknown;
         }
-
-        internal override void Be(object value) => throw new InvalidOperationException("can't set the Group Item");
-
-        internal override void Reset() => throw new InvalidOperationException("can't reset the Group Item");
-
-
+        
         public override bool Equals(object? obj) => this == obj || obj is GroupItem other && this.Equals(other);
 
         private bool Equals(GroupItem other) =>
