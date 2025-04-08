@@ -39,11 +39,16 @@ namespace Engine.Tests.Unit {
             Assert.Equal(3, activeItems.Count);
             
             var topCondition = (SimpleItem)checklist.I(0, 1, 0);
+            Creator.Sets(topCondition).To(false);
+            activeItems = checklist.ActiveItems();
+            Assert.Equal(5, activeItems.Count);
+            
             Creator.Sets(topCondition).To(true);
             activeItems = checklist.ActiveItems();
             Assert.Equal(4, activeItems.Count);
             
-            Creator.Sets(topCondition).To(false);
+            var innerCondition = (SimpleItem)checklist.I(0, 1, 1, 0);
+            Creator.Sets(innerCondition).To(true);
             activeItems = checklist.ActiveItems();
             Assert.Equal(5, activeItems.Count);
         }
