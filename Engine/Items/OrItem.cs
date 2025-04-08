@@ -17,10 +17,10 @@ namespace Engine.Items
         }
 
         internal override void Accept(ChecklistVisitor visitor) {
-            visitor.PreVisit(this, _item1, _item2, Operations);
+            visitor.PreVisit(this, _position, _item1, _item2, Operations);
             _item1.Accept(visitor);
             _item2.Accept(visitor);
-            visitor.PostVisit(this, _item1, _item2, Operations);
+            visitor.PostVisit(this, _position, _item1, _item2, Operations);
         }
 
         public override bool Equals(object? obj) => this == obj || obj is OrItem other && this.Equals(other);

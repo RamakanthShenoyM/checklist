@@ -21,11 +21,11 @@ namespace Engine.Items
 
         internal override void Accept(ChecklistVisitor visitor)
         {
-            visitor.PreVisit(this, _conditionItem, _onSuccessItem, _onFailItem, Operations);
+            visitor.PreVisit(this, _position, _conditionItem, _onSuccessItem, _onFailItem, Operations);
             _conditionItem.Accept(visitor);
             _onSuccessItem.Accept(visitor);
             _onFailItem.Accept(visitor);
-            visitor.PostVisit(this, _conditionItem, _onSuccessItem, _onFailItem, Operations);
+            visitor.PostVisit(this, _position, _conditionItem, _onSuccessItem, _onFailItem, Operations);
         }
         
         public override bool Equals(object? obj) => this == obj || obj is ConditionalItem other && this.Equals(other);

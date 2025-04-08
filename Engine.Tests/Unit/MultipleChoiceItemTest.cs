@@ -92,11 +92,23 @@ namespace Engine.Tests.Unit
                 checklist.Accept(this);
             }
 
-            public void Visit(BooleanItem item, Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations,History history) =>
+            public void Visit(BooleanItem item,
+                Guid id,
+                Position position,
+                string question,
+                bool? value,
+                Dictionary<Person, List<Operation>> operations,
+                History history) =>
                 Count++;
 
-            public void Visit(MultipleChoiceItem item, Guid id, string question, object? value, List<object> choices,
-                Dictionary<Person, List<Operation>> operations, History history) =>
+            public void Visit(MultipleChoiceItem item,
+                Guid id,
+                Position position,
+                string question,
+                object? value,
+                List<object> choices,
+                Dictionary<Person, List<Operation>> operations,
+                History history) =>
                 Count++;
         }
 

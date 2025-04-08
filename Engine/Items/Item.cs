@@ -5,7 +5,7 @@ namespace Engine.Items {
     public abstract class Item {
         protected readonly Dictionary<Person, List<Operation>> Operations = [];
         protected History? _history; // Shadow reference to Checklist History
-        private Position? _position;
+        protected Position? _position;
 
         internal Position Position() =>
             _position ?? throw new InvalidOperationException("Position has not been initialized");

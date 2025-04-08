@@ -34,7 +34,7 @@ namespace Engine.Items {
         internal override void Reset() => _hasSucceeded = null;
 
         internal override void Accept(ChecklistVisitor visitor) {
-	        visitor.Visit(this,_id,_question, _hasSucceeded, Operations,_history);
+	        visitor.Visit(this,_id, _position, _question, _hasSucceeded, Operations,_history);
         }
 
         internal override Item P(List<int> indexes) {

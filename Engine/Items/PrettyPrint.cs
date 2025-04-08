@@ -26,13 +26,13 @@ namespace Engine.Items {
             _indentionLevel--;
         }
 
-        public void Visit(
-            BooleanItem item,
+        public void Visit(BooleanItem item,
             Guid id,
+            Position position,
             string question,
             bool? value,
-            Dictionary<Person, List<Operation>> operations,History history
-        ) {
+            Dictionary<Person, List<Operation>> operations,
+            History history) {
             LabelIndention(item);
             _result += String.Format("{0}Question: [{1}] {2} Value: {3}\n", Indention, _position, question, Format(value));
             OperationsDescription(operations);
@@ -42,10 +42,12 @@ namespace Engine.Items {
 
         public void Visit(MultipleChoiceItem item,
             Guid id,
+            Position position,
             string question,
             object? value,
             List<object> choices,
-            Dictionary<Person, List<Operation>> operations, History history) {
+            Dictionary<Person, List<Operation>> operations,
+            History history) {
             LabelIndention(item);
             _result += String.Format("{0}Boolean Item with value {1}\n", Indention, Format(value));
             OperationsDescription(operations);
@@ -53,7 +55,11 @@ namespace Engine.Items {
             _position.Increment();
         }
 
-        public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
+        public void PreVisit(ConditionalItem item,
+            Position position,
+            Item baseItem,
+            Item? successItem,
+            Item? failureItem,
             Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
             _result += String.Format("{0}Conditional [{1}]\n", Indention, _position);
@@ -62,7 +68,11 @@ namespace Engine.Items {
             _position.Deeper();
         }
 
-        public void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
+        public void PostVisit(ConditionalItem item,
+            Position position,
+            Item baseItem,
+            Item? successItem,
+            Item? failureItem,
             Dictionary<Person, List<Operation>> operations) {
             _indentionLevel--;
             LabelUndention(item);
@@ -70,42 +80,62 @@ namespace Engine.Items {
             _position.Increment();
         }
 
-        public void PreVisit(OrItem item, Item item1, Item item2, Dictionary<Person, List<Operation>> operations) {
+        public void PreVisit(OrItem item,
+            Position position,
+            Item item1,
+            Item item2,
+            Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
             _result += String.Format("{0}Either/Or [{1}]\n", Indention, _position);
             _indentionLevel++;
             _position.Deeper();
         }
 
-        public void PostVisit(OrItem item, Item item1, Item item2, Dictionary<Person, List<Operation>> operations) {
+        public void PostVisit(OrItem item,
+            Position position,
+            Item item1,
+            Item item2,
+            Dictionary<Person, List<Operation>> operations) {
             _indentionLevel--;
             LabelUndention(item);
             _position.Truncate();
             _position.Increment();
         }
 
-        public void PreVisit(NotItem item, Item negatedItem, Dictionary<Person, List<Operation>> operations) {
+        public void PreVisit(NotItem item,
+            Position position,
+            Item negatedItem,
+            Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
             _result += String.Format("{0}Not (the following) [{1}]\n", Indention, _position);
             _indentionLevel++;
             _position.Deeper();
         }
 
-        public void PostVisit(NotItem item, Item negatedItem, Dictionary<Person, List<Operation>> operations) {
+        public void PostVisit(NotItem item,
+            Position position,
+            Item negatedItem,
+            Dictionary<Person, List<Operation>> operations) {
             _indentionLevel--;
             LabelUndention(item);
             _position.Truncate();
             _position.Increment();
         }
 
-        public void PreVisit(GroupItem item, List<Item> childItems, Dictionary<Person, List<Operation>> operations) {
+        public void PreVisit(GroupItem item,
+            Position position,
+            List<Item> childItems,
+            Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
             _result += String.Format("{0}Group of Items [{1}]\n", Indention, _position);
             _position.Deeper();
             _indentionLevel++;
         }
 
-        public void PostVisit(GroupItem item, List<Item> childItems, Dictionary<Person, List<Operation>> operations) {
+        public void PostVisit(GroupItem item,
+            Position position,
+            List<Item> childItems,
+            Dictionary<Person, List<Operation>> operations) {
             _indentionLevel--;
             LabelUndention(item);
             _position.Truncate();

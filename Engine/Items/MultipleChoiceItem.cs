@@ -21,7 +21,7 @@ namespace Engine.Items
 
         internal override void Accept(ChecklistVisitor visitor)
         {
-            visitor.Visit(this,_id, _question, _value, _choices, Operations, _history);
+            visitor.Visit(this,_id, _position, _question, _value, _choices, Operations, _history);
         }
 
         internal override void Be(object value)

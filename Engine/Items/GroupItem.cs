@@ -60,9 +60,9 @@ namespace Engine.Items
 
         internal override void Accept(ChecklistVisitor visitor)
         {
-            visitor.PreVisit(this, _childItems, Operations);
+            visitor.PreVisit(this, _position, _childItems, Operations);
             foreach (var item in _childItems) item.Accept(visitor);
-            visitor.PostVisit(this, _childItems, Operations);
+            visitor.PostVisit(this, _position, _childItems, Operations);
         }
 
         internal override void AddPerson(Person person, Role role)

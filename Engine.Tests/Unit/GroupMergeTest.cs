@@ -85,26 +85,44 @@ public class GroupMergeTest(ITestOutputHelper testOutput) {
 
         public void Visit(BooleanItem item,
             Guid id,
+            Position position,
             string question,
             bool? value,
-            Dictionary<Person, List<Operation>> operations, History history) =>
+            Dictionary<Person, List<Operation>> operations,
+            History history) =>
             Count[BooleanQuestion] += 1;
 
         public void Visit(MultipleChoiceItem item,
             Guid id,
+            Position position,
             string question,
             object? value,
             List<object> choices,
-            Dictionary<Person, List<Operation>> operations, History history) =>
+            Dictionary<Person, List<Operation>> operations,
+            History history) =>
             Count[MultipleChoiceQuestion] += 1;
 
-        public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
+        public void PreVisit(ConditionalItem item,
+            Position position,
+            Item baseItem,
+            Item? successItem,
+            Item? failureItem,
             Dictionary<Person, List<Operation>> operations) =>
             Count[ConditionalQuestion] += 1;
 
-        public void PreVisit(NotItem item, Item negatedItem, Dictionary<Person, List<Operation>> operations) => Count[NotQuestion] += 1;
-        public void PreVisit(OrItem item, Item item1, Item item2, Dictionary<Person, List<Operation>> operations) => Count[OrQuestion] += 1;
-        public void PreVisit(GroupItem item, List<Item> childItems, Dictionary<Person, List<Operation>> operations) => Count[GroupQuestion] += 1;
+        public void PreVisit(NotItem item,
+            Position position,
+            Item negatedItem,
+            Dictionary<Person, List<Operation>> operations) => Count[NotQuestion] += 1;
+        public void PreVisit(OrItem item,
+            Position position,
+            Item item1,
+            Item item2,
+            Dictionary<Person, List<Operation>> operations) => Count[OrQuestion] += 1;
+        public void PreVisit(GroupItem item,
+            Position position,
+            List<Item> childItems,
+            Dictionary<Person, List<Operation>> operations) => Count[GroupQuestion] += 1;
     }
 
     internal enum QuesitonType {
