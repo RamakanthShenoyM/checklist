@@ -118,5 +118,8 @@ namespace Engine.Items
                 $"Invalid index of {indexes[0]} for a Group with only {_childItems.Count} items");
             return _childItems[indexes[1]].I(indexes.Skip(1).ToList());
         }
+
+        internal override List<SimpleItem> ActiveItems() => 
+            _childItems.SelectMany(item => item.ActiveItems()).ToList();
     }
 }

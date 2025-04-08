@@ -35,7 +35,17 @@ namespace Engine.Tests.Unit {
 
         [Fact]
         public void ActiveItemsWithoutSetting() {
-            // var activeItems = checklist.ActiveItems();
+            var activeItems = checklist.ActiveItems();
+            Assert.Equal(3, activeItems.Count);
+            
+            var topCondition = (SimpleItem)checklist.I(0, 1, 0);
+            Creator.Sets(topCondition).To(true);
+            activeItems = checklist.ActiveItems();
+            Assert.Equal(4, activeItems.Count);
+            
+            Creator.Sets(topCondition).To(false);
+            activeItems = checklist.ActiveItems();
+            Assert.Equal(5, activeItems.Count);
         }
     }
 }

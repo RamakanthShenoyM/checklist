@@ -49,6 +49,7 @@ namespace Engine.Items {
         public override int GetHashCode() => _creator.GetHashCode()*37 + _history.GetHashCode();
 
         public History History => _history;
+        
         public void Replace(Item originalItem, Item newItem) {
             newItem.AddPerson(_creator, Creator, _history);
             if (_item == originalItem) {
@@ -81,6 +82,8 @@ namespace Engine.Items {
 
         public static Checklist FromMemento(string memento) => 
             new ChecklistDeserializer(memento).Result;
+
+        public List<SimpleItem> ActiveItems() => _item.ActiveItems();
     }
    
 }

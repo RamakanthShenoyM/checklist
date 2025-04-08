@@ -96,5 +96,6 @@ namespace Engine.Items
             throw new InvalidOperationException($"Invalid index of {indexes[1]} for an OrItem. Should be 0 or 1 only.");
         }
 
+        internal override List<SimpleItem> ActiveItems() => [.._item1.ActiveItems().Concat(_item2.ActiveItems())];
     }
 }

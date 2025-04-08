@@ -64,6 +64,15 @@ namespace Engine.Items {
             return Unknown;
         }
 
+        internal override List<SimpleItem> ActiveItems() {
+            var result = _conditionItem.ActiveItems();
+            return _conditionItem.Status() switch {
+                Unknown => result,
+                Succeeded => [..result.Concat(_onSuccessItem.ActiveItems())],
+                Failed => [..result.Concat(_onFailItem.ActiveItems())]
+            };
+        }
+
         internal override void AddPerson(Person person, Role role, History history) {
             base.AddPerson(person, role, history);
             _conditionItem.AddPerson(person, role, history);

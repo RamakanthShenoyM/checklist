@@ -59,6 +59,8 @@ namespace Engine.Items {
             base.AddPerson(person, role, history);
         }
 
+        internal override List<SimpleItem> ActiveItems() => [this];
+
         public override string ToString() => _question;
     }
 }

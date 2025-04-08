@@ -71,5 +71,7 @@ namespace Engine.Items
             if (indexes[1] == 0) return _item.I(indexes.Skip(1).ToList());
             throw new InvalidOperationException($"Invalid index of {indexes[1]} for a NotItem. Should be 0.");
         }
+
+        internal override List<SimpleItem> ActiveItems() => _item.ActiveItems();
     }
 }
