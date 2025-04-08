@@ -43,6 +43,9 @@ namespace Engine.Tests.Unit
 			Creator.Add(Owner).As(Role.Owner).To(checklist);
 			Assert.True(Owner.Can(Set).On(item1));
 			Assert.True(Owner.Can(Set).On(item2));
-		}
+
+            Creator.Add(Owner).As(Role.Viewer).To(item1);
+            Assert.True(Owner.Can(Set).On(item1));
+        }
 	}
 }

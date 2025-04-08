@@ -13,8 +13,11 @@ namespace Engine.Items
 		
 		internal abstract void Reset();
 
-        internal virtual void AddPerson(Person person, Role role) => 
-            Operations[person] = role.Operations;
+        internal virtual void AddPerson(Person person, Role role)
+        {   
+            if(!Operations.ContainsKey(person)) Operations[person] = [];
+            Operations[person] = role.Operations.Concat(Operations[person]).ToHashSet().ToList();
+        }
 
         internal abstract void History(History history);
         
