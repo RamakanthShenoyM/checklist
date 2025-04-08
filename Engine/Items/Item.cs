@@ -13,8 +13,10 @@ namespace Engine.Items
 		
 		internal abstract void Reset();
 
-        internal virtual void AddPerson(Person person, Role role, History history) => 
+        internal virtual void AddPerson(Person person, Role role) => 
             Operations[person] = role.Operations;
+
+        internal abstract void History(History history);
         
 		internal bool HasPerson(Person person) => Operations.Keys.Contains(person);
 		
@@ -47,7 +49,9 @@ namespace Engine.Items
 
     public abstract class SimpleItem: Item
     {
-        internal abstract History History();
+        protected History? _history;
+        internal History History() => _history;
+        internal override void History(History history) => _history = history;
     }
 
 	public static class ItemExtensions

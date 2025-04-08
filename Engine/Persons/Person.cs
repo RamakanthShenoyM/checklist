@@ -225,7 +225,7 @@ namespace Engine.Persons
             {
                 if (!_addingPerson.Can(AddPerson).On(item))
                     throw new InvalidOperationException("Does not have permission to add new person");
-                item.AddPerson(_addedPerson, _role, _history ?? throw new InvalidOperationException("Improper DSL construction; missing Role!"));
+                item.AddPerson(_addedPerson, _role);
 
             } 
             public void To(Checklist checklist) => To(checklist._item);

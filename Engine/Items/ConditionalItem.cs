@@ -73,11 +73,18 @@ namespace Engine.Items {
             };
         }
 
-        internal override void AddPerson(Person person, Role role, History history) {
-            base.AddPerson(person, role, history);
-            _conditionItem.AddPerson(person, role, history);
-            _onSuccessItem?.AddPerson(person, role, history);
-            _onFailItem?.AddPerson(person, role, history);
+        internal override void AddPerson(Person person, Role role) {
+            base.AddPerson(person, role);
+            _conditionItem.AddPerson(person, role);
+            _onSuccessItem.AddPerson(person, role);
+            _onFailItem.AddPerson(person, role);
+        }
+
+        internal override void History(History history)
+        {
+            _conditionItem.History(history);
+            _onSuccessItem.History(history);
+            _onFailItem.History(history);
         }
 
         internal override bool Contains(Item desiredItem) =>

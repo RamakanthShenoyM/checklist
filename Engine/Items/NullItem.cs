@@ -20,7 +20,12 @@ namespace Engine.Items
 
         internal override ItemStatus Status() => Succeeded;
         
-        internal override void AddPerson(Person person, Role role, History history)
+        internal override void AddPerson(Person person, Role role)
+        {
+            //Ignore this
+        }
+
+        internal override void History(History history)
         {
             //Ignore this
         }

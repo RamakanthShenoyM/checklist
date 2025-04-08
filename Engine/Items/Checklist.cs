@@ -15,7 +15,8 @@ namespace Engine.Items {
             _item = (items.Length == 0) ? firstItem : new GroupItem(firstItem, items);
             _creator = creator;
             _history = history ?? _history;
-            _item.AddPerson(_creator, Creator, _history);
+            _item.AddPerson(_creator, Creator);
+            _item.History(_history);
         }
 
         public void Accept(ChecklistVisitor visitor) {
@@ -51,7 +52,7 @@ namespace Engine.Items {
         public History History => _history;
         
         public void Replace(Item originalItem, Item newItem) {
-            newItem.AddPerson(_creator, Creator, _history);
+            newItem.AddPerson(_creator, Creator);
             if (_item == originalItem) {
                 _item = newItem;
                 return;

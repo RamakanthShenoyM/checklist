@@ -6,17 +6,13 @@ namespace Engine.Items {
         private readonly Guid _id;
         private bool? _hasSucceeded;
         private readonly string _question;
-        private History? _history;
 
-        public BooleanItem(string question,Guid?id=null,List<string>? events=null)
+        public BooleanItem(string question, Guid? id = null)
 		{
 			_question = question;
             _id = id??Guid.NewGuid();
-            _history = new History(events ?? []);
         }
 
-        internal override History History() => 
-            _history ?? throw new InvalidOperationException("History has not been initialized. Is it part of a Checklist?");
 
         internal override void Be(object value) {
             ArgumentNullException.ThrowIfNull(value);
@@ -51,13 +47,6 @@ namespace Engine.Items {
             false => ItemStatus.Failed,
             _ => ItemStatus.Unknown,
         };
-
-        internal override void AddPerson(Person person, Role role, History history)
-        {
-            if (Operations.ContainsKey(person) && Operations.Keys.Count > 1) return;
-            _history = history;
-            base.AddPerson(person, role, history);
-        }
 
         internal override List<SimpleItem> ActiveItems() => [this];
 

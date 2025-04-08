@@ -70,10 +70,15 @@ namespace Engine.Items
             visitor.PostVisit(this, _childItems, Operations);
         }
 
-        internal override void AddPerson(Person person, Role role, History history)
+        internal override void AddPerson(Person person, Role role)
         {
-            base.AddPerson(person, role, history);
-            foreach (var item in _childItems) item.AddPerson(person, role, history);
+            base.AddPerson(person, role);
+            foreach (var item in _childItems) item.AddPerson(person, role);
+        }
+
+        internal override void History(History history)
+        {
+            foreach (var item in _childItems) item.History(history);
         }
 
         internal override bool Contains(Item desiredItem) =>

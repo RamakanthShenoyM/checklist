@@ -10,26 +10,15 @@ namespace Engine.Items
         private readonly List<object> _choices;
         private readonly string _question;
         private object? _value;
-        private History _history;
 
-        public MultipleChoiceItem(string question, object firstChoice,Guid? id=null,List<string>? events=null,params object[] choices)
+        public MultipleChoiceItem(string question, object firstChoice, Guid? id = null, params object[] choices)
         {
             _choices = choices.ToList();
             _choices.Insert(0, firstChoice);
             _question = question;
             _id = id ?? Guid.NewGuid();
-            _history = new History(events ?? []);
         }
-        
-        internal override History History() => _history;
-        
-        internal override void AddPerson(Person person, Role role, History history)
-        {
-            if (Operations.ContainsKey(person) && Operations.Keys.Count > 1) return;
-            _history = history;
-            base.AddPerson(person, role, history);
-        }
-        
+
         internal override void Accept(ChecklistVisitor visitor)
         {
             visitor.Visit(this,_id, _question, _value, _choices, Operations, _history);
