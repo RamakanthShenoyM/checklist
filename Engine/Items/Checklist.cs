@@ -80,8 +80,10 @@ namespace Engine.Items {
                 "There is only one item at the root of the Checklist hierarchy, so use index 0.");
             var indexes = rest.ToList();
             indexes.Insert(0, firstIndex);
-            return _item.P(indexes);
+            return P(indexes);
         }
+
+        internal Item P(List<int> indexes) => _item.P(indexes);
 
         public string ToMemento() => new ChecklistSerializer(this).Result;
 

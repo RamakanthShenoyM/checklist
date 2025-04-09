@@ -21,6 +21,12 @@ public static class ChecklistExtensions {
     public static List<Position> Positions(this Checklist checklist, Item item) =>
         new PositionLocator(checklist, item).Results;
 
+    internal static List<int> ToPosition(this string position)
+    {
+        var raw=position.Substring(2, position.Length - 3);
+        return raw.Split(".").Select(int.Parse).ToList();
+    }
+
     // From ChatGPT
     public static bool DeepEquals<TKey, TEnum>(this Dictionary<TKey, List<TEnum>> left,
         Dictionary<TKey, List<TEnum>> right) where TEnum : Enum where TKey : notnull {
