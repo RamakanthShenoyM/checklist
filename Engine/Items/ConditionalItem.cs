@@ -14,8 +14,8 @@ namespace Engine.Items
         internal ConditionalItem(Item condition, Item? onSuccess = null, Item? onFail = null)
         {
             _conditionItem = condition;
-            _onSuccessItem = onSuccess ?? NullItem.Instance;
-            _onFailItem = onFail ?? NullItem.Instance;
+            _onSuccessItem = onSuccess ?? new NullItem();
+            _onFailItem = onFail ?? new NullItem();
         }
 
         internal override void Accept(ChecklistVisitor visitor)
@@ -123,15 +123,15 @@ namespace Engine.Items
             {
                 if (_onFailItem is NullItem)
                     throw new InvalidOperationException("Cannot remove the last leg in a conditional");
-                _onSuccessItem = NullItem.Instance;
+                _onSuccessItem = new NullItem();
                 result = true;
             }
 
             if (_onFailItem == item)
             {
-                if (_onSuccessItem is NullItem)
+                if ( _onSuccessItem is NullItem)
                     throw new InvalidOperationException("Cannot remove the last leg in a conditional");
-                _onFailItem = NullItem.Instance;
+                _onFailItem = new NullItem();
                 result = true;
             }
 

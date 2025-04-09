@@ -31,7 +31,7 @@ namespace Engine.Items
                     "ConditionalItem" => ConditionalItem(subItems,dto),
                     "OrItem" => OrItem(subItems,dto),
                     "NotItem" => NotItem(subItems,dto),
-                    "NullItem" => Instance,
+                    "NullItem" => new NullItem(),
                     _ => throw new InvalidOperationException($"Unknown item class name {dto.ItemClassName}")
                 });
             }

@@ -6,7 +6,6 @@ namespace Engine.Items
 {
     public class NullItem : Item
     {
-        public static readonly NullItem Instance = new();
         
         internal override void Accept(ChecklistVisitor visitor) => visitor.Visit(this);
 
@@ -30,5 +29,8 @@ namespace Engine.Items
         {
             //Ignore this
         }
+
+        public override bool Equals(object? obj) => this == obj || obj is NullItem;
+        public override int GetHashCode() => nameof(NullItem).GetHashCode();
     }
 }
