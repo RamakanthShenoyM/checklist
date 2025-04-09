@@ -143,7 +143,7 @@ namespace Engine.Persons
                 foreach (var item in _items) EnsureItemNotInTree(_originalItem, item);
                 var newItem = _items.Length == 0 ? _firstItem : new GroupItem(_firstItem, _items);
                 checklist.Replace(_originalItem, newItem);
-                newItem.History().Add(ReplaceItemEvent, $"Item <{_originalItem}> replaced with <{newItem}> in checklist <{checklist}>");
+                newItem.History().Add(ReplaceItemEvent, $"Item <{_originalItem}> at Position  <{_originalItem.Position()}> replaced with <{newItem}>  in checklist <{checklist}>");
             }
 
             private void EnsureItemNotInTree(Item originalItem, Item targetItem)
@@ -179,7 +179,7 @@ namespace Engine.Persons
                 _originalItem = originalItem;
                 _firstItem = originalItem;
                 _items.Insert(0, _item);
-                _originalItem.History().Add(InsertItemEvent, $"Item <{_item}> inserted after <{originalItem}>");
+                _originalItem.History().Add(InsertItemEvent, $"Item <{_item}> inserted after <{originalItem}> at Position <{originalItem.Position()}>");
                 return this;
             }
 
@@ -188,7 +188,7 @@ namespace Engine.Persons
                 _originalItem = originalItem;
                 _firstItem = _item;
                 _items.Add(originalItem);
-                _originalItem.History().Add(InsertItemEvent, $"Item <{_item}> inserted before <{originalItem}>");
+                _originalItem.History().Add(InsertItemEvent, $"Item <{_item}> inserted before <{originalItem}> at Position <{originalItem.Position()}>");
                 return this;
             }
         }
@@ -205,7 +205,7 @@ namespace Engine.Persons
             public void From(Checklist checklist)
             {
                 checklist.Remove(_item);
-                _item.History().Add(RemoveItemEvent, $"Item <{_item}> Removed from checklist <{checklist}>");
+                _item.History().Add(RemoveItemEvent, $"Item <{_item}> at Position <{_item.Position()}> Removed from checklist <{checklist}> ");
             }
         }
 
