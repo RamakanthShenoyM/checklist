@@ -5,6 +5,7 @@ using Xunit.Abstractions;
 using System;
 using static Engine.Items.ChecklistExtensions;
 using static Engine.Items.PrettyPrint.PrettyPrintOptions;
+using Engine.Tests.Util;
 
 namespace Engine.Tests.Unit;
 
@@ -80,6 +81,8 @@ public class RemoveTest {
     public void RemoveInGroup() {
         testOutput.WriteLine(checklist.ToString());
         Creator.Remove(firstItem).From(checklist);
+        var history = new HistoryDump(checklist).Result;
+        testOutput.WriteLine(history.ToString());
     }
 
     [Fact]
@@ -87,6 +90,8 @@ public class RemoveTest {
         Creator.Remove(firstItem).From(checklist);
         Creator.Remove(condition1).From(checklist);
         Assert.Throws<InvalidOperationException>(() => Creator.Remove(lastItem).From(checklist));
+        var history = new HistoryDump(checklist).Result;
+        testOutput.WriteLine(history.ToString());
     }
 
     [Fact]
@@ -98,6 +103,8 @@ public class RemoveTest {
     public void RemoveOneLegInConditional() {
         Creator.Remove(failItem2).From(checklist);
         Assert.Throws<InvalidOperationException>(() => Creator.Remove(successItem2).From(checklist));
+        var history = new HistoryDump(checklist).Result;
+        testOutput.WriteLine(history.ToString());
     }
 
     [Fact]

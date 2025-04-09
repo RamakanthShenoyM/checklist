@@ -8,6 +8,8 @@ using static Engine.Tests.Unit.CarpetColor;
 using static Engine.Tests.Unit.MultipleChoiceItemTest;
 using static Engine.Items.ChecklistExtensions;
 using static Engine.Items.PrettyPrint.PrettyPrintOptions;
+using Engine.Tests.Util;
+using Xunit.Sdk;
 
 namespace Engine.Tests.Unit {
     public class ReplaceTest {
@@ -58,6 +60,8 @@ namespace Engine.Tests.Unit {
                 )
                 .In(checklist);
             Assert.Equal(3, new QuestionCount(checklist).Count);
+            var history = new HistoryDump(checklist).Result;
+            _testOutput.WriteLine(history.ToString());
             AssertMissing(item2);
         }
 
@@ -89,6 +93,8 @@ namespace Engine.Tests.Unit {
                 .In(checklist);
             _testOutput.WriteLine(checklist.ToString(NoOperations));
             Assert.Equal(9, new QuestionCount(checklist).Count);
+            var history = new HistoryDump(checklist).Result;
+            _testOutput.WriteLine(history.ToString());
             AssertMissing(successItem2);
         }
 
@@ -174,6 +180,9 @@ namespace Engine.Tests.Unit {
             var positions = checklist.Positions(innerConditional);
             Assert.Single(positions);
             Assert.Equal("0.1.1.0", positions[0].ToString()); // Conditional now first in the added Group
+            var history = new HistoryDump(checklist).Result;
+            _testOutput.WriteLine(history.ToString());
+
         }
 
         [Fact]
@@ -191,6 +200,8 @@ namespace Engine.Tests.Unit {
             var positions = checklist.Positions(innerConditional);
             Assert.Single(positions);
             Assert.Equal("0.1.1.2", positions[0].ToString()); // Conditional now last in the added Group
+            var history = new HistoryDump(checklist).Result;
+            _testOutput.WriteLine(history.ToString());
         }
 
         [Fact]

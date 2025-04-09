@@ -12,10 +12,10 @@ namespace Engine.Items
        
 
         internal abstract ItemStatus Status();
-		
-		internal abstract void Be(object value);
-		
-		internal abstract void Reset();
+
+        internal abstract void Be(object value);
+
+        internal abstract void Reset();
 
         internal virtual void AddPerson(Person person, Role role)
         {   

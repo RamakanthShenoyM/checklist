@@ -134,19 +134,22 @@ namespace Engine.Persons
                 return this;
             }
 
-            public void In(Checklist checklist) {
+            public void In(Checklist checklist)
+            {
                 EnsureItemNotInTree(
-                    _originalItem, 
+                    _originalItem,
                     _firstItem ?? throw new InvalidOperationException("Improper DSL construction; missing first replacement Item")
                     );
                 foreach (var item in _items) EnsureItemNotInTree(_originalItem, item);
                 var newItem = _items.Length == 0 ? _firstItem : new GroupItem(_firstItem, _items);
                 checklist.Replace(_originalItem, newItem);
+                newItem.History().Add(ReplaceItemEvent, $"Item <{_originalItem}> replaced with <{newItem}> in checklist <{checklist}>");
             }
 
-            private void EnsureItemNotInTree(Item originalItem, Item targetItem) {
+            private void EnsureItemNotInTree(Item originalItem, Item targetItem)
+            {
                 if (_originalItem == targetItem) return;
-                if (targetItem.Contains(originalItem)) 
+                if (targetItem.Contains(originalItem))
                     throw new InvalidOperationException("can't reinsert item being replaced");
             }
         }
@@ -176,6 +179,7 @@ namespace Engine.Persons
                 _originalItem = originalItem;
                 _firstItem = originalItem;
                 _items.Insert(0, _item);
+                _originalItem.History().Add(InsertItemEvent, $"Item <{_item}> inserted after <{originalItem}>");
                 return this;
             }
 
@@ -184,6 +188,7 @@ namespace Engine.Persons
                 _originalItem = originalItem;
                 _firstItem = _item;
                 _items.Add(originalItem);
+                _originalItem.History().Add(InsertItemEvent, $"Item <{_item}> inserted before <{originalItem}>");
                 return this;
             }
         }
@@ -200,6 +205,7 @@ namespace Engine.Persons
             public void From(Checklist checklist)
             {
                 checklist.Remove(_item);
+                _item.History().Add(RemoveItemEvent, $"Item <{_item}> Removed from checklist <{checklist}>");
             }
         }
 
@@ -234,22 +240,23 @@ namespace Engine.Persons
         }
         public class RemovePersonEngine
         {
-            private readonly Person _addingPerson;
-            private readonly Person _addedPerson;
+            private readonly Person _removingPerson;
+            private readonly Person _removedPerson;
             private readonly History _history = new([]);
 
-            internal RemovePersonEngine(Person addingPerson, Person addedPerson)
+            internal RemovePersonEngine(Person removingPerson, Person removedPerson)
             {
-                _addingPerson = addingPerson;
-                _addedPerson = addedPerson;
+                _removingPerson = removingPerson;
+                _removedPerson = removedPerson;
             }
 
             public void From(Item item)
             {
-                if (!_addingPerson.Can(SetRole).On(item))
+                if (!_removingPerson.Can(SetRole).On(item))
                     throw new InvalidOperationException("Does not have permission to remove person");
-                item.RemovePerson(_addedPerson);
-
+                item.RemovePerson(_removedPerson);
+                item.History().Add(PersonRemovedEvent, $"Person<{_removingPerson}> removed <{_removedPerson}> From <{item}>");
+                
             } 
             public void From(Checklist checklist) => From(checklist._item);
         }

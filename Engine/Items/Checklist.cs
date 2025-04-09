@@ -48,11 +48,9 @@ namespace Engine.Items {
             && this._history.Equals(other._history);
 
         public override int GetHashCode() => _creator.GetHashCode()*37 + _history.GetHashCode();
-
-        public History History => _history;
-        
         public void Replace(Item originalItem, Item newItem) {
             newItem.AddPerson(_creator, Creator);
+            newItem.History(_history);
             if (_item == originalItem) {
                 _item = newItem;
                 return;

@@ -12,6 +12,9 @@ namespace Engine.Items
         ResetValueEvent,
         InvalidValueEvent,
         PersonAddEvent,
-        PersonRemoveEvent,
+        PersonRemovedEvent,
+        RemoveItemEvent,
+        InsertItemEvent,
+        ReplaceItemEvent
     }
 }

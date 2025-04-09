@@ -29,8 +29,10 @@ namespace Engine.Tests.Unit {
             Assert.Throws<ArgumentNullException>(() => Creator.Sets(item).To(null));
                 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             Assert.Throws<InvalidCastException>(() => Creator.Sets(item).To("India"));
+            var history = new HistoryDump(checklist).Result;
+            testOutput.WriteLine(history.ToString());
         }
-        
+
         [Fact]
         public void SingleItemHistory() {
             var checklist = Creator.Checklist(
