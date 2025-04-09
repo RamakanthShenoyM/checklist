@@ -41,8 +41,7 @@ namespace Engine.Items
                 id,
                 question, 
                 new ValueDto(typeof(Boolean).ToString(), value.ToString()),
-                Operations:OperationDtos(operations),
-                Events:history.Events()));
+                Operations:OperationDtos(operations)));
             _position.Increment();
         }
 
@@ -68,8 +67,7 @@ namespace Engine.Items
                 question, 
                 new ValueDto(value?.GetType().ToString(), value?.ToString()?? ""),
                 choices.Select(c => new ValueDto(c.GetType().ToString(), c.ToString())).ToList(),
-                Operations:OperationDtos(operations),
-                Events:history.Events()));
+                Operations:OperationDtos(operations)));
             _position.Increment();
         }
 
@@ -133,8 +131,7 @@ namespace Engine.Items
         string? Question = null, 
         ValueDto? Value=null,
         List<ValueDto>? Choices = null,
-        List<OperationDto>? Operations=null,
-        List<string>? Events=null);
+        List<OperationDto>? Operations=null);
 
     public record ValueDto(string? ValueClass, string? ValueValue);
 
