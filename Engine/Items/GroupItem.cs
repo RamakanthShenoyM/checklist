@@ -31,12 +31,7 @@ namespace Engine.Items
                 return ItemStatus.Failed;
             return ItemStatus.Unknown;
         }
-
-        internal override void Be(object value) => throw new InvalidOperationException("can't set the Group Item");
-
-        internal override void Reset() => throw new InvalidOperationException("can't reset the Group Item");
-
-
+        
         public override bool Equals(object? obj) => this == obj || obj is GroupItem other && this.Equals(other);
 
         private bool Equals(GroupItem other) =>
@@ -65,9 +60,9 @@ namespace Engine.Items
 
         internal override void Accept(ChecklistVisitor visitor)
         {
-            visitor.PreVisit(this, _childItems, Operations);
+            visitor.PreVisit(this, _position, _childItems, Operations);
             foreach (var item in _childItems) item.Accept(visitor);
-            visitor.PostVisit(this, _childItems, Operations);
+            visitor.PostVisit(this, _position, _childItems, Operations);
         }
 
         internal override void AddPerson(Person person, Role role)
@@ -123,12 +118,12 @@ namespace Engine.Items
             return result;
         }
 
-        internal override Item I(List<int> indexes)
+        internal override Item P(List<int> indexes)
         {
             if (indexes.Count == 1) return this;
             if (indexes[1] >= _childItems.Count) throw new InvalidOperationException(
                 $"Invalid index of {indexes[0]} for a Group with only {_childItems.Count} items");
-            return _childItems[indexes[1]].I(indexes.Skip(1).ToList());
+            return _childItems[indexes[1]].P(indexes.Skip(1).ToList());
         }
 
         internal override List<SimpleItem> ActiveItems() => 

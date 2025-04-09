@@ -9,7 +9,7 @@ public class Position {
 
     public Position() : this([0]) { }
 
-    public override string ToString() => string.Join(".", _indexes);
+    public override string ToString() => $"P[{string.Join(".", _indexes)}]";
 
     public void Deeper() => _indexes.Add(0);
 
@@ -17,5 +17,5 @@ public class Position {
 
     public void Increment() => _indexes[^1]++;
 
-    internal Position Clone() => new(new List<int>(_indexes));
+    internal Position Clone() => new([.._indexes]);
 }

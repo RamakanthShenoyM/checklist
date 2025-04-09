@@ -1,6 +1,5 @@
 ﻿using CommonUtilities.Util;
 using Engine.Persons;
-using static Engine.Items.ItemExtensions;
 using static Engine.Items.ItemStatus;
 
 namespace Engine.Items
@@ -21,18 +20,13 @@ namespace Engine.Items
 
         internal override void Accept(ChecklistVisitor visitor)
         {
-            visitor.PreVisit(this, _conditionItem, _onSuccessItem, _onFailItem, Operations);
+            visitor.PreVisit(this, _position, _conditionItem, _onSuccessItem, _onFailItem, Operations);
             _conditionItem.Accept(visitor);
             _onSuccessItem.Accept(visitor);
             _onFailItem.Accept(visitor);
-            visitor.PostVisit(this, _conditionItem, _onSuccessItem, _onFailItem, Operations);
+            visitor.PostVisit(this, _position, _conditionItem, _onSuccessItem, _onFailItem, Operations);
         }
-
-        internal override void Be(object value) =>
-            throw new InvalidOperationException("can't set the Conditional Item");
-
-        internal override void Reset() => throw new InvalidOperationException("can't set the Conditional Item");
-
+        
         public override bool Equals(object? obj) => this == obj || obj is ConditionalItem other && this.Equals(other);
 
         private bool Equals(ConditionalItem other) =>
@@ -86,25 +80,25 @@ namespace Engine.Items
         internal override void AddPerson(Person person, Role role)
         {
             base.AddPerson(person, role);
-            _conditionItem.AddPerson(person, role);
-            _onSuccessItem.AddPerson(person, role);
-            _onFailItem.AddPerson(person, role);
+            Apply(item => item.AddPerson(person, role));
         }
 
         internal override void History(History history)
         {
             base.History(history);
-            _conditionItem.History(history);
-            _onSuccessItem.History(history);
-            _onFailItem.History(history);
+            Apply(item => item.History(history));
         }
 
         internal override void RemovePerson(Person person)
         {
             base.RemovePerson(person);
-            _conditionItem.RemovePerson(person);
-            _onSuccessItem.RemovePerson(person);
-            _onFailItem.RemovePerson(person);
+            Apply(item => item.RemovePerson(person));
+        }
+
+        private void Apply(Action<Item> action ) {
+            action(_conditionItem);
+            action(_onSuccessItem);
+            action(_onFailItem);
         }
 
         internal override bool Contains(Item desiredItem) =>
@@ -148,14 +142,14 @@ namespace Engine.Items
             return result || baseResult || successResult || failItemResult;
         }
 
-        internal override Item I(List<int> indexes)
+        internal override Item P(List<int> indexes)
         {
             if (indexes.Count == 1) return this;
             return indexes[1] switch
             {
-                0 => _conditionItem.I(indexes.Skip(1).ToList()),
-                1 => _onSuccessItem?.I(indexes.Skip(1).ToList()) ?? Fail("success"),
-                2 => _onFailItem?.I(indexes.Skip(1).ToList()) ?? Fail("failure"),
+                0 => _conditionItem.P(indexes.Skip(1).ToList()),
+                1 => _onSuccessItem?.P(indexes.Skip(1).ToList()) ?? Fail("success"),
+                2 => _onFailItem?.P(indexes.Skip(1).ToList()) ?? Fail("failure"),
                 _ => throw new InvalidOperationException("Invalid index for a Conditional Item")
             };
         }

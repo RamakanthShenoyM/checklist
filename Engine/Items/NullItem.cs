@@ -10,13 +10,9 @@ namespace Engine.Items
         
         internal override void Accept(ChecklistVisitor visitor) => visitor.Visit(this);
 
-        internal override void Be(object value) { }
-
-        internal override Item I(List<int> indexes) => this;
+        internal override Item P(List<int> indexes) => this;
 
         internal override List<SimpleItem> ActiveItems() => [];
-
-        internal override void Reset() { }
 
         internal override ItemStatus Status() => Succeeded;
         

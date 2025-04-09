@@ -21,7 +21,7 @@ namespace Engine.Tests.Unit
             var checklist = Creator.Checklist(
                 "Which Carpet Color?".Choices(RedCarpet, GreenCarpet, NoCarpet)
             );
-            var item = (SimpleItem)checklist.I(0);
+            var item = (SimpleItem)checklist.P(0);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             Creator.Sets(item).To(GreenCarpet);
             Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
@@ -65,9 +65,9 @@ namespace Engine.Tests.Unit
                 ("Is US citizen?").TrueFalse(),
                 "Which country?".Choices("India", "Iceland", "Norway")
             );
-            var item1 = (SimpleItem)checklist.I(0, 0);
-            var item2 = (SimpleItem)checklist.I(0, 1);
-            var item3 = (SimpleItem)checklist.I(0, 2);
+            var item1 = (SimpleItem)checklist.P(0, 0);
+            var item2 = (SimpleItem)checklist.P(0, 1);
+            var item3 = (SimpleItem)checklist.P(0, 2);
 
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             Creator.Sets(item1).To(GreenCarpet);
@@ -92,11 +92,23 @@ namespace Engine.Tests.Unit
                 checklist.Accept(this);
             }
 
-            public void Visit(BooleanItem item, Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations,History history) =>
+            public void Visit(BooleanItem item,
+                Guid id,
+                Position position,
+                string question,
+                bool? value,
+                Dictionary<Person, List<Operation>> operations,
+                History history) =>
                 Count++;
 
-            public void Visit(MultipleChoiceItem item, Guid id, string question, object? value, List<object> choices,
-                Dictionary<Person, List<Operation>> operations, History history) =>
+            public void Visit(MultipleChoiceItem item,
+                Guid id,
+                Position position,
+                string question,
+                object? value,
+                List<object> choices,
+                Dictionary<Person, List<Operation>> operations,
+                History history) =>
                 Count++;
         }
 

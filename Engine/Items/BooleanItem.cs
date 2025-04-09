@@ -34,10 +34,10 @@ namespace Engine.Items {
         internal override void Reset() => _hasSucceeded = null;
 
         internal override void Accept(ChecklistVisitor visitor) {
-	        visitor.Visit(this,_id,_question, _hasSucceeded, Operations,_history);
+	        visitor.Visit(this,_id, _position, _question, _hasSucceeded, Operations,_history);
         }
 
-        internal override Item I(List<int> indexes) {
+        internal override Item P(List<int> indexes) {
             if (indexes.Count == 1) return this;
             throw new InvalidOperationException($"No more items exist to reach with indexes {indexes}");
         }

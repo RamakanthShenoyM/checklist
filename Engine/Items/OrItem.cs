@@ -16,22 +16,11 @@ namespace Engine.Items
             _item2 = item2;
         }
 
-        internal override void Accept(ChecklistVisitor visitor)
-        {
-            visitor.PreVisit(this, _item1, _item2, Operations);
+        internal override void Accept(ChecklistVisitor visitor) {
+            visitor.PreVisit(this, _position, _item1, _item2, Operations);
             _item1.Accept(visitor);
             _item2.Accept(visitor);
-            visitor.PostVisit(this, _item1, _item2, Operations);
-        }
-
-        internal override void Be(object value)
-        {
-            throw new InvalidOperationException("can't set the Or");
-        }
-
-        internal override void Reset()
-        {
-            throw new InvalidOperationException("can't reset the Or");
+            visitor.PostVisit(this, _position, _item1, _item2, Operations);
         }
 
         public override bool Equals(object? obj) => this == obj || obj is OrItem other && this.Equals(other);
@@ -69,22 +58,24 @@ namespace Engine.Items
         internal override void AddPerson(Person person, Role role)
         {
             base.AddPerson(person, role);
-            _item1.AddPerson(person, role);
-            _item2.AddPerson(person, role);
+            Apply(item => item.AddPerson(person, role));
         }
 
         internal override void History(History history)
         {
             base.History(history);
-            _item1.History(history);
-            _item2.History(history);
+            Apply(item => item.History(history));
         }
 
         internal override void RemovePerson(Person person)
         {
              base.RemovePerson(person);
-            _item1.RemovePerson(person);
-            _item2.RemovePerson(person);
+             Apply(item => item.RemovePerson(person));
+        }
+
+        private void Apply(Action<Item> action ) {
+            action(_item1);
+            action(_item2);
         }
 
         internal override bool Contains(Item desiredItem) =>
@@ -105,11 +96,11 @@ namespace Engine.Items
             return _item2.Remove(item) || result;
         }
 
-        internal override Item I(List<int> indexes)
+        internal override Item P(List<int> indexes)
         {
             if (indexes.Count == 1) return this;
-            if (indexes[1] == 0) return _item1.I(indexes.Skip(1).ToList());
-            if (indexes[1] == 1) return _item2.I(indexes.Skip(1).ToList());
+            if (indexes[1] == 0) return _item1.P(indexes.Skip(1).ToList());
+            if (indexes[1] == 1) return _item2.P(indexes.Skip(1).ToList());
             throw new InvalidOperationException($"Invalid index of {indexes[1]} for an OrItem. Should be 0 or 1 only.");
         }
 

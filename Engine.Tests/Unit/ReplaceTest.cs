@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using Engine.Items;
 using Engine.Persons;
+using Engine.Tests.Util;
 using Xunit;
 using Xunit.Abstractions;
 using static Engine.Tests.Unit.CarpetColor;
 using static Engine.Tests.Unit.MultipleChoiceItemTest;
 using static Engine.Items.ChecklistExtensions;
-using static Engine.Items.PrettyPrint.PrettyPrintOptions;
-using Engine.Tests.Util;
-using Xunit.Sdk;
+using static Engine.Items.PrettyPrintOptions;
 
 namespace Engine.Tests.Unit {
     public class ReplaceTest {
@@ -39,9 +37,6 @@ namespace Engine.Tests.Unit {
             Assert.Equal(8, new QuestionCount(checklist).Count);
         }
 
-
-        
-
         [Fact]
         public void ReplaceNotItem() {
             checklist = Creator.Checklist(
@@ -52,7 +47,7 @@ namespace Engine.Tests.Unit {
             );
             Assert.Equal(2, new QuestionCount(checklist).Count);
 
-            var item2 = checklist.I(0, 1, 0);
+            var item2 = checklist.P(0, 1, 0);
             Creator.Replace(item2)
                 .With(
                     "Vehicle Type?".Choices("Car", "Bike", "Bus"),
@@ -75,16 +70,17 @@ namespace Engine.Tests.Unit {
             );
             Assert.Equal(2, new QuestionCount(checklist).Count);
 
-            var firstItem = checklist.I(0, 0);
+            var firstItem = checklist.P(0, 0);
+            var notFirstItem = Not(firstItem);
             Assert.Throws<InvalidOperationException>(() => Creator
                 .Replace(firstItem)
-                .With(firstItem.Not())
+                .With(notFirstItem)
                 .In(checklist));
         }
 
         [Fact]
         public void ReplaceSuccessLegOfInnerConditional() {
-            var successItem2 = checklist.I(0, 1, 1, 1);
+            var successItem2 = checklist.P(0, 1, 1, 1);
             Creator.Replace(successItem2)
                 .With(
                     "Replace1".TrueFalse(),
@@ -100,7 +96,7 @@ namespace Engine.Tests.Unit {
 
         [Fact]
         public void ReplaceConditionOfInnerConditional() {
-            var baseItem2 = checklist.I(0, 1, 1, 0);
+            var baseItem2 = checklist.P(0, 1, 1, 0);
             Creator.Replace(baseItem2)
                 .With(
                     "Replace1".TrueFalse(),
@@ -114,7 +110,7 @@ namespace Engine.Tests.Unit {
 
         [Fact]
         public void ReplaceNotContents() {
-            var failItem1A = checklist.I(0, 1, 2, 0, 0);
+            var failItem1A = checklist.P(0, 1, 2, 0, 0);
             Creator.Replace(failItem1A)
                 .With(
                     "Replace1".TrueFalse(),
@@ -128,7 +124,7 @@ namespace Engine.Tests.Unit {
 
         [Fact]
         public void ReplaceInnerConditional() {
-            var secondConditional = checklist.I(0, 1, 1);
+            var secondConditional = checklist.P(0, 1, 1);
             Creator.Replace(secondConditional)
                 .With(
                     "Replace1".TrueFalse(),
@@ -142,7 +138,7 @@ namespace Engine.Tests.Unit {
 
         [Fact]
         public void ReplaceOuterConditionalTwice() {
-            var firstConditional = checklist.I(0, 1);
+            var firstConditional = checklist.P(0, 1);
             Creator.Replace(firstConditional)
                 .With(
                     "Replace1".TrueFalse(),
@@ -153,7 +149,7 @@ namespace Engine.Tests.Unit {
             _testOutput.WriteLine(checklist.ToString(NoOperations));
             AssertMissing(firstConditional);
 
-            var newGroup = checklist.I(0, 1);
+            var newGroup = checklist.P(0, 1);
             Creator.Replace(newGroup) // Replace what we just replaced!
                 .With(
                     "Replace3".TrueFalse(),
@@ -167,7 +163,7 @@ namespace Engine.Tests.Unit {
 
         [Fact]
         public void InsertMoreAfterInnerConditionalInSuccessLeg() {
-            var innerConditional = checklist.I(0, 1, 1);
+            var innerConditional = checklist.P(0, 1, 1);
             Creator
                 .Insert(
                     "Addition1".TrueFalse(),
@@ -179,7 +175,8 @@ namespace Engine.Tests.Unit {
             Assert.Equal(10, new QuestionCount(checklist).Count);
             var positions = checklist.Positions(innerConditional);
             Assert.Single(positions);
-            Assert.Equal("0.1.1.0", positions[0].ToString()); // Conditional now first in the added Group
+            Assert.Equal("P[0.1.1.0]", positions[0].ToString()); // Conditional now first in the added Group
+            
             var history = new HistoryDump(checklist).Result;
             _testOutput.WriteLine(history.ToString());
 
@@ -187,7 +184,7 @@ namespace Engine.Tests.Unit {
 
         [Fact]
         public void InsertMoreBeforeInnerConditionalInSuccessLeg() {
-            var innerConditional = checklist.I(0, 1, 1);
+            var innerConditional = checklist.P(0, 1, 1);
             Creator
                 .Insert(
                     "Addition1".TrueFalse(),
@@ -199,9 +196,10 @@ namespace Engine.Tests.Unit {
             Assert.Equal(10, new QuestionCount(checklist).Count);
             var positions = checklist.Positions(innerConditional);
             Assert.Single(positions);
-            Assert.Equal("0.1.1.2", positions[0].ToString()); // Conditional now last in the added Group
+           
             var history = new HistoryDump(checklist).Result;
             _testOutput.WriteLine(history.ToString());
+            Assert.Equal("P[0.1.1.2]", positions[0].ToString()); // Conditional now last in the added Group
         }
 
         [Fact]
@@ -235,7 +233,7 @@ namespace Engine.Tests.Unit {
             );
             Assert.Equal(3, new QuestionCount(checklist).Count);
 
-            var item2 = checklist.I(0, 1);
+            var item2 = checklist.P(0, 1);
             Creator.Replace(item2)
                 .With(
                     "Vehicle Type?".Choices("Car", "Bike", "Bus"),

@@ -1,8 +1,7 @@
 ﻿using CommonUtilities.Util;
 using Engine.Persons;
-using static Engine.Items.PrettyPrint;
 using static Engine.Persons.Role;
-using static Engine.Items.PrettyPrint.PrettyPrintOptions;
+using static Engine.Items.PrettyPrintOptions;
 
 namespace Engine.Items {
     public class Checklist {
@@ -17,6 +16,7 @@ namespace Engine.Items {
             _history = history ?? _history;
             _item.AddPerson(_creator, Creator);
             _item.History(_history);
+            new ChecklistIndexer(this);
         }
 
         public void Accept(ChecklistVisitor visitor) {
@@ -53,11 +53,13 @@ namespace Engine.Items {
             newItem.History(_history);
             if (_item == originalItem) {
                 _item = newItem;
+                new ChecklistIndexer(this);
                 return;
             }
 
             if (!_item.Replace(originalItem, newItem))
                 throw new InvalidOperationException("Item not found in checklist");
+            new ChecklistIndexer(this);
         }
 
         public void Simplify() {
@@ -67,14 +69,15 @@ namespace Engine.Items {
         internal void Remove(Item item) {
             if (item == _item) throw new InvalidOperationException("Cannot remove the only item in the checklist");
             if (!_item.Remove(item)) throw new InvalidOperationException("Item not found in checklist");
+            new ChecklistIndexer(this);
         }
 
-        public Item I(int firstIndex, params int[] rest) {
+        public Item P(int firstIndex, params int[] rest) {
             if (firstIndex != 0) throw new InvalidOperationException(
                 "There is only one item at the root of the Checklist hierarchy, so use index 0.");
             var indexes = rest.ToList();
             indexes.Insert(0, firstIndex);
-            return _item.I(indexes);
+            return _item.P(indexes);
         }
 
         public string ToMemento() => new ChecklistSerializer(this).Result;

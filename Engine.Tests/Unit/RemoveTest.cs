@@ -3,9 +3,9 @@ using Xunit;
 using Engine.Persons;
 using Xunit.Abstractions;
 using System;
-using static Engine.Items.ChecklistExtensions;
-using static Engine.Items.PrettyPrint.PrettyPrintOptions;
 using Engine.Tests.Util;
+using static Engine.Items.ChecklistExtensions;
+using static Engine.Items.PrettyPrintOptions;
 
 namespace Engine.Tests.Unit;
 
@@ -58,23 +58,23 @@ public class RemoveTest {
             ),
             "Last simple item".TrueFalse() // 0.2
         );
-        firstItem = checklist.I(0, 0);
-        condition1 = checklist.I(0, 1);
-        conditionItem1 = checklist.I(0, 1, 0);
-        successItem1 = checklist.I(0, 1, 1); // aka condition2
-        conditionItem2 = checklist.I(0, 1, 1, 0);
-        successItem2 = checklist.I(0, 1, 1, 1);
-        failItem2 = checklist.I(0, 1, 1, 2);
-        failItem1 = checklist.I(0, 1, 2); // the Or
-        failItem1ANot = checklist.I(0, 1, 2, 0);
-        failItem1A = checklist.I(0, 1, 2, 0, 0);
-        failItem1A1 = checklist.I(0, 1, 2, 0, 0, 0);
+        firstItem = checklist.P(0, 0);
+        condition1 = checklist.P(0, 1);
+        conditionItem1 = checklist.P(0, 1, 0);
+        successItem1 = checklist.P(0, 1, 1); // aka condition2
+        conditionItem2 = checklist.P(0, 1, 1, 0);
+        successItem2 = checklist.P(0, 1, 1, 1);
+        failItem2 = checklist.P(0, 1, 1, 2);
+        failItem1 = checklist.P(0, 1, 2); // the Or
+        failItem1ANot = checklist.P(0, 1, 2, 0);
+        failItem1A = checklist.P(0, 1, 2, 0, 0);
+        failItem1A1 = checklist.P(0, 1, 2, 0, 0, 0);
         ;
-        failItem1A2 = checklist.I(0, 1, 2, 0, 0, 1);
-        failItem1B = checklist.I(0, 1, 2, 1);
-        failItem1B1 = checklist.I(0, 1, 2, 1, 0);
-        failItem1B2 = checklist.I(0, 1, 2, 1, 1);
-        lastItem = checklist.I(0, 2);
+        failItem1A2 = checklist.P(0, 1, 2, 0, 0, 1);
+        failItem1B = checklist.P(0, 1, 2, 1);
+        failItem1B1 = checklist.P(0, 1, 2, 1, 0);
+        failItem1B2 = checklist.P(0, 1, 2, 1, 1);
+        lastItem = checklist.P(0, 2);
     }
 
     [Fact]

@@ -15,7 +15,7 @@ namespace Engine.Tests.Unit {
             var checklist = Creator.Checklist(
                 "Is US citizen?".TrueFalse()
             );
-            var item = (SimpleItem)checklist.I(0);
+            var item = (SimpleItem)checklist.P(0);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             Creator.Sets(item).To(true);
             Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());
@@ -38,7 +38,7 @@ namespace Engine.Tests.Unit {
             var checklist = Creator.Checklist(
                 "Is US citizen?".TrueFalse()
             );
-            var item = (SimpleItem)checklist.I(0);
+            var item = (SimpleItem)checklist.P(0);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             Creator.Sets(item).To(true);
             var history = new HistoryDump(checklist).Result;
@@ -54,9 +54,9 @@ namespace Engine.Tests.Unit {
                 "Is Indian citizen?".TrueFalse(),
                 "Is Nordic citizen?".TrueFalse()
             );
-            var item1 = (SimpleItem)checklist.I(0, 0);
-            var item2 = (SimpleItem)checklist.I(0, 1);
-            var item3 = (SimpleItem)checklist.I(0, 2);
+            var item1 = (SimpleItem)checklist.P(0, 0);
+            var item2 = (SimpleItem)checklist.P(0, 1);
+            var item3 = (SimpleItem)checklist.P(0, 2);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             Creator.Sets(item1).To(true);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
@@ -82,7 +82,7 @@ namespace Engine.Tests.Unit {
             var checklist = Creator.Checklist(
                 "Is US citizen?".TrueFalse()
             );
-            var item = (SimpleItem)checklist.I(0);
+            var item = (SimpleItem)checklist.P(0);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             Creator.Sets(item).To(true);
             Assert.Equal(ChecklistStatus.Succeeded, checklist.Status());

@@ -27,7 +27,13 @@ namespace Engine.Items
 
         public void Visit(History history, List<string> events) => _events = events;
 
-        public void Visit(BooleanItem item,Guid id, string question, bool? value, Dictionary<Person, List<Operation>> operations,History history)
+        public void Visit(BooleanItem item,
+            Guid id,
+            Position position,
+            string question,
+            bool? value,
+            Dictionary<Person, List<Operation>> operations,
+            History history)
         {
             _dtos.Add(new ItemDto(
                 nameof(BooleanItem),
@@ -35,8 +41,7 @@ namespace Engine.Items
                 id,
                 question, 
                 new ValueDto(typeof(Boolean).ToString(), value.ToString()),
-                Operations:OperationDtos(operations),
-                Events:history.Events()));
+                Operations:OperationDtos(operations)));
             _position.Increment();
         }
 
@@ -46,8 +51,14 @@ namespace Engine.Items
             _position.Increment();
         }
 
-        public void Visit(MultipleChoiceItem item, Guid id, string question, object? value, List<object> choices,
-            Dictionary<Person, List<Operation>> operations, History history)
+        public void Visit(MultipleChoiceItem item,
+            Guid id,
+            Position position,
+            string question,
+            object? value,
+            List<object> choices,
+            Dictionary<Person, List<Operation>> operations,
+            History history)
         {
             _dtos.Add(new ItemDto(
                 nameof(MultipleChoiceItem), 
@@ -56,22 +67,49 @@ namespace Engine.Items
                 question, 
                 new ValueDto(value?.GetType().ToString(), value?.ToString()?? ""),
                 choices.Select(c => new ValueDto(c.GetType().ToString(), c.ToString())).ToList(),
-                Operations:OperationDtos(operations),
-                Events:history.Events()));
+                Operations:OperationDtos(operations)));
             _position.Increment();
         }
 
         public void PreVisit(Checklist checklist, Person creator,History history) => 
             _person = new PersonDto(creator._organizationId, creator._personId);
-        public void PreVisit(GroupItem item, List<Item> childItems, Dictionary<Person, List<Operation>> operations) => _position.Deeper();
-        public void PostVisit(GroupItem item, List<Item> childItems, Dictionary<Person, List<Operation>> operations) => CreateComposite(item, operations);
-        public void PreVisit(OrItem item, Item item1, Item item2, Dictionary<Person, List<Operation>> operations) => _position.Deeper();
-        public void PostVisit(OrItem item, Item item1, Item item2, Dictionary<Person, List<Operation>> operations) => CreateComposite(item, operations);
-        public void PreVisit(NotItem item, Item negatedItem, Dictionary<Person, List<Operation>> operations) => _position.Deeper();
-        public void PostVisit(NotItem item, Item negatedItem, Dictionary<Person, List<Operation>> operations) => CreateComposite(item, operations);
-        public void PreVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
+        public void PreVisit(GroupItem item,
+            Position position,
+            List<Item> childItems,
             Dictionary<Person, List<Operation>> operations) => _position.Deeper();
-        public void PostVisit(ConditionalItem item, Item baseItem, Item? successItem, Item? failureItem,
+        public void PostVisit(GroupItem item,
+            Position position,
+            List<Item> childItems,
+            Dictionary<Person, List<Operation>> operations) => CreateComposite(item, operations);
+        public void PreVisit(OrItem item,
+            Position position,
+            Item item1,
+            Item item2,
+            Dictionary<Person, List<Operation>> operations) => _position.Deeper();
+        public void PostVisit(OrItem item,
+            Position position,
+            Item item1,
+            Item item2,
+            Dictionary<Person, List<Operation>> operations) => CreateComposite(item, operations);
+        public void PreVisit(NotItem item,
+            Position position,
+            Item negatedItem,
+            Dictionary<Person, List<Operation>> operations) => _position.Deeper();
+        public void PostVisit(NotItem item,
+            Position position,
+            Item negatedItem,
+            Dictionary<Person, List<Operation>> operations) => CreateComposite(item, operations);
+        public void PreVisit(ConditionalItem item,
+            Position position,
+            Item baseItem,
+            Item? successItem,
+            Item? failureItem,
+            Dictionary<Person, List<Operation>> operations) => _position.Deeper();
+        public void PostVisit(ConditionalItem item,
+            Position position,
+            Item baseItem,
+            Item? successItem,
+            Item? failureItem,
             Dictionary<Person, List<Operation>> operations) => 
             CreateComposite(item,operations);
         private void CreateComposite(Item item, Dictionary<Person, List<Operation>> operations)
@@ -93,8 +131,7 @@ namespace Engine.Items
         string? Question = null, 
         ValueDto? Value=null,
         List<ValueDto>? Choices = null,
-        List<OperationDto>? Operations=null,
-        List<string>? Events=null);
+        List<OperationDto>? Operations=null);
 
     public record ValueDto(string? ValueClass, string? ValueValue);
 
