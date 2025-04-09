@@ -253,7 +253,7 @@ namespace Engine.Persons
             public void From(Item item)
             {
                 if (!_removingPerson.Can(SetRole).On(item))
-                    throw new InvalidOperationException("Does not have permission to remove person");
+                    throw new InvalidOperationException($"Person<{_removingPerson}> does not have permission to remove person <{_removedPerson}> From <{item}>");
                 item.RemovePerson(_removedPerson);
                 item.History().Add(PersonRemovedEvent, $"Person<{_removingPerson}> removed <{_removedPerson}> From <{item}>");
                 

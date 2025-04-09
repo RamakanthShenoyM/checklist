@@ -33,7 +33,7 @@ namespace Engine.Items {
             Dictionary<Person, List<Operation>> operations,
             History history) {
             LabelIndention(item);
-            _result += String.Format("{0}Question: [{1}] {2} Value: {3}\n", Indention, position, question, Format(value));
+            _result += String.Format("{0}Question: {1} {2} Value: {3}\n", Indention, position, question, Format(value));
             OperationsDescription(operations);
             LabelUndention(item);
         }
@@ -59,7 +59,7 @@ namespace Engine.Items {
             Item? failureItem,
             Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
-            _result += String.Format("{0}Conditional [{1}]\n", Indention, position);
+            _result += String.Format("{0}Conditional {1}\n", Indention, position);
             _conditionalItems.Add(new Triple(baseItem, successItem, failureItem));
             _indentionLevel++;
         }
@@ -80,7 +80,7 @@ namespace Engine.Items {
             Item item2,
             Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
-            _result += String.Format("{0}Either/Or [{1}]\n", Indention, position);
+            _result += String.Format("{0}Either/Or {1}\n", Indention, position);
             _indentionLevel++;
         }
 
@@ -98,7 +98,7 @@ namespace Engine.Items {
             Item negatedItem,
             Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
-            _result += String.Format("{0}Not (the following) [{1}]\n", Indention, position);
+            _result += String.Format("{0}Not (the following) {1}\n", Indention, position);
             _indentionLevel++;
         }
 
@@ -115,7 +115,7 @@ namespace Engine.Items {
             List<Item> childItems,
             Dictionary<Person, List<Operation>> operations) {
             LabelIndention(item);
-            _result += String.Format("{0}Group of Items [{1}]\n", Indention, position);
+            _result += String.Format("{0}Group of Items {1}\n", Indention, position);
             _indentionLevel++;
         }
 
