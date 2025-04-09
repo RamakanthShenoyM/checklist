@@ -1,6 +1,5 @@
 ﻿using CommonUtilities.Util;
 using Engine.Persons;
-using static Engine.Items.ItemExtensions;
 using static Engine.Items.ItemStatus;
 
 namespace Engine.Items
@@ -81,25 +80,25 @@ namespace Engine.Items
         internal override void AddPerson(Person person, Role role)
         {
             base.AddPerson(person, role);
-            _conditionItem.AddPerson(person, role);
-            _onSuccessItem.AddPerson(person, role);
-            _onFailItem.AddPerson(person, role);
+            Apply(item => item.AddPerson(person, role));
         }
 
         internal override void History(History history)
         {
             base.History(history);
-            _conditionItem.History(history);
-            _onSuccessItem.History(history);
-            _onFailItem.History(history);
+            Apply(item => item.History(history));
         }
 
         internal override void RemovePerson(Person person)
         {
             base.RemovePerson(person);
-            _conditionItem.RemovePerson(person);
-            _onSuccessItem.RemovePerson(person);
-            _onFailItem.RemovePerson(person);
+            Apply(item => item.RemovePerson(person));
+        }
+
+        private void Apply(Action<Item> action ) {
+            action(_conditionItem);
+            action(_onSuccessItem);
+            action(_onFailItem);
         }
 
         internal override bool Contains(Item desiredItem) =>
