@@ -7,7 +7,8 @@ namespace Engine.Items;
 public interface ChecklistVisitor: HistoryVisitor {
     void PreVisit(Checklist checklist, 
         Person creator, 
-        History history) {}
+        History history,
+        Guid id) {}
     void PostVisit(Checklist checklist, 
         Person creator, 
         History history) {}

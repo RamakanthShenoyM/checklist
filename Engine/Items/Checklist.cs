@@ -6,13 +6,15 @@ using static Engine.Items.PrettyPrintOptions;
 namespace Engine.Items {
     public class Checklist {
         internal Item _item;
+        private readonly Guid _id;
         private readonly Person _creator;
         private readonly History _history = new([]);
 
         // Create with a Creator person only with extension method
-        internal Checklist(Person creator, Item firstItem,History? history=null, params Item[] items) {
+        internal Checklist(Person creator, Item firstItem, History? history=null, Guid? id=null, params Item[] items) {
             _item = (items.Length == 0) ? firstItem : new GroupItem(firstItem, items);
             _creator = creator;
+            _id =  id??Guid.NewGuid();
             _history = history ?? _history;
             _item.AddPerson(_creator, Creator);
             _item.History(_history);
@@ -20,7 +22,7 @@ namespace Engine.Items {
         }
 
         public void Accept(ChecklistVisitor visitor) {
-            visitor.PreVisit(this, _creator, _history);
+            visitor.PreVisit(this, _creator, _history, _id);
             _history.Accept(visitor);
             _item.Accept(visitor);
             visitor.PostVisit(this, _creator, _history);
@@ -45,9 +47,10 @@ namespace Engine.Items {
         private bool Equals(Checklist other) =>
             this._item.Equals(other._item) 
             && this._creator.Equals(other._creator) 
-            && this._history.Equals(other._history);
+            && this._history.Equals(other._history)
+            && this._id.Equals(other._id);
 
-        public override int GetHashCode() => _creator.GetHashCode()*37 + _history.GetHashCode();
+        public override int GetHashCode() => _creator.GetHashCode()*37 + _history.GetHashCode()+ _id.GetHashCode();
         public void Replace(Item originalItem, Item newItem) {
             newItem.AddPerson(_creator, Creator);
             newItem.History(_history);

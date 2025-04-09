@@ -10,7 +10,8 @@ namespace Engine.Items
         private PersonDto _person;
         private readonly Position _position = new();
         private List<string> _events;
-        internal ChecklistSerializer(Checklist checklist)
+        private Guid _id;
+		internal ChecklistSerializer(Checklist checklist)
         {
             checklist.Accept(this);
         }
@@ -21,7 +22,7 @@ namespace Engine.Items
             {
                 if (_dtos.Count == 0 || _person is null) throw new InvalidOperationException(
                     "The serializer has not examined the Checklist. Visitor issue possible?");
-                return JsonSerializer.Serialize(new CheckListDto(_person,_dtos,_events));
+                return JsonSerializer.Serialize(new CheckListDto(_person,_dtos,_events,_id));
             }
         }
 
@@ -71,9 +72,13 @@ namespace Engine.Items
             _position.Increment();
         }
 
-        public void PreVisit(Checklist checklist, Person creator,History history) => 
-            _person = new PersonDto(creator._organizationId, creator._personId);
-        public void PreVisit(GroupItem item,
+		public void PreVisit(Checklist checklist, Person creator, History history, Guid id)
+		{
+			_person = new PersonDto(creator._organizationId, creator._personId);
+			_id = id;
+		}
+
+		public void PreVisit(GroupItem item,
             Position position,
             List<Item> childItems,
             Dictionary<Person, List<Operation>> operations) => _position.Deeper();
@@ -122,7 +127,7 @@ namespace Engine.Items
             operations.Select(o => new OperationDto(new PersonDto(o.Key._organizationId, o.Key._personId), o.Value)).ToList();
     }
 
-    public record CheckListDto(PersonDto Person, List<ItemDto> Items,List<string> Events);
+    public record CheckListDto(PersonDto Person, List<ItemDto> Items,List<string> Events, Guid ID);
 
     public record ItemDto(
         string ItemClassName,

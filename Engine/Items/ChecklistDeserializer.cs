@@ -10,14 +10,16 @@ namespace Engine.Items
         private int level;
         private readonly Stack<List<Item>> items = new();
         private readonly Person person;
+        private readonly Guid id;
         private History history;
-        internal Checklist Result => new(person, items.Peek()[0],history);
+        internal Checklist Result => new(person, items.Peek()[0],history,id);
 
         internal ChecklistDeserializer(string memento)
         {
-            var (personDto, dtos,events) = Deserialize<CheckListDto>(memento) ?? throw new InvalidOperationException("Invalid Json");
+            var (personDto, dtos,events, guid) = Deserialize<CheckListDto>(memento) ?? throw new InvalidOperationException("Invalid Json");
             person = new Person(personDto.OrganizationId, personDto.PersonId);
             history = new History(events);
+            id = guid;
             level = Level(dtos[0]);
             for (var i = 0; i < level; i++) items.Push([]);
             foreach (var dto in dtos)
