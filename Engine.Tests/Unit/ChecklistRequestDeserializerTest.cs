@@ -7,6 +7,7 @@ using static Engine.Items.ChecklistRequestDeserializer;
 using static Engine.Items.ChecklistRequestType;
 using static Engine.Items.ChecklistRequestValueType;
 using static Engine.Persons.Operation;
+using static Engine.Tests.Unit.CarpetColor;
 
 namespace Engine.Tests.Unit
 {
@@ -22,14 +23,16 @@ namespace Engine.Tests.Unit
                 "Multiple choice question1".Choices("A", "B","C"),
                 "Multiple choice question2".Choices(1,2,3),
                 "Multiple choice question3".Choices(1.0, 2.0, 3.0),
-                "Multiple choice question4".Choices('A', 'B', 'C')
+                "Multiple choice question4".Choices('A', 'B', 'C'),
+                "Which Carpet Color?".Choices(RedCarpet, GreenCarpet, NoCarpet)
             );
             var setDto1 = new ChecklistRequestDto(new PersonDto(100,200), ChecklistRequestType.Set, ItemPosition:"P[0.0]",Value: "true", ValueType:BooleanValue);
             var setDto2 = new ChecklistRequestDto(new PersonDto(100,200), ChecklistRequestType.Set, ItemPosition: "P[0.1]", Value: "A", ValueType: StringValue);
             var setDto3 = new ChecklistRequestDto(new PersonDto(100,200), ChecklistRequestType.Set, ItemPosition: "P[0.2]", Value: "1", ValueType: IntegerValue);
             var setDto4 = new ChecklistRequestDto(new PersonDto(100,200), ChecklistRequestType.Set, ItemPosition: "P[0.3]", Value: "1.0", ValueType: DoubleValue);
-            var setDto5 = new ChecklistRequestDto(new PersonDto(100,200), ChecklistRequestType.Set, ItemPosition: "P[0.4]", Value: "A", ValueType: CharacterValue);
-            var inputDto = new ChecklistApiDto(Guid.NewGuid(), [setDto1,setDto2,setDto3,setDto4,setDto5]);
+            var setDto5 = new ChecklistRequestDto(new PersonDto(100,200), ChecklistRequestType.Set, ItemPosition: "P[0.4]", Value: "A", ValueType: CharacterValue); 
+            var setDto6 = new ChecklistRequestDto(new PersonDto(100,200), ChecklistRequestType.Set, ItemPosition: "P[0.5]", Value: "GreenCarpet", ValueType: EnumValue);
+            var inputDto = new ChecklistApiDto(Guid.NewGuid(), [setDto1,setDto2,setDto3,setDto4,setDto5,setDto6]);
             var json = JsonSerializer.Serialize(inputDto);
             new ChecklistRequestDeserializer(json).Execute(checklist);
 

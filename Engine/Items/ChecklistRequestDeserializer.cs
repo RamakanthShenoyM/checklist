@@ -44,7 +44,7 @@ namespace Engine.Items
                     case ChecklistRequestType.RemovePerson:
                         ExecuteRemovePerson(requestDto, checklist);
                         break;
-                } ;
+                }
             }
         }
 
@@ -52,7 +52,7 @@ namespace Engine.Items
         {
             var item = (SimpleItem)checklist.P(requestDto.ItemPosition.ToPosition());
             var person = new Person(requestDto.Person.OrganizationId, requestDto.Person.PersonId);
-            var value = Value(requestDto.Value, requestDto.ValueType);
+            var value = Value(requestDto.Value, requestDto.ValueType, item);
             person.Sets(item).To(value);
         }
 
@@ -86,7 +86,8 @@ namespace Engine.Items
             person.Remove(personToRemove).From(item);
         }
 
-        private static object Value(object requestDtoValue, ChecklistRequestValueType? requestDtoValueType)
+        private static object Value(object requestDtoValue, ChecklistRequestValueType? requestDtoValueType,
+            SimpleItem item)
         {
             return requestDtoValueType switch
             {
@@ -95,6 +96,7 @@ namespace Engine.Items
                 ChecklistRequestValueType.DoubleValue => DoubleParser(requestDtoValue),
                 ChecklistRequestValueType.StringValue => StringParser(requestDtoValue),
                 ChecklistRequestValueType.CharacterValue => CharacterParser(requestDtoValue),
+                ChecklistRequestValueType.EnumValue => EnumParser(requestDtoValue, item),
                 _ => throw new ArgumentOutOfRangeException(nameof(requestDtoValueType), requestDtoValueType, null)
             };
         }
@@ -129,6 +131,15 @@ namespace Engine.Items
             return requestDtoValue.ToString()[0];
         }
 
+        private static Enum EnumParser(object requestDtoValue, SimpleItem item)
+        {
+            if (item is not MultipleChoiceItem) throw new InvalidCastException("You can choose value on multiple choice item only");
+            var enumType= ((MultipleChoiceItem)item).ChoiceType();
+            if (!enumType.IsEnum) throw new InvalidOperationException(
+                $"Type '{enumType}' is not an enum.");
+            return (Enum)Enum.Parse(enumType, requestDtoValue.ToString());
+        }
+
     }
 
     public enum ChecklistRequestType
@@ -150,7 +161,8 @@ namespace Engine.Items
         DoubleValue,
         DateValue,
         StringValue,
-        CharacterValue
+        CharacterValue,
+        EnumValue
     }
 
     public enum ChecklistRole
