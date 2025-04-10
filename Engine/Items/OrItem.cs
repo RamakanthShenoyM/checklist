@@ -48,6 +48,8 @@ namespace Engine.Items
             return _item2.Replace(originalItem, newItem) || result;
         }
 
+        protected override List<Item> SubItems() => [_item1, _item2];
+
         internal override ItemStatus Status()
         {
             if (_item1.Status() == Failed || _item2.Status() == Failed) return Failed;

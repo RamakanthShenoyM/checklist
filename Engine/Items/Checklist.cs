@@ -85,7 +85,9 @@ namespace Engine.Items {
         
         public Item P(Position position) => P(position.ToIndexes());
 
-        internal Item P(List<int> indexes) => _item.P(indexes);
+        public Item X(Position position) => _item.X(position);
+
+        private Item P(List<int> indexes) => _item.P(indexes);
 
         public string ToMemento() => new ChecklistSerializer(this).Result;
 

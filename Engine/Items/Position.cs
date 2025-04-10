@@ -28,4 +28,10 @@ public class Position {
     internal Position Clone() => new([.._indexes]);
 
     internal List<int> ToIndexes()=> [.._indexes];
+    
+    public bool IsPartialMatch(Position other) {
+        if (this._indexes.Count > other._indexes.Count() ) return false;
+        var matchingIndexes = other._indexes.GetRange(0, this._indexes.Count);
+        return this._indexes.SequenceEqual(matchingIndexes);
+    }
 }

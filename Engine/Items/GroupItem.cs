@@ -21,6 +21,8 @@ namespace Engine.Items
 
         internal GroupItem(List<Item> items) => _childItems = items;
 
+        protected override List<Item> SubItems() => [.._childItems];
+
         internal override ItemStatus Status()
         {
             if (_childItems.Count == 0) return ItemStatus.Unknown;

@@ -37,6 +37,8 @@ namespace Engine.Items
             return _item.Replace(originalItem, newItem);
         }
 
+        protected override List<Item> SubItems() => [_item];
+
         internal override ItemStatus Status()
         {
             if (_item.Status() == Succeeded) return Failed;

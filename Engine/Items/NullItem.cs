@@ -13,6 +13,8 @@ namespace Engine.Items
 
         internal override List<SimpleItem> ActiveItems() => [];
 
+        protected override List<Item> SubItems() => [];
+        
         internal override ItemStatus Status() => Succeeded;
         
         internal override void AddPerson(Person person, Role role)
