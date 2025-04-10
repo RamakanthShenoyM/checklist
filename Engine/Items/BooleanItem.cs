@@ -49,7 +49,7 @@ namespace Engine.Items {
         };
 
         internal override List<SimpleItem> ActiveItems() => [this];
-
+        internal override Item Clone() => new BooleanItem(_question, _id);
         public override string ToString() => _question;
     }
 }

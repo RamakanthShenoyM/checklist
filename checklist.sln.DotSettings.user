@@ -28,5 +28,6 @@
     &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest.CheckEqualsForOrItemCheckList&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest.CheckEqualsForOrItemCheckListWithMultiplePerson&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest.CheckEqualsForGroupItemCheckListWithMultiplePersons&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.ConditionalItemTest.Boolean&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

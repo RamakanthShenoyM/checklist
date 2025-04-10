@@ -1,15 +1,156 @@
 ﻿using Engine.Items;
 using Engine.Persons;
+using Engine.Tests.Util;
 using Xunit;
 using Xunit.Abstractions;
 using static Engine.Items.ChecklistExtensions;
 
 namespace Engine.Tests.Unit
 {
-    public class SaveChecklistTest(ITestOutputHelper testOutput)
+    public class ChecklistTest(ITestOutputHelper testOutput)
     {
         private static readonly Person Creator = new Person(0, 0);
         private static readonly Person Owner = new Person(1, 2);
+        [Fact]
+        public void CloneChecklistForBooleanItem()
+        {
+            var checklist = Creator.Checklist(
+                "Is US citizen?".TrueFalse()
+            );
+            var checklistClone = checklist.Clone();
+            Assert.Equal(checklist, checklistClone);
+        }
+        [Fact]
+        public void CloneChecklistForMultipleChoiceItem()
+        {
+            var item1 = "second question".Choices(1, 2, 3, 4);
+            var checklist = Creator.Checklist(
+                item1
+            );
+            var checklistClone = checklist.Clone();
+            Assert.Equal(checklist, checklistClone);
+        }
+        [Fact]
+        public void CloneChecklistForGroupItem()
+        {
+            var checklist = Creator.Checklist(
+                "first question".TrueFalse(),
+                Group(
+                    "first inner question".TrueFalse(),
+                    "second inner question".TrueFalse()
+                ),
+                "second question".TrueFalse(),
+                "third question".TrueFalse()
+            );
+            var checklistClone = checklist.Clone();
+            Assert.Equal(checklist, checklistClone);
+        }
+        [Fact]
+        public void CloneChecklistForOrItem()
+        {
+            var checklist = Creator.Checklist(
+                "first question".TrueFalse(),
+                Or(
+                    "first inner question".TrueFalse(),
+                    "second inner question".TrueFalse()
+                ),
+                "second question".TrueFalse(),
+                "third question".TrueFalse()
+            );
+            var checklistClone = checklist.Clone();
+            Assert.Equal(checklist, checklistClone);
+        }
+        [Fact]
+        public void CloneChecklistForNotItem()
+        {
+            var checklist = Creator.Checklist(
+                "first question".TrueFalse(),
+                Not(
+                    Group(
+                        "first inner question".TrueFalse(),
+                        "second inner question".TrueFalse()
+                    )
+                ),
+                "second question".TrueFalse(),
+                "third question".TrueFalse()
+            );
+            var checklistClone = checklist.Clone();
+            Assert.Equal(checklist, checklistClone);
+        }
+        [Fact]
+        public void CloneChecklistForConditionalItem()
+        {
+            var checklist = Creator.Checklist(
+                "first question".TrueFalse(),
+                Conditional(
+                    "Conditional question".TrueFalse(),
+                    Group(
+                        "first Succeed inner question".TrueFalse(),
+                        "second Succeed inner question".TrueFalse()
+                    )),
+                    "Failed question".TrueFalse(),
+                    Not(
+                        Group(
+                            "first inner question".TrueFalse(),
+                            "second inner question".TrueFalse()
+                        )
+                    ), Or(
+                        "first inner question".TrueFalse(),
+                        "second inner question".TrueFalse()
+                    ),
+                "second question".Choices("A", "B", "C", "D"),
+                "third question".TrueFalse()
+            );
+            var checklistClone = checklist.Clone();
+            Assert.Equal(checklist, checklistClone);
+            var item1 = (SimpleItem)checklistClone.P(0, 0);
+            Creator.Sets(item1).To(true);
+            Assert.NotEqual(checklist, checklistClone);
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+            var history = new HistoryDump(checklist).Result;
+            testOutput.WriteLine(history.ToString());
+        }
+        [Fact]
+        public void CloneChecklistForComplexMultipleChoiceItem()
+        {
+            var checklist = Creator.Checklist(
+                "first question".Choices("Option 1", "Option 2", "Option 3"),
+                Conditional(
+                    "Conditional question".Choices("Yes", "No"),
+                    Group(
+                        "first Succeed inner question".Choices("A", "B", "C"),
+                        "second Succeed inner question".Choices(1, 2, 3, 4)
+                    )),
+                "Failed question".Choices("X", "Y", "Z"),
+                Not(
+                    Group(
+                        "first inner question".Choices("True", "False"),
+                        "second inner question".Choices("On", "Off")
+                    )
+                ), Or(
+                    "first inner question".Choices("Red", "Blue", "Green"),
+                    "second inner question".Choices("Hot", "Cold")
+                ),
+                "second question".Choices("A", "B", "C", "D"),
+                "third question".Choices("Yes", "No")
+            );
+            
+            var checklistClone = checklist.Clone();
+            Assert.Equal(checklist, checklistClone);
+            var item2 = (SimpleItem)checklistClone.P(0, 1, 1, 0);
+            Creator.Sets((SimpleItem)checklistClone.P(0, 0)).To("Option 1");
+            Creator.Add(Owner).As(Role.Owner).To(item2);
+            Owner.Sets(item2).To("A");
+            Assert.NotEqual(checklist, checklistClone);
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+            var history = new HistoryDump(checklist).Result;
+            testOutput.WriteLine(history.ToString());
+        }
+
         [Fact]
         public void SaveGroupChecklist()
         {

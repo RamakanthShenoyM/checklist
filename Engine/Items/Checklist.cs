@@ -7,6 +7,7 @@ namespace Engine.Items {
     public class Checklist {
         internal Item _item;
         private readonly Guid _id;
+        private List<Item> _checklist;
         private readonly Person _creator;
         private readonly History _history = new([]);
 
@@ -89,6 +90,8 @@ namespace Engine.Items {
             new ChecklistDeserializer(memento).Result;
 
         public List<SimpleItem> ActiveItems() => _item.ActiveItems();
+
+        public Checklist Clone() => new(_creator, _item.Clone(), _history.Clone(), _id);
     }
    
 }

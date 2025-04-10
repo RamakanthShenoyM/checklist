@@ -12,6 +12,7 @@ namespace Engine.Items
         internal override Item P(List<int> indexes) => this;
 
         internal override List<SimpleItem> ActiveItems() => [];
+        internal override Item Clone() => new NullItem();
 
         internal override ItemStatus Status() => Succeeded;
         

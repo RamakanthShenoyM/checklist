@@ -104,6 +104,10 @@ namespace Engine.Tests.Unit
 			Assert.False(Viewer.Can(Set).On(item));
             Creator.Add(Viewer).As(Role.Owner).To(item);
             Assert.True(Viewer.Can(Set).On(item));
+            var memento = checklist.ToMemento();
+            var restoredChecklist = Checklist.FromMemento(memento);
+            Assert.Equal(checklist, restoredChecklist);
+
         }
 
         [Fact]

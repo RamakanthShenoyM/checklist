@@ -59,7 +59,7 @@ namespace Engine.Items
         }
         
         internal override List<SimpleItem> ActiveItems() => [this];
-
+        internal override Item Clone() => new MultipleChoiceItem(_question, _choices[0], _id, _choices.Skip(1).ToArray());
         public override string ToString() => _question;
     }
 }
