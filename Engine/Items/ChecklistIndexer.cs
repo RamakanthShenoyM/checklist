@@ -34,6 +34,7 @@ namespace Engine.Items {
         }
 
         public void Visit(NullItem item) {
+            item.Position(_position.Clone());
             _position.Increment();
         }
 

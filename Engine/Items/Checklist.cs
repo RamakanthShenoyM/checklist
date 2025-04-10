@@ -75,13 +75,7 @@ namespace Engine.Items {
             new ChecklistIndexer(this);
         }
 
-        public Item P(int firstIndex, params int[] rest) {
-            if (firstIndex != 0) throw new InvalidOperationException(
-                "There is only one item at the root of the Checklist hierarchy, so use index 0.");
-            var indexes = rest.ToList();
-            indexes.Insert(0, firstIndex);
-            return P(indexes);
-        }
+        public Item P(int firstIndex, params int[] rest) => X(new Position(firstIndex, rest));
         
         public Item P(Position position) => P(position.ToIndexes());
 

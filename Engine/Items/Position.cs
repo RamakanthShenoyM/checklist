@@ -9,6 +9,15 @@ public class Position {
         _indexes = indexes;
     }
 
+    internal Position(int firstIndex, int[] rest) {
+        if (firstIndex != 0)
+            throw new InvalidOperationException(
+                "There is only one item at the root of the Checklist hierarchy, so use index 0.");
+        var indexes = rest.ToList();
+        indexes.Insert(0, firstIndex);
+        _indexes = indexes;
+    }
+
     public Position() : this([0]) { }
 
     internal Position(string positionRepresentation) {
@@ -27,11 +36,23 @@ public class Position {
 
     internal Position Clone() => new([.._indexes]);
 
-    internal List<int> ToIndexes()=> [.._indexes];
-    
+    internal List<int> ToIndexes() => [.._indexes];
+
     public bool IsPartialMatch(Position other) {
-        if (this._indexes.Count > other._indexes.Count() ) return false;
+        if (this._indexes.Count > other._indexes.Count) return false;
         var matchingIndexes = other._indexes.GetRange(0, this._indexes.Count);
         return this._indexes.SequenceEqual(matchingIndexes);
     }
+
+    public override bool Equals(object? obj) =>
+        this == obj || obj is Position other && this.Equals(other);
+
+    private bool Equals(Position other) =>
+        this._indexes.SequenceEqual(other._indexes);
+
+    public override int GetHashCode() => ToString().GetHashCode();
+
+    public static bool operator ==(Position left, Position right) => left.Equals(right);
+
+    public static bool operator !=(Position left, Position right) => !left.Equals(right);
 }
