@@ -82,6 +82,8 @@ namespace Engine.Items {
             indexes.Insert(0, firstIndex);
             return P(indexes);
         }
+        
+        public Item P(Position position) => P(position.ToIndexes());
 
         internal Item P(List<int> indexes) => _item.P(indexes);
 

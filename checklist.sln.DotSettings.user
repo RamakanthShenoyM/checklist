@@ -1,8 +1,6 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=24438049_002Dc824_002D4374_002Dac00_002D3bff3c2ad62e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="SaveChecklistTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=24438049_002Dc824_002D4374_002Dac00_002D3bff3c2ad62e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="SaveChecklistTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=42171938_002D6b9b_002D4884_002D9073_002D93fa7c1bec0e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CheckEqualsForConditionalItemCheckList" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
@@ -10,23 +8,8 @@
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=84e28a19_002D4f0e_002D4cdd_002D9c84_002D7d991c6bb811/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="SaveChecklistTest #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f9396ec7_002D7bf8_002D4005_002Dbe26_002D18be54f91f6f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CheckEqualsForBooleanItemChecklist" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest.CheckEqualsForBooleanItemChecklist&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest.BooleanItemChecklistEqualityWithMultiplePersons&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest.MultipleChoiceItemChecklistEqualityWithMultiplePersons&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest.CheckEqualsForComplexCheckList&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.OperationTest.GroupItem&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest.CheckEqualsForConditionalItemCheckList&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest.CheckEqualsForConditionalItemCheckListWithMultiplePersons&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest.CheckEqualsForNotItemCheckList&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest.CheckEqualsForNotItemCheckListWithMultiplePersons&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest.CheckEqualsForOrItemCheckList&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest.CheckEqualsForOrItemCheckListWithMultiplePerson&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::298FFC6C-6460-4225-B86A-DD1A058F0F5B::net9.0::Engine.Tests.Unit.SaveChecklistTest.CheckEqualsForGroupItemCheckListWithMultiplePersons&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f9396ec7_002D7bf8_002D4005_002Dbe26_002D18be54f91f6f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CheckEqualsForBooleanItemChecklist" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
