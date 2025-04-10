@@ -49,7 +49,13 @@ namespace Engine.Items {
         };
 
         internal override List<SimpleItem> ActiveItems() => [this];
-        internal override Item Clone() => new BooleanItem(_question, _id);
+        internal override Item Clone()
+        {
+            var result = new BooleanItem(_question, _id);
+            result._hasSucceeded = _hasSucceeded;
+            return result;
+        }
+
         public override string ToString() => _question;
     }
 }

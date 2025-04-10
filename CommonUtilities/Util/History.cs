@@ -39,5 +39,5 @@ public class History
 
     public void Merge(History other) => _events.InsertRange(0, other._events);
 
-    public History? Clone() => new(_events);
+    public History? Clone() => new([.._events]);
 }
