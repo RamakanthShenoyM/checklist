@@ -17,17 +17,11 @@ namespace Engine.Items {
 
         internal virtual void History(History history) => _history = history;
 
-        public Item P(int firstIndex, params int[] rest) {
-            var results = rest.ToList();
-            results.Insert(0, firstIndex);
-            return P(results);
-        }
-
-        internal Item X(Position position) {
-            if (position == Position()) return this;
+        internal Item P(Position position) {
+            if (position.Equals(Position())) return this;
             var subItem = SubItems().Find(subItem => subItem.Position().IsPartialMatch(position))
                 ?? throw new ArgumentException($"No item exists at position {position}");
-            return subItem.X(position);
+            return subItem.P(position);
         }
 
         protected abstract List<Item> SubItems();
@@ -56,8 +50,6 @@ namespace Engine.Items {
         internal virtual void Simplify() { } // Ignore by default
 
         internal virtual bool Remove(Item item) => false;
-
-        internal abstract Item P(List<int> indexes);
 
         internal abstract List<SimpleItem> ActiveItems();
 

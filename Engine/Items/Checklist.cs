@@ -76,13 +76,9 @@ namespace Engine.Items {
             new ChecklistIndexer(this);
         }
 
-        public Item P(int firstIndex, params int[] rest) => X(new Position(firstIndex, rest));
-        
-        public Item P(Position position) => P(position.ToIndexes());
+        public Item P(int firstIndex, params int[] rest) => P(new Position(firstIndex, rest));
 
-        public Item X(Position position) => _item.X(position);
-
-        private Item P(List<int> indexes) => _item.P(indexes);
+        public Item P(Position position) => _item.P(position);
 
         public string ToMemento() => new ChecklistSerializer(this).Result;
 

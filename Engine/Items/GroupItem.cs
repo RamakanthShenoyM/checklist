@@ -115,14 +115,6 @@ namespace Engine.Items
             return result;
         }
 
-        internal override Item P(List<int> indexes)
-        {
-            if (indexes.Count == 1) return this;
-            if (indexes[1] >= _childItems.Count) throw new InvalidOperationException(
-                $"Invalid index of {indexes[0]} for a Group with only {_childItems.Count} items");
-            return _childItems[indexes[1]].P(indexes.Skip(1).ToList());
-        }
-
         internal override List<SimpleItem> ActiveItems() => 
             _childItems.SelectMany(item => item.ActiveItems()).ToList();
 

@@ -98,14 +98,6 @@ namespace Engine.Items
             return _item2.Remove(item) || result;
         }
 
-        internal override Item P(List<int> indexes)
-        {
-            if (indexes.Count == 1) return this;
-            if (indexes[1] == 0) return _item1.P(indexes.Skip(1).ToList());
-            if (indexes[1] == 1) return _item2.P(indexes.Skip(1).ToList());
-            throw new InvalidOperationException($"Invalid index of {indexes[1]} for an OrItem. Should be 0 or 1 only.");
-        }
-
         internal override List<SimpleItem> ActiveItems() => [.. _item1.ActiveItems().Concat(_item2.ActiveItems())];
         internal override Item Clone() => new OrItem(_item1.Clone(), _item2.Clone());
     }

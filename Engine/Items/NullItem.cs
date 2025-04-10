@@ -6,9 +6,8 @@ namespace Engine.Items {
     public class NullItem : Item {
         internal override void Accept(ChecklistVisitor visitor) => visitor.Visit(this);
 
-        internal override Item P(List<int> indexes) => this;
-
         internal override List<SimpleItem> ActiveItems() => [];
+        
         internal override Item Clone() => new NullItem();
 
         protected override List<Item> SubItems() => [];
