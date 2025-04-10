@@ -58,6 +58,8 @@ namespace Engine.Items
             return currentItem.Replace(originalItem, newItem);
         }
 
+        protected override List<Item> SubItems() => [_conditionItem,  _onSuccessItem, _onFailItem];
+
         internal override ItemStatus Status()
         {
             if (_conditionItem.Status() == Succeeded) return (_onSuccessItem is NullItem) ? Succeeded

@@ -10,8 +10,8 @@ namespace Engine.Items {
         internal Position Position() =>
             _position ?? throw new InvalidOperationException("Position has not been initialized");
 
-        internal Position Position(Position position) => _position = position;
-        
+        internal void Position(Position position) => _position = position;
+
         internal History History() =>
             _history ?? throw new InvalidOperationException("History hasn't been initialized");
 
@@ -22,6 +22,15 @@ namespace Engine.Items {
             results.Insert(0, firstIndex);
             return P(results);
         }
+
+        internal Item X(Position position) {
+            if (position == Position()) return this;
+            var subItem = SubItems().Find(subItem => subItem.Position().IsPartialMatch(position))
+                ?? throw new ArgumentException($"No item exists at position {position}");
+            return subItem.X(position);
+        }
+
+        protected abstract List<Item> SubItems();
 
         internal abstract ItemStatus Status();
 
@@ -59,6 +68,8 @@ namespace Engine.Items {
         internal abstract void Be(object value);
 
         internal abstract void Reset();
+
+        protected override List<Item> SubItems() => [];
     }
 
     public static class ItemExtensions {
