@@ -32,7 +32,7 @@ namespace Engine.Tests.Unit {
             var history = new HistoryDump(checklist).Result;
             testOutput.WriteLine(history.ToString());
         }
-
+      
         [Fact]
         public void SingleItemHistory() {
             var checklist = Creator.Checklist(
@@ -57,6 +57,7 @@ namespace Engine.Tests.Unit {
             var item1 = (SimpleItem)checklist.P(0, 0);
             var item2 = (SimpleItem)checklist.P(0, 1);
             var item3 = (SimpleItem)checklist.P(0, 2);
+
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
             Creator.Sets(item1).To(true);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());

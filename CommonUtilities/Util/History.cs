@@ -38,5 +38,6 @@ public class History
     public string Header(Enum type) => $"{DateTime.Now} >> {type} << Status: ";
 
     public void Merge(History other) => _events.InsertRange(0, other._events);
-    
+
+    public History? Clone() => new([.._events]);
 }

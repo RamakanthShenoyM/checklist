@@ -107,5 +107,6 @@ namespace Engine.Items
         }
 
         internal override List<SimpleItem> ActiveItems() => [.. _item1.ActiveItems().Concat(_item2.ActiveItems())];
+        internal override Item Clone() => new OrItem(_item1.Clone(), _item2.Clone());
     }
 }

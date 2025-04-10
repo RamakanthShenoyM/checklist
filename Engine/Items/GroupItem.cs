@@ -125,5 +125,11 @@ namespace Engine.Items
 
         internal override List<SimpleItem> ActiveItems() => 
             _childItems.SelectMany(item => item.ActiveItems()).ToList();
+
+        internal override Item Clone()
+        {
+            var clonedItem = _childItems.Select(x => x.Clone()).ToList();
+            return new GroupItem(clonedItem[0], clonedItem.Skip(1).ToArray());
+        }
     }
 }

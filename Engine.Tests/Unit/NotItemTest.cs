@@ -25,6 +25,8 @@ namespace Engine.Tests.Unit
             Assert.Equal(Succeeded, checklist.Status());
             Creator.Reset(booleanItem);
             Assert.Equal(InProgress, checklist.Status());
+            var checklistClone = checklist.Clone();
+            Assert.Equal(checklist, checklistClone);
         }
 
         [Fact]

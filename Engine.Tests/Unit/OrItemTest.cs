@@ -33,6 +33,8 @@ namespace Engine.Tests.Unit
             Assert.Equal(Succeeded, checklist.Status());
             Creator.Reset(item2);
             Assert.Equal(InProgress, checklist.Status());
+            var checklistClone = checklist.Clone();
+            Assert.Equal(checklist, checklistClone);
         }
 
     }

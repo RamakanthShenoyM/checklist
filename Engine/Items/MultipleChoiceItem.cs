@@ -19,6 +19,8 @@ namespace Engine.Items
             _id = id ?? Guid.NewGuid();
         }
 
+        internal Type ChoiceType() => _choices[0].GetType();
+
         internal override void Accept(ChecklistVisitor visitor)
         {
             visitor.Visit(this,_id, _position, _question, _value, _choices, Operations, _history);
@@ -59,6 +61,12 @@ namespace Engine.Items
         }
         
         internal override List<SimpleItem> ActiveItems() => [this];
+        internal override Item Clone()
+        {
+            var result =  new MultipleChoiceItem(_question, _choices[0], _id, _choices.Skip(1).ToArray());
+            result._value = _value;
+            return result;
+        }
 
         public override string ToString() => _question;
     }

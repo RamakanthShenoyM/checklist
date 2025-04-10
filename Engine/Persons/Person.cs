@@ -233,7 +233,8 @@ namespace Engine.Persons
                 if (!_addingPerson.Can(SetRole).On(item))
                     throw new InvalidOperationException("Does not have permission to add new person");
                 item.AddPerson(_addedPerson, _role);
-                item.History().Add(PersonAddEvent, $"Person<{_addingPerson}> added <{_addedPerson}> To <{item}>");
+                item.History().Add(PersonAddEvent, 
+                    $"Person<{_addingPerson}> added <{_addedPerson}> To Item <{item}> at Position <{item.Position()}>");
 
             } 
             public void To(Checklist checklist) => To(checklist._item);
@@ -255,7 +256,7 @@ namespace Engine.Persons
                 if (!_removingPerson.Can(SetRole).On(item))
                     throw new InvalidOperationException($"Person<{_removingPerson}> does not have permission to remove person <{_removedPerson}> From <{item}>");
                 item.RemovePerson(_removedPerson);
-                item.History().Add(PersonRemovedEvent, $"Person<{_removingPerson}> removed <{_removedPerson}> From <{item}>");
+                item.History().Add(PersonRemovedEvent, $"Person<{_removingPerson}> removed <{_removedPerson}> From <{item}> at Position <{item.Position()}>");
                 
             } 
             public void From(Checklist checklist) => From(checklist._item);

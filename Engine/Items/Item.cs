@@ -60,6 +60,8 @@ namespace Engine.Items {
         internal abstract Item P(List<int> indexes);
 
         internal abstract List<SimpleItem> ActiveItems();
+
+        internal abstract Item Clone();
     }
 
     public abstract class SimpleItem : Item {

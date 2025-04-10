@@ -37,7 +37,6 @@ namespace Engine.Tests.Unit
             Assert.Equal(ChecklistStatus.Failed, checklist.Status()); 
             Creator.Reset(item2);
             Assert.Equal(ChecklistStatus.InProgress, checklist.Status());
-
         }
     }
 }

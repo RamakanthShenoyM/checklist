@@ -83,5 +83,6 @@ namespace Engine.Items
         }
 
         internal override List<SimpleItem> ActiveItems() => _item.ActiveItems();
+        internal override Item Clone() => new NotItem(_item.Clone());
     }
 }

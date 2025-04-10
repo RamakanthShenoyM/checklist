@@ -79,6 +79,9 @@ namespace Engine.Items
             };
         }
 
+        internal override Item Clone() => 
+            new ConditionalItem(_conditionItem.Clone(), _onSuccessItem.Clone(), _onFailItem.Clone());
+
         internal override void AddPerson(Person person, Role role)
         {
             base.AddPerson(person, role);
