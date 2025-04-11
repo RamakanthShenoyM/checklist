@@ -85,25 +85,19 @@ namespace Engine.Items
         internal override void AddPerson(Person person, Role role)
         {
             base.AddPerson(person, role);
-            Apply(item => item.AddPerson(person, role));
+            foreach (var item in SubItems()) item.AddPerson(person, role);
         }
 
         internal override void History(History history)
         {
             base.History(history);
-            Apply(item => item.History(history));
+            foreach (var item in SubItems()) item.History(history);
         }
 
         internal override void RemovePerson(Person person)
         {
             base.RemovePerson(person);
-            Apply(item => item.RemovePerson(person));
-        }
-
-        private void Apply(Action<Item> action ) {
-            action(_conditionItem);
-            action(_onSuccessItem);
-            action(_onFailItem);
+            foreach (var item in SubItems()) item.RemovePerson(person);
         }
 
         internal override bool Contains(Item desiredItem) =>
