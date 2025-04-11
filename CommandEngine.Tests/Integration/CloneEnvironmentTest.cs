@@ -122,7 +122,6 @@ namespace CommandEngine.Tests.Integration {
             var memento = redEnvironment.ToMemento();
             var restoredEnvironment = CommandEnvironment.FromMemento(memento);
             Assert.Equal(redEnvironment,restoredEnvironment);
-
         }
 
         [Fact]

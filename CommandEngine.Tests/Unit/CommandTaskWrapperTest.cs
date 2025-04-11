@@ -1,17 +1,11 @@
 ﻿using CommandEngine.Commands;
 using CommandEngine.Tasks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CommandEngine.Tests.Util;
+using Xunit.Abstractions;
 using static CommandEngine.Tests.Util.PermanentStatus;
 using static CommandEngine.Commands.CommandStatus;
 using static CommandEngine.Tests.Unit.TestLabels;
 using static CommandEngine.Tests.Util.TestExtensions;
-using CommandEngine.Tests.Util;
-using Xunit.Sdk;
-using Xunit.Abstractions;
 using static CommandEngine.Tests.Util.SuspendLabels;
 using static CommandEngine.Commands.CommandEventType;
 

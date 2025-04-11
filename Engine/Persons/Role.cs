@@ -24,8 +24,8 @@ namespace Engine.Persons
 	public enum Operation
 	{
 		View,
-		ModifyChecklist,
-		Set,
-		SetRole
+		ModifyChecklist,  // Insert after; Insert before; Replace; Remove
+		Set,			  // Set a value or Reset
+		SetRole			  // Add a Person with a Role; Remove a Person
 	}
 }

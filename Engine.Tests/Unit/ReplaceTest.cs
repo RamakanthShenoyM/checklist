@@ -24,7 +24,7 @@ namespace Engine.Tests.Unit {
                     condition: "First condition".TrueFalse(),
                     onSuccess: Conditional(
                         condition: "Second condition".TrueFalse(),
-                        onSuccess: "Second success leg".TrueFalse(), // successItem2 to be replaced
+                        onSuccess: "Second success leg".TrueFalse(),
                         onFailure: "Second failure leg".TrueFalse()
                     ),
                     onFailure: Or(
