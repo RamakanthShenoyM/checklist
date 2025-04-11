@@ -23,7 +23,7 @@ namespace Engine.Items
 
         internal override void Accept(ChecklistVisitor visitor)
         {
-            visitor.Visit(this,_id, _position, _question, _value, _choices, Operations, _history);
+            visitor.Visit(this,_id, _position, _question, _value, _choices, Operations, History());
         }
 
         internal override void Be(object value)
@@ -44,7 +44,7 @@ namespace Engine.Items
             && this._choices.SequenceEqual(other._choices)
             && this._id == other._id
             && this.Operations.DeepEquals(other.Operations)
-            && this._history.Equals(other._history);
+            && this.History().Equals(other.History());
 
         public override int GetHashCode() => HashCode.Combine(_question, _id, Join(",", _choices));
 

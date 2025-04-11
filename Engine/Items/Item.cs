@@ -4,8 +4,8 @@ using Engine.Persons;
 namespace Engine.Items {
     public abstract class Item {
         protected readonly Dictionary<Person, List<Operation>> Operations = [];
-        protected History? _history; // Shadow reference to Checklist History
-        protected Position? _position;
+        private History? _history; // Shadow reference to Checklist History
+        protected Position? _position; // Established when creating a checklist or modigying one
 
         internal Position Position() =>
             _position ?? throw new InvalidOperationException("Position has not been initialized");

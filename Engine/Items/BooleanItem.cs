@@ -26,15 +26,14 @@ namespace Engine.Items {
             && this._question == other._question
             && this._id == other._id
             && this.Operations.DeepEquals(other.Operations)
-            && this._history.Equals(other._history);
-
+            && this.History().Equals(other.History());
 
         public override int GetHashCode() => _question.GetHashCode() * 37 + _id.GetHashCode();
 
         internal override void Reset() => _hasSucceeded = null;
 
         internal override void Accept(ChecklistVisitor visitor) {
-	        visitor.Visit(this,_id, _position, _question, _hasSucceeded, Operations,_history);
+	        visitor.Visit(this,_id, _position, _question, _hasSucceeded, Operations,History());
         }
 
         internal override ItemStatus Status() => _hasSucceeded switch {
