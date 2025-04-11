@@ -6,9 +6,12 @@ namespace Engine.Items {
     public class ChecklistIndexer : ChecklistVisitor {
         private Position _position = new();
 
-        public ChecklistIndexer(Checklist checklist) {
+        private ChecklistIndexer(Checklist checklist) {
             checklist.Accept(this);
         }
+        
+        // ReSharper disable once ObjectCreationAsStatement
+        public static void Index(Checklist checklist) => new ChecklistIndexer(checklist);
 
         public void Visit(BooleanItem item,
             Guid id,

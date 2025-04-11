@@ -12,7 +12,7 @@ namespace CommandEngine.Tasks
 
         internal Context(List<string> events)
         {
-            _history = new (events);
+            _history = new(events);
         }
         public Context():this([]) { }
 

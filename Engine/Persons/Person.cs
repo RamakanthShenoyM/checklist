@@ -237,7 +237,7 @@ namespace Engine.Persons
                     $"Person<{_addingPerson}> added <{_addedPerson}> To Item <{item}> at Position <{item.Position()}>");
 
             } 
-            public void To(Checklist checklist) => To(checklist._item);
+            public void To(Checklist checklist) => To(checklist.Item);
         }
         public class RemovePersonEngine
         {
@@ -259,7 +259,7 @@ namespace Engine.Persons
                 item.History().Add(PersonRemovedEvent, $"Person<{_removingPerson}> removed <{_removedPerson}> From <{item}> at Position <{item.Position()}>");
                 
             } 
-            public void From(Checklist checklist) => From(checklist._item);
+            public void From(Checklist checklist) => From(checklist.Item);
         }
     }
 }

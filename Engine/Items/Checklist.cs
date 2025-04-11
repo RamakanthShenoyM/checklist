@@ -5,39 +5,38 @@ using static Engine.Items.PrettyPrintOptions;
 
 namespace Engine.Items {
     public class Checklist {
-        internal Item _item;
+        internal Item Item;
         private readonly Guid _id;
-        private List<Item> _checklist;
         private readonly Person _creator;
         private readonly History _history = new([]);
 
         // Create with a Creator person only with extension method
         internal Checklist(Person creator, Item firstItem, History? history=null, Guid? id=null, params Item[] items) {
-            _item = (items.Length == 0) ? firstItem : new GroupItem(firstItem, items);
+            Item = (items.Length == 0) ? firstItem : new GroupItem(firstItem, items);
             _creator = creator;
             _id =  id??Guid.NewGuid();
             _history = history ?? _history;
-            _item.AddPerson(_creator, Creator);
-            _item.History(_history);
-            new ChecklistIndexer(this);
+            Item.AddPerson(_creator, Creator);
+            Item.History(_history);
+            ChecklistIndexer.Index(this);
         }
 
         public void Accept(ChecklistVisitor visitor) {
             visitor.PreVisit(this, _creator, _history, _id);
             _history.Accept(visitor);
-            _item.Accept(visitor);
+            Item.Accept(visitor);
             visitor.PostVisit(this, _creator, _history);
         }
 
         public ChecklistStatus Status() {
-            if (_item.Status() == ItemStatus.Succeeded)
+            if (Item.Status() == ItemStatus.Succeeded)
                 return ChecklistStatus.Succeeded;
-            if (_item.Status() == ItemStatus.Failed)
+            if (Item.Status() == ItemStatus.Failed)
                 return ChecklistStatus.Failed;
             return ChecklistStatus.InProgress;
         }
 
-        internal bool HasCreator(Person person) => person == _creator;
+        internal bool HasCreator(Person person) => Equals(person, _creator);
 
         public override string ToString() => ToString(Full);
 
@@ -46,7 +45,7 @@ namespace Engine.Items {
         public override bool Equals(object? obj) => this == obj || obj is Checklist other && this.Equals(other);
 
         private bool Equals(Checklist other) =>
-            this._item.Equals(other._item) 
+            this.Item.Equals(other.Item) 
             && this._creator.Equals(other._creator) 
             && this._history.Equals(other._history)
             && this._id.Equals(other._id);
@@ -55,39 +54,39 @@ namespace Engine.Items {
         public void Replace(Item originalItem, Item newItem) {
             newItem.AddPerson(_creator, Creator);
             newItem.History(_history);
-            if (_item == originalItem) {
-                _item = newItem;
-                new ChecklistIndexer(this);
+            if (Item == originalItem) {
+                Item = newItem;
+                ChecklistIndexer.Index(this);
                 return;
             }
 
-            if (!_item.Replace(originalItem, newItem))
+            if (!Item.Replace(originalItem, newItem))
                 throw new InvalidOperationException("Item not found in checklist");
-            new ChecklistIndexer(this);
+            ChecklistIndexer.Index(this);
         }
 
         public void Simplify() {
-            _item.Simplify();
+            Item.Simplify();
         }
 
         internal void Remove(Item item) {
-            if (item == _item) throw new InvalidOperationException("Cannot remove the only item in the checklist");
-            if (!_item.Remove(item)) throw new InvalidOperationException("Item not found in checklist");
-            new ChecklistIndexer(this);
+            if (item == Item) throw new InvalidOperationException("Cannot remove the only item in the checklist");
+            if (!Item.Remove(item)) throw new InvalidOperationException("Item not found in checklist");
+            ChecklistIndexer.Index(this);
         }
 
         public Item P(int firstIndex, params int[] rest) => P(new Position(firstIndex, rest));
 
-        public Item P(Position position) => _item.P(position);
+        public Item P(Position position) => Item.P(position);
 
         public string ToMemento() => new ChecklistSerializer(this).Result;
 
         public static Checklist FromMemento(string memento) => 
             new ChecklistDeserializer(memento).Result;
 
-        public List<SimpleItem> ActiveItems() => _item.ActiveItems();
+        public List<SimpleItem> ActiveItems() => Item.ActiveItems();
 
-        public Checklist Clone() => new(_creator, _item.Clone(), _history.Clone(), _id);
+        public Checklist Clone() => new(_creator, Item.Clone(), _history.Clone(), _id);
     }
    
 }
